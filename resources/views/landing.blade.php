@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFFBEB">
+    <title>TwoGo — Rencana Seru, Bareng-Bareng! 🎒</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-[#FFFBEB] font-sans text-[#1A1A2E] overflow-x-hidden">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-[#FFFBEB] border-b-[3px] border-[#1A1A2E] z-50">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="font-heading font-bold text-xl tracking-tight">TwoGo<span class="text-[#FF6B9D]">.</span></div>
+            <div>
+                <a href="/login" class="font-bold text-sm hover:underline mr-4">Masuk</a>
+                <a href="/register" class="nb-btn nb-btn-primary nb-btn-sm">Daftar</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24 pb-20">
+        <!-- Hero Section -->
+        <section class="max-w-4xl mx-auto px-4 pt-10 pb-16 text-center animate-fade-in-up">
+            <div class="inline-block nb-badge nb-badge-pink mb-6 rotate-[-2deg]">
+                ✨ Aplikasi Itinerary #1 buat Berdua
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-heading font-bold leading-tight mb-6 tracking-tight relative">
+                Rencana Seru, <br>
+                <span class="bg-[#FFE156] px-2 py-1 inline-block border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rotate-[1deg]">Bareng-Bareng! 🎒</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto opacity-90">
+                Aplikasi perencanaan perjalanan yang bikin liburanmu bareng pasangan atau bestie makin asyik, rapi, dan terorganisir.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="/register" class="nb-btn nb-btn-primary nb-btn-lg text-lg w-full sm:w-auto">Mulai Sekarang 🔥</a>
+                <a href="/login" class="nb-btn nb-btn-secondary nb-btn-lg text-lg w-full sm:w-auto">Sudah Punya Akun</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="max-w-4xl mx-auto px-4 py-16">
+            <h2 class="text-3xl font-heading font-bold mb-10 text-center reveal-on-scroll">Fitur yang Bikin Liburan Makin Chill 🌴</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Feature 1 -->
+                <div class="nb-card bg-white reveal-on-scroll">
+                    <div class="w-12 h-12 bg-[#00D4AA] rounded-full border-2 border-[#1A1A2E] flex items-center justify-center text-2xl mb-4 shadow-[2px_2px_0px_#1A1A2E]">📅</div>
+                    <h3 class="text-xl font-bold font-heading mb-2">Timeline Fleksibel</h3>
+                    <p class="text-sm font-medium opacity-80">Atur jadwal per hari dengan santai. Pagi, Siang, Malam — tanpa dikejar waktu karena liburan itu butuh chill.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="nb-card bg-[#FFE156] reveal-on-scroll animate-delay-100">
+                    <div class="w-12 h-12 bg-white rounded-full border-2 border-[#1A1A2E] flex items-center justify-center text-2xl mb-4 shadow-[2px_2px_0px_#1A1A2E]">💰</div>
+                    <h3 class="text-xl font-bold font-heading mb-2">Budget Tracker</h3>
+                    <p class="text-sm font-medium opacity-80">Catat pengeluaran bersama. Siapa bayar apa, langsung tercatat rapi dan auto ngitung utang-piutang.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="nb-card bg-[#FF6B9D] text-white reveal-on-scroll">
+                    <div class="w-12 h-12 bg-white rounded-full border-2 border-[#1A1A2E] flex items-center justify-center text-2xl mb-4 shadow-[2px_2px_0px_#1A1A2E]">📍</div>
+                    <h3 class="text-xl font-bold font-heading mb-2">Wishlist Destinasi</h3>
+                    <p class="text-sm font-medium text-white opacity-90">Kumpulkan ide tempat seru di bucket list sebelum finalisasi rencana. Vote mana yang wajib didatangi.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="nb-card bg-[#7B2FF7] text-white reveal-on-scroll animate-delay-100">
+                    <div class="w-12 h-12 bg-[#FF8C42] rounded-full border-2 border-[#1A1A2E] flex items-center justify-center text-2xl mb-4 shadow-[2px_2px_0px_#1A1A2E]">📸</div>
+                    <h3 class="text-xl font-bold font-heading mb-2">Dokumentasi</h3>
+                    <p class="text-sm font-medium text-white opacity-90">Abadikan momen perjalanan. Foto dan catatan tersimpan rapi per trip, jadi kenangan digital yang aesthetic.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="max-w-4xl mx-auto px-4 py-16 reveal-on-scroll">
+            <div class="nb-card bg-[#4361EE] text-white text-center p-10">
+                <h2 class="text-3xl font-heading font-bold mb-4">Siap untuk Liburan Berikutnya?</h2>
+                <p class="mb-8 font-medium max-w-md mx-auto">Yuk bikin itinerary pertamamu di TwoGo, gratis!</p>
+                <a href="/register" class="nb-btn nb-btn-primary nb-btn-lg text-lg">Buat Trip Sekarang 🚀</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-[3px] border-[#1A1A2E] bg-white py-8">
+        <div class="max-w-4xl mx-auto px-4 text-center font-bold text-sm">
+            &copy; 2025 TwoGo. Dibuat dengan 💖 untuk travelers.
+        </div>
+    </footer>
+</body>
+</html>
