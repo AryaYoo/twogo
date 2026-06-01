@@ -45,6 +45,8 @@
             @yield('content')
         </main>
 
+        @stack('floating-bottom')
+
         @auth
         <x-bottom-nav />
         @endauth

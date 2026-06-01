@@ -2,39 +2,65 @@
 @section('title', $trip->title)
 
 @section('header')
-<div class="flex items-center gap-3 w-full">
-    <a href="{{ route('trips.index') }}" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform">
+<div class="flex items-center gap-2 md:gap-3 w-full">
+    <a href="{{ route('trips.index') }}" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform text-sm md:text-base">
         &larr;
     </a>
-    <div class="flex-1 overflow-hidden">
-        <h1 class="text-xl font-heading font-bold truncate">{{ $trip->title }}</h1>
+    <div class="flex-1 min-w-0">
+        <h1 class="text-lg md:text-xl font-heading font-bold truncate">{{ $trip->title }}</h1>
         <p class="text-xs font-medium opacity-80 truncate">{{ $trip->start_date->format('d M') }} - {{ $trip->end_date->format('d M Y') }}</p>
     </div>
     @if($trip->user_id === Auth::id())
-    <a href="{{ route('trips.edit', $trip) }}" class="w-10 h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform">
-        ✏️
-    </a>
-    <a href="{{ route('invitations.show', $trip) }}" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] ml-2 hover:translate-y-[-2px] transition-transform">🤝</a>
-    <form action="{{ route('trips.split_budget', $trip) }}" method="POST" class="inline">
-        @csrf
-        <button type="submit" class="w-10 h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] ml-2 hover:translate-y-[-2px] transition-transform">💸</button>
-    </form>
+    <div class="relative shrink-0">
+        <button id="trip-actions-btn" type="button" aria-haspopup="true" aria-expanded="false" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-sm md:text-base">
+            <!-- simple hamburger icon -->
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6h16M4 12h16M4 18h16" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+
+        <div id="trip-actions-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border-[3px] border-[#1A1A2E] rounded-lg shadow-[2px_2px_0px_#1A1A2E] z-50 overflow-hidden">
+            <a href="{{ route('trips.edit', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">✏️ Edit Perjalanan</a>
+            <a href="{{ route('invitations.show', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">🤝 Kelola Undangan</a>
+            <form action="{{ route('trips.split_budget', $trip) }}" method="POST" class="px-3 py-2">
+                @csrf
+                <button type="submit" class="w-full text-left text-sm font-medium hover:text-[#7B2FF7]">💸 Auto-Settlement</button>
+            </form>
+        </div>
+    </div>
     @endif
 </div>
 @endsection
 
 @section('content')
-<!-- Horizontal Day Tabs -->
-<div class="flex overflow-x-auto no-scrollbar gap-3 mb-6 pb-2 -mx-4 px-4 sticky top-[76px] bg-[#FFFBEB] z-20 py-2">
-    @foreach($trip->days as $day)
-        <a href="#hari-{{ $day->day_number }}" class="shrink-0">
-            <div class="nb-card px-4 py-2 bg-white flex flex-col items-center justify-center min-w-[70px] transition-colors hover:bg-[#FFE156]">
-                <span class="text-xs font-bold opacity-70">Hari</span>
-                <span class="text-xl font-heading font-bold">{{ $day->day_number }}</span>
+@push('floating-bottom')
+<div class="fixed left-1/2 bottom-[71px] z-50 w-full max-w-[480px] -translate-x-1/2 px-1 pointer-events-none">
+    <div class="w-full pointer-events-auto relative">
+        <button id="day-prev" class="absolute left-1 top-1/2 -translate-y-1/2 bg-white border-[3px] border-[#1A1A2E] rounded-full w-6 h-6 flex items-center justify-center z-60 hidden">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="day-next" class="absolute right-1 top-1/2 -translate-y-1/2 bg-white border-[3px] border-[#1A1A2E] rounded-full w-6 h-6 flex items-center justify-center z-60 hidden">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="relative w-full">
+            <!-- background bar behind tabs -->
+            <div class="absolute inset-0 left-0 right-0 bottom-0 top-0 pointer-events-none">
+                <div class="w-full h-full bg-[#FFFBEB]"></div>
             </div>
-        </a>
-    @endforeach
+            <div id="dayTabsContainer" class="flex w-full overflow-x-auto no-scrollbar gap-3 pb-2 pt-2 justify-center">
+                @foreach($trip->days as $day)
+                    <a href="#hari-{{ $day->day_number }}" class="shrink-0 day-tab" data-day="{{ $day->day_number }}">
+                        <div class="nb-card day-card-sm bg-white flex flex-col items-center justify-center gap-1 min-w-[56px] transition-colors hover:bg-[#FFE156]">
+                            <span class="text-xs font-bold opacity-70">Hari</span>
+                            <span class="text-xl font-heading font-bold">{{ $day->day_number }}</span>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
 </div>
+@endpush
 
 <!-- Timeline -->
 <div class="flex flex-col gap-8">
@@ -153,6 +179,9 @@
     Perjalanan ini sudah ditandai sebagai selesai. Kamu dapat melihat budget-nya di halaman Budget Tracker.
 </div>
 @endif
+
+<!-- spacer to avoid floating bottom covering important buttons -->
+<div class="h-32"></div>
 
 <!-- Modal Tambah Kegiatan -->
 <x-modal id="addActivityModal" title="Tambah Kegiatan">
@@ -282,5 +311,89 @@
 
         openModal('editActivityModal');
     }
+
+    // Trip actions dropdown toggle
+    document.addEventListener('click', function(e) {
+        var btn = document.getElementById('trip-actions-btn');
+        var dropdown = document.getElementById('trip-actions-dropdown');
+        if (!btn || !dropdown) return;
+
+        if (btn.contains(e.target)) {
+            dropdown.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', !dropdown.classList.contains('hidden'));
+            return;
+        }
+
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.add('hidden');
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    // Day tabs: center active / first item and add pagination controls
+    document.addEventListener('DOMContentLoaded', function() {
+        var container = document.getElementById('dayTabsContainer');
+        var prevBtn = document.getElementById('day-prev');
+        var nextBtn = document.getElementById('day-next');
+        if (!container) return;
+
+        function updateControls() {
+            var isOverflow = container.scrollWidth > container.clientWidth + 1; // tolerance
+            if (isOverflow) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                container.classList.remove('justify-center');
+            } else {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                container.classList.add('justify-center');
+            }
+            return isOverflow;
+        }
+
+        function centerElement(el, smooth = true) {
+            if (!el) return;
+            var left = el.offsetLeft + el.offsetWidth / 2 - container.clientWidth / 2;
+            container.scrollTo({ left: left, behavior: smooth ? 'smooth' : 'auto' });
+        }
+
+        // center the first tab (or try to center the anchor matching location.hash)
+        var target = null;
+        if (location.hash) {
+            var hash = location.hash.replace('#hari-', '');
+            target = container.querySelector('[data-day="' + hash + '"]');
+        }
+        if (!target) target = container.querySelector('.day-tab');
+        // wait for layout then center if overflowing; otherwise rely on justify-center
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                var overflowing = updateControls();
+                if (overflowing) {
+                    centerElement(target, false);
+                }
+            });
+        });
+
+        // handle clicks on tabs to center
+        container.querySelectorAll('.day-tab').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                var box = a;
+                setTimeout(function() { centerElement(box, true); }, 0);
+            });
+        });
+
+        // pagination buttons
+        prevBtn.addEventListener('click', function() {
+            container.scrollBy({ left: -Math.round(container.clientWidth * 0.6), behavior: 'smooth' });
+        });
+        nextBtn.addEventListener('click', function() {
+            container.scrollBy({ left: Math.round(container.clientWidth * 0.6), behavior: 'smooth' });
+        });
+
+        // update controls on resize/scroll
+        window.addEventListener('resize', function() { updateControls(); });
+        container.addEventListener('scroll', function() { updateControls(); });
+        updateControls();
+    });
 </script>
 @endpush
