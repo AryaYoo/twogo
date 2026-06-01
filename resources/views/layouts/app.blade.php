@@ -70,9 +70,9 @@
             });
         </script>
         @endauth
-    </div>
 
-    @stack('scripts')
+        @stack('modals')
+        @stack('scripts')
+    </div>
 </body>
 </html>
-@stack('modals')

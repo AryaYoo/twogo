@@ -28,7 +28,7 @@
                 
                 <form action="{{ route('wishlists.destroy', $item) }}" method="POST" onsubmit="return confirm('Hapus dari wishlist?');">
                     @csrf @method('DELETE')
-                    <button type="submit" class="text-xs text-red-500 font-bold">&times;</button>
+                    <button type="submit" class="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]">&times;</button>
                 </form>
             </div>
             

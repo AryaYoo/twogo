@@ -1,5 +1,6 @@
 @props([
     'name',
+    'id' => null,
     'label' => null,
     'type' => 'text',
     'value' => '',
@@ -8,16 +9,20 @@
     'error' => null,
 ])
 
+@php
+    $inputId = $id ?? $name;
+@endphp
+
 <div class="nb-form-group">
     @if($label)
-        <label for="{{ $name }}" class="nb-label">
+        <label for="{{ $inputId }}" class="nb-label">
             {{ $label }} @if($required) <span class="text-red-500">*</span> @endif
         </label>
     @endif
     
     @if($type === 'textarea')
         <textarea 
-            id="{{ $name }}" 
+            id="{{ $inputId }}" 
             name="{{ $name }}" 
             placeholder="{{ $placeholder }}"
             {{ $required ? 'required' : '' }}
@@ -26,7 +31,7 @@
     @else
         <input 
             type="{{ $type }}" 
-            id="{{ $name }}" 
+            id="{{ $inputId }}" 
             name="{{ $name }}" 
             value="{{ old($name, $value) }}"
             placeholder="{{ $placeholder }}"

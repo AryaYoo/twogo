@@ -137,7 +137,7 @@
                     
                     <form action="{{ route('expenses.destroy', $expense) }}" method="POST" onsubmit="return confirm('Hapus pengeluaran ini?');">
                         @csrf @method('DELETE')
-                        <button type="submit" class="text-xs text-red-500 font-bold hover:underline">Hapus</button>
+                        <button type="submit" class="w-8 h-8 rounded-sm bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">&times;</button>
                     </form>
                 </div>
             </div>

@@ -115,10 +115,10 @@
                                                 </div>
                                                 @endif
                                                 <div class="inline-flex items-center gap-2">
-                                                    <button type="button" onclick="openEditActivityModal(@json($act))" class="text-sm text-[#1A1A2E] font-bold ml-2 p-1 hover:text-[#7B2FF7]">✏️</button>
+                                                    <button type="button" onclick='openEditActivityModal(@json($act))' class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">✏️</button>
                                                     <form action="{{ route('activities.destroy', $act) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kegiatan ini?');">
                                                         @csrf @method('DELETE')
-                                                        <button type="submit" class="text-xs text-red-500 font-bold ml-2 p-1">&times;</button>
+                                                        <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">&times;</button>
                                                     </form>
                                                 </div>
                                             </div>
