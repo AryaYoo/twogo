@@ -83,9 +83,9 @@
                                                 
                                                 @if($act->start_time || $act->end_time)
                                                 <div class="text-xs text-gray-600 mt-1">
-                                                    {{ $act->start_time ? \Carbon\Carbon::createFromFormat('H:i', $act->start_time)->format('H:i') : '' }}
+                                                    {{ $act->start_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->start_time)->format('H:i') : '' }}
                                                     @if($act->start_time && $act->end_time) — @endif
-                                                    {{ $act->end_time ? \Carbon\Carbon::createFromFormat('H:i', $act->end_time)->format('H:i') : '' }}
+                                                    {{ $act->end_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->end_time)->format('H:i') : '' }}
                                                 </div>
                                                 @endif
                                                 <div class="inline-flex items-center gap-2">
