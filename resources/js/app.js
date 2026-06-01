@@ -6,7 +6,7 @@ window.showToast = function(message, type = 'success', duration = 3000) {
     if (!container) return;
     
     const toast = document.createElement('div');
-    toast.className = `nb-toast toast-${type}`;
+    toast.className = `nb-toast nb-toast-${type}`;
     
     // Icon based on type
     let icon = '';
@@ -38,7 +38,11 @@ window.showToast = function(message, type = 'success', duration = 3000) {
 window.openModal = function(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.classList.add('nb-modal-active');
+        modal.classList.add('active');
+        modal.querySelectorAll('.nb-modal-overlay, .nb-modal, .nb-bottom-sheet').forEach(el => {
+            el.classList.add('active');
+            el.classList.add('nb-modal-active');
+        });
         document.body.style.overflow = 'hidden';
     }
 };
@@ -46,7 +50,11 @@ window.openModal = function(modalId) {
 window.closeModal = function(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.classList.remove('nb-modal-active');
+        modal.classList.remove('active');
+        modal.querySelectorAll('.nb-modal-overlay, .nb-modal, .nb-bottom-sheet').forEach(el => {
+            el.classList.remove('active');
+            el.classList.remove('nb-modal-active');
+        });
         document.body.style.overflow = '';
     }
 };

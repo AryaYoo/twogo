@@ -14,9 +14,30 @@
 </head>
 <body>
     <div class="app-container">
+        @auth
+        @php
+            $pendingInvites = \App\Models\TripInvitation::where('invited_user_id', Auth::id())
+                ->where('status', 'pending')
+                ->where('expires_at', '>', now())
+                ->count();
+        @endphp
+        @endauth
+
         @hasSection('header')
         <header class="page-header">
-            @yield('header')
+            <div class="page-header-inner">
+                <div class="header-main">
+                    @yield('header')
+                </div>
+                @auth
+                <a href="{{ route('invitations.index') }}" class="top-notification-button" title="Undangan">
+                    <span class="text-xl">🔔</span>
+                    @if($pendingInvites > 0)
+                        <span class="top-notification-badge">{{ $pendingInvites }}</span>
+                    @endif
+                </a>
+                @endauth
+            </div>
         </header>
         @endif
 
@@ -36,8 +57,20 @@
         @if(session('error'))
         <script>document.addEventListener('DOMContentLoaded', () => showToast('{{ session('error') }}', 'error'));</script>
         @endif
+
+        @auth
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var pending = {{ $pendingInvites }};
+                if (pending > 0) {
+                    showToast('Kamu mempunyai ' + pending + ' undangan baru.', 'info', 5000);
+                }
+            });
+        </script>
+        @endauth
     </div>
 
     @stack('scripts')
 </body>
 </html>
+@stack('modals')

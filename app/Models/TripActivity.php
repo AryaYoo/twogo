@@ -35,6 +35,8 @@ class TripActivity extends Model
         'title',
         'description',
         'session',
+        'start_time',
+        'end_time',
         'location_name',
         'location_url',
         'estimated_cost',
@@ -53,6 +55,8 @@ class TripActivity extends Model
         return [
             'estimated_cost' => 'decimal:2',
             'is_completed'   => 'boolean',
+            'notified_start' => 'boolean',
+            'notified_end'   => 'boolean',
         ];
     }
 

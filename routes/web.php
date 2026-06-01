@@ -62,17 +62,23 @@ Route::middleware('auth')->group(function () {
     // Invitations
     Route::get('/trips/{trip}/invite', [\App\Http\Controllers\InvitationController::class, 'showInviteForm'])->name('invitations.show');
     Route::post('/join-trip', [\App\Http\Controllers\InvitationController::class, 'inviteViaCode'])->name('invitations.join_code');
+    Route::post('/trips/{trip}/invite', [\App\Http\Controllers\InvitationController::class, 'sendInvite'])->name('invitations.send');
+    Route::get('/trips/invitations/accept/{token}', [\App\Http\Controllers\InvitationController::class, 'acceptInvite'])->name('invitations.accept');
+    // In-app invitations
+    Route::get('/invitations', [\App\Http\Controllers\InvitationController::class, 'index'])->name('invitations.index');
+    Route::post('/invitations/{invitation}/accept', [\App\Http\Controllers\InvitationController::class, 'accept'])->name('invitations.accept_inapp');
+    Route::post('/invitations/{invitation}/decline', [\App\Http\Controllers\InvitationController::class, 'decline'])->name('invitations.decline_inapp');
+
+    // Split budget
+    Route::post('/trips/{trip}/split-budget', [\App\Http\Controllers\TripController::class, 'splitBudget'])->name('trips.split_budget');
+    Route::post('/trips/{trip}/complete', [\App\Http\Controllers\TripController::class, 'complete'])->name('trips.complete');
 
     // Expenses
     Route::get('/trips/{trip}/budget', [\App\Http\Controllers\ExpenseController::class, 'index'])->name('expenses.index');
     Route::get('/trips/{trip}/budget/create', [\App\Http\Controllers\ExpenseController::class, 'create'])->name('expenses.create');
     Route::post('/trips/{trip}/budget', [\App\Http\Controllers\ExpenseController::class, 'store'])->name('expenses.store');
     Route::delete('/expenses/{expense}', [\App\Http\Controllers\ExpenseController::class, 'destroy'])->name('expenses.destroy');
-    Route::get('/budget', function() {
-        $trip = \Illuminate\Support\Facades\Auth::user()->trips()->first();
-        if($trip) return redirect()->route('expenses.index', $trip);
-        return redirect()->route('trips.index')->with('error', 'Buat trip dulu untuk melihat budget.');
-    })->name('expenses.dashboard');
+    Route::get('/budget', [\App\Http\Controllers\ExpenseController::class, 'dashboard'])->name('expenses.dashboard');
     
     // Documents
     Route::get('/trips/{trip}/documents', [\App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');

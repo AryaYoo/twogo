@@ -24,6 +24,8 @@ class ExpenseController extends Controller
             return $row->sum('amount');
         });
 
+        $splitBudgetExpenseExists = $trip->expenses()->where('title', 'Split Budget')->exists();
+
         // Calculate settlement (who owes who)
         $balances = [];
         foreach ($trip->members as $member) {
@@ -40,7 +42,19 @@ class ExpenseController extends Controller
             }
         }
 
-        return view('expenses.index', compact('trip', 'totalSpent', 'remainingBudget', 'categoryBreakdown', 'balances'));
+        return view('expenses.index', compact('trip', 'totalSpent', 'remainingBudget', 'categoryBreakdown', 'balances', 'splitBudgetExpenseExists'));
+    }
+
+    public function dashboard()
+    {
+        $completedTrips = Auth::user()
+            ->trips()
+            ->where('status', 'completed')
+            ->with('expenses')
+            ->orderByDesc('end_date')
+            ->get();
+
+        return view('expenses.dashboard', compact('completedTrips'));
     }
 
     public function create(Trip $trip)

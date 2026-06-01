@@ -14,6 +14,11 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+    <div class="mb-4 p-4 bg-[#DDF6FF] border-[3px] border-[#4361EE] rounded-xl text-[#1A1A2E] font-bold">
+        {{ session('success') }}
+    </div>
+@endif
 <!-- Budget Summary Card -->
 <x-card class="bg-[#1A1A2E] text-white mb-6">
     <div class="flex justify-between items-end mb-4">
@@ -40,6 +45,11 @@
         <span class="text-[#00D4AA]">Sisa: Rp {{ number_format($remainingBudget, 0, ',', '.') }}</span>
         <span>{{ number_format($percentage, 1) }}%</span>
     </div>
+    @if($splitBudgetExpenseExists)
+    <div class="mt-4 px-4 py-3 bg-white border-[3px] border-[#1A1A2E] rounded-xl text-sm font-bold text-[#1A1A2E]">
+        💡 Budget ini berasal dari split bill. Semua anggota telah dibagi secara rata berdasarkan total trip.
+    </div>
+    @endif
 </x-card>
 
 <!-- Settlement / Utang Piutang -->

@@ -60,5 +60,23 @@
             <p class="text-red-500 text-xs font-bold mt-2">{{ $message }}</p>
         @enderror
     </x-card>
+    
+    <!-- Invite a friend directly -->
+    <h3 class="font-heading font-bold text-lg mt-6 mb-3">Undang Teman</h3>
+    <x-card>
+        <form action="{{ route('invitations.send', $trip) }}" method="POST" class="flex gap-2 items-center">
+            @csrf
+            <select name="invited_user_id" class="flex-1 border-[3px] border-[#1A1A2E] rounded-sm px-3 py-2" required>
+                <option value="">Pilih teman untuk diundang</option>
+                @foreach($availableFriends as $f)
+                    <option value="{{ $f->id }}">{{ $f->name }} ({{ $f->email }})</option>
+                @endforeach
+            </select>
+            <x-button type="submit" variant="mint" class="shrink-0">Kirim Undangan</x-button>
+        </form>
+        @error('invited_user_id')
+            <p class="text-red-500 text-xs font-bold mt-2">{{ $message }}</p>
+        @enderror
+    </x-card>
 @endif
 @endsection

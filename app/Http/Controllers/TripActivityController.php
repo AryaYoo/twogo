@@ -17,6 +17,8 @@ class TripActivityController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'session' => 'required|in:pagi,siang,malam',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i|after_or_equal:start_time',
             'category' => 'required|in:wisata,kuliner,transportasi,akomodasi,belanja,lainnya',
             'estimated_cost' => 'nullable|numeric|min:0'
         ]);
@@ -28,6 +30,8 @@ class TripActivityController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'session' => $request->session,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'location_name' => $request->location_name,
             'location_url' => $request->location_url,
             'category' => $request->category,
@@ -46,10 +50,14 @@ class TripActivityController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'session' => 'required|in:pagi,siang,malam',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i|after_or_equal:start_time',
             'category' => 'required|in:wisata,kuliner,transportasi,akomodasi,belanja,lainnya'
         ]);
 
-        $activity->update($request->all());
+        $activity->update($request->only([
+            'title','description','session','start_time','end_time','category','location_name','location_url','estimated_cost'
+        ]));
 
         return back()->with('success', 'Kegiatan diupdate!');
     }

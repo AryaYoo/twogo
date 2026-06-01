@@ -9,8 +9,8 @@
         @csrf
         <x-input 
             name="name" 
-            label="Nama Lengkap" 
-            placeholder="John Doe" 
+            label="Nama Akun" 
+            placeholder="Yohanes" 
             required="true"
         />
         
@@ -18,7 +18,7 @@
             type="email"
             name="email" 
             label="Email" 
-            placeholder="john@example.com" 
+            placeholder="yohanes@example.com" 
             required="true"
         />
         

@@ -156,15 +156,67 @@ img {
     min-height: 100dvh;
     background-color: #FFFBEB;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .page-content {
+    flex: 1;
     padding: 1rem;
     padding-bottom: 6rem; /* space for bottom nav */
 }
 
 .page-content-no-nav {
     padding: 1rem;
+}
+
+.top-notification-bar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: #FFFBEB;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+    padding: 0.75rem 1rem;
+}
+
+.top-notification-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background: #F8FAFC;
+    border: 1px solid rgba(15, 23, 42, .08);
+    color: #0F172A;
+    text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.top-notification-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .08);
+}
+
+.top-notification-badge {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    background: #ef4444;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0 0.25rem;
 }
 
 .page-header {
@@ -181,6 +233,10 @@ img {
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
+}
+
+.header-main {
+    flex: 1;
 }
 
 .page-header-title {
@@ -877,8 +933,24 @@ img {
    Modal / Bottom Sheet
    ============================================================ */
 
-.nb-modal-overlay {
+/* Modal wrapper fixed to viewport so modal is always centered */
+.nb-modal-wrapper {
     position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.nb-modal-wrapper.active,
+.nb-modal-wrapper .active {
+    pointer-events: auto;
+}
+
+.nb-modal-overlay {
+    position: absolute;
     inset: 0;
     background: rgba(26, 26, 46, 0.5);
     backdrop-filter: blur(4px);
@@ -895,10 +967,7 @@ img {
 }
 
 .nb-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
+    position: relative;
     z-index: 51;
     background: #FFFFFF;
     border: 3px solid #1A1A2E;
@@ -911,12 +980,12 @@ img {
     opacity: 0;
     visibility: hidden;
     transition: var(--nb-transition-slow);
+    transform: none;
 }
 
 .nb-modal.active {
     opacity: 1;
     visibility: visible;
-    transform: translate(-50%, -50%) scale(1);
 }
 
 .nb-modal-header {

@@ -1,8 +1,9 @@
 @props(['id', 'title' => ''])
 
-<div id="{{ $id }}" class="group">
+@push('modals')
+<div id="{{ $id }}" class="group nb-modal-wrapper">
     <div class="nb-modal-overlay"></div>
-    <div class="nb-bottom-sheet flex flex-col">
+    <div class="nb-modal flex flex-col">
         @if($title)
         <div class="flex justify-between items-center p-4 border-b-2 border-[#1A1A2E] sticky top-0 bg-white z-10">
             <h3 class="font-heading font-bold text-lg">{{ $title }}</h3>
@@ -14,8 +15,9 @@
         </div>
         @endif
         
-        <div class="p-4 overflow-y-auto">
+        <div class="p-4 overflow-y-auto max-h-[80vh]">
             {{ $slot }}
         </div>
     </div>
 </div>
+@endpush

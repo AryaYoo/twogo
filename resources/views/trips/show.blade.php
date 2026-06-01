@@ -14,6 +14,11 @@
     <a href="{{ route('trips.edit', $trip) }}" class="w-10 h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform">
         ✏️
     </a>
+    <a href="{{ route('invitations.show', $trip) }}" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] ml-2 hover:translate-y-[-2px] transition-transform">🤝</a>
+    <form action="{{ route('trips.split_budget', $trip) }}" method="POST" class="inline">
+        @csrf
+        <button type="submit" class="w-10 h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] ml-2 hover:translate-y-[-2px] transition-transform">💸</button>
+    </form>
     @endif
 </div>
 @endsection
@@ -76,10 +81,20 @@
                                             <div class="flex justify-between items-start">
                                                 <h4 class="font-bold font-heading text-lg {{ $act->is_completed ? 'line-through' : '' }}">{{ $act->title }}</h4>
                                                 
-                                                <form action="{{ route('activities.destroy', $act) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kegiatan ini?');">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="text-xs text-red-500 font-bold ml-2 p-1">&times;</button>
-                                                </form>
+                                                @if($act->start_time || $act->end_time)
+                                                <div class="text-xs text-gray-600 mt-1">
+                                                    {{ $act->start_time ? \Carbon\Carbon::createFromFormat('H:i', $act->start_time)->format('H:i') : '' }}
+                                                    @if($act->start_time && $act->end_time) — @endif
+                                                    {{ $act->end_time ? \Carbon\Carbon::createFromFormat('H:i', $act->end_time)->format('H:i') : '' }}
+                                                </div>
+                                                @endif
+                                                <div class="inline-flex items-center gap-2">
+                                                    <button type="button" onclick="openEditActivityModal(@json($act))" class="text-sm text-[#1A1A2E] font-bold ml-2 p-1 hover:text-[#7B2FF7]">✏️</button>
+                                                    <form action="{{ route('activities.destroy', $act) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kegiatan ini?');">
+                                                        @csrf @method('DELETE')
+                                                        <button type="submit" class="text-xs text-red-500 font-bold ml-2 p-1">&times;</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                             
                                             <div class="flex items-center gap-2 mt-1 mb-2">
@@ -124,6 +139,21 @@
     @endforeach
 </div>
 
+@if($trip->status !== 'completed')
+<div class="mt-6">
+    <form action="{{ route('trips.complete', $trip) }}" method="POST" onsubmit="return confirm('Tandai perjalanan ini sebagai selesai?');">
+        @csrf
+        <button type="submit" class="w-full nb-btn nb-btn-primary bg-[#FFE156] text-[#1A1A2E] border-[3px] border-[#1A1A2E] rounded-xl py-3 font-heading font-bold hover:translate-y-[-2px] transition-transform">
+            ✅ Selesaikan Perjalanan
+        </button>
+    </form>
+</div>
+@else
+<div class="mt-6 p-4 bg-[#E1FCEF] border-[3px] border-[#00D4AA] rounded-xl text-[#1A1A2E] font-bold">
+    Perjalanan ini sudah ditandai sebagai selesai. Kamu dapat melihat budget-nya di halaman Budget Tracker.
+</div>
+@endif
+
 <!-- Modal Tambah Kegiatan -->
 <x-modal id="addActivityModal" title="Tambah Kegiatan">
     <form id="addActivityForm" method="POST" action="">
@@ -137,6 +167,11 @@
             placeholder="Makan siang di..." 
             required="true"
         />
+
+        <div class="grid grid-cols-2 gap-3">
+            <x-input type="time" name="start_time" label="Waktu Mulai" />
+            <x-input type="time" name="end_time" label="Waktu Selesai" />
+        </div>
         
         <div class="nb-form-group">
             <label class="nb-label">Kategori <span class="text-red-500">*</span></label>
@@ -182,6 +217,43 @@
     </form>
 </x-modal>
 
+<!-- Modal Edit Kegiatan -->
+<x-modal id="editActivityModal" title="Edit Kegiatan">
+    <form id="editActivityForm" method="POST" action="">
+        @csrf @method('PUT')
+
+        <input type="hidden" name="session" id="edit_activity_session" value="pagi">
+
+        <x-input id="edit_title" name="title" label="Nama Kegiatan" placeholder="Makan siang di..." required="true" />
+
+        <div class="grid grid-cols-2 gap-3">
+            <x-input id="edit_start_time" type="time" name="start_time" label="Waktu Mulai" />
+            <x-input id="edit_end_time" type="time" name="end_time" label="Waktu Selesai" />
+        </div>
+
+        <div class="nb-form-group">
+            <label class="nb-label">Kategori <span class="text-red-500">*</span></label>
+            <select id="edit_category" name="category" class="nb-select" required>
+                <option value="wisata">🏖️ Wisata</option>
+                <option value="kuliner">🍜 Kuliner</option>
+                <option value="transportasi">🚗 Transportasi</option>
+                <option value="akomodasi">🏨 Akomodasi</option>
+                <option value="belanja">🛍️ Belanja</option>
+                <option value="lainnya">✨ Lainnya</option>
+            </select>
+        </div>
+
+        <x-input id="edit_estimated_cost" type="number" name="estimated_cost" label="Estimasi Biaya (Rp)" placeholder="50000" />
+        <x-input id="edit_location_name" name="location_name" label="Nama Lokasi (Opsional)" placeholder="Kuta Beach" />
+        <x-input id="edit_location_url" name="location_url" label="Link Google Maps (Opsional)" placeholder="https://maps.google.com/..." />
+        <x-input id="edit_description" type="textarea" name="description" label="Catatan Khusus (Opsional)" placeholder="Pesan tempat yang pinggir jendela..." />
+
+        <div class="mt-6">
+            <x-button type="submit" variant="primary" class="w-full">Simpan Perubahan</x-button>
+        </div>
+    </form>
+</x-modal>
+
 @endsection
 
 @push('scripts')
@@ -190,6 +262,25 @@
         document.getElementById('addActivityForm').action = `/trips/days/${dayId}/activities`;
         document.getElementById('activity_session').value = session;
         openModal('addActivityModal');
+    }
+
+    function openEditActivityModal(activity) {
+        // set form action
+        document.getElementById('editActivityForm').action = `/activities/${activity.id}`;
+
+        // populate fields
+        document.getElementById('edit_title').value = activity.title || '';
+        document.getElementById('edit_activity_session').value = activity.session || '';
+        document.getElementById('edit_start_time').value = activity.start_time || '';
+        document.getElementById('edit_end_time').value = activity.end_time || '';
+        document.getElementById('edit_category').value = activity.category || '';
+        document.getElementById('edit_estimated_cost').value = activity.estimated_cost ?? '';
+        document.getElementById('edit_location_name').value = activity.location_name || '';
+        document.getElementById('edit_location_url').value = activity.location_url || '';
+        // textarea
+        document.getElementById('edit_description').value = activity.description || '';
+
+        openModal('editActivityModal');
     }
 </script>
 @endpush

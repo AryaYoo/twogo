@@ -64,24 +64,24 @@
                 </div>
                 
                 <!-- Feature 3 -->
-                <div class="nb-card bg-[#FF6B9D] text-white reveal-on-scroll">
+                <div class="nb-card bg-[#FF6B9D] reveal-on-scroll">
                     <div class="w-12 h-12 bg-white rounded-full border-2 border-[#1A1A2E] flex items-center justify-center text-2xl mb-4 shadow-[2px_2px_0px_#1A1A2E]">📍</div>
                     <h3 class="text-xl font-bold font-heading mb-2">Wishlist Destinasi</h3>
-                    <p class="text-sm font-medium text-white opacity-90">Kumpulkan ide tempat seru di bucket list sebelum finalisasi rencana. Vote mana yang wajib didatangi.</p>
+                    <p class="text-sm font-medium opacity-90">Kumpulkan ide tempat seru di bucket list sebelum finalisasi rencana. Vote mana yang wajib didatangi.</p>
                 </div>
                 
                 <!-- Feature 4 -->
-                <div class="nb-card bg-[#7B2FF7] text-white reveal-on-scroll animate-delay-100">
+                <div class="nb-card bg-[#7B2FF7] reveal-on-scroll animate-delay-100">
                     <div class="w-12 h-12 bg-[#FF8C42] rounded-full border-2 border-[#1A1A2E] flex items-center justify-center text-2xl mb-4 shadow-[2px_2px_0px_#1A1A2E]">📸</div>
                     <h3 class="text-xl font-bold font-heading mb-2">Dokumentasi</h3>
-                    <p class="text-sm font-medium text-white opacity-90">Abadikan momen perjalanan. Foto dan catatan tersimpan rapi per trip, jadi kenangan digital yang aesthetic.</p>
+                    <p class="text-sm font-medium opacity-90">Abadikan momen perjalanan. Foto dan catatan tersimpan rapi per trip, jadi kenangan digital yang aesthetic.</p>
                 </div>
             </div>
         </section>
 
         <!-- CTA Section -->
         <section class="max-w-4xl mx-auto px-4 py-16 reveal-on-scroll">
-            <div class="nb-card bg-[#4361EE] text-white text-center p-10">
+            <div class="nb-card bg-[#4361EE] text-center p-10">
                 <h2 class="text-3xl font-heading font-bold mb-4">Siap untuk Liburan Berikutnya?</h2>
                 <p class="mb-8 font-medium max-w-md mx-auto">Yuk bikin itinerary pertamamu di TwoGo, gratis!</p>
                 <a href="/register" class="nb-btn nb-btn-primary nb-btn-lg text-lg">Buat Trip Sekarang 🚀</a>
@@ -92,7 +92,7 @@
     <!-- Footer -->
     <footer class="border-t-[3px] border-[#1A1A2E] bg-white py-8">
         <div class="max-w-4xl mx-auto px-4 text-center font-bold text-sm">
-            &copy; 2025 TwoGo. Dibuat dengan 💖 untuk travelers.
+            &copy; 2026 TwoGo. V1.0.1.
         </div>
     </footer>
 </body>

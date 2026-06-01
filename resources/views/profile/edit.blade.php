@@ -28,7 +28,7 @@
             </div>
         </div>
         
-        <x-input name="name" label="Nama Lengkap" value="{{ $user->name }}" required="true" />
+        <x-input name="name" label="Nama Akun" value="{{ $user->name }}" required="true" />
         <x-input type="email" name="email" label="Email" value="{{ $user->email }}" required="true" />
         <x-input name="phone" label="No. Handphone" value="{{ $user->phone }}" placeholder="08123456789" />
         <x-input type="textarea" name="bio" label="Bio Singkat" value="{{ $user->bio }}" placeholder="Traveler santai yang suka nyari makanan enak..." />
