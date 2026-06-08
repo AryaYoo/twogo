@@ -162,10 +162,7 @@
                                             </div>
 
                                             <div class="absolute right-0 top-0 flex flex-col items-end gap-2">
-                                                <form action="{{ route('activities.destroy', $act) }}" method="POST" onsubmit="return confirm('Hapus kegiatan ini?');">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-sm bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-sm">&times;</button>
-                                                </form>
+                                                <button type="button" onclick="openDeleteActivityModal({{ $act->id }})" class="w-7 h-7 flex items-center justify-center rounded-sm bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-sm">&times;</button>
                                                 <button type="button" onclick='openEditActivityModal(@json($act))' class="w-10 h-10 flex items-center justify-center rounded-sm bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-lg">✏️</button>
                                             </div>
                                         </div>
@@ -321,6 +318,28 @@
     </div>
 </x-modal>
 
+<x-modal id="deleteActivityModal" title="Hapus Kegiatan?">
+    <div class="text-center p-2">
+        <div class="text-5xl mb-4">🗑️</div>
+        <h3 class="font-heading font-bold text-xl mb-2 text-[#1A1A2E]">Hapus Kegiatan Ini?</h3>
+        <p class="text-sm font-medium text-gray-600 mb-6 leading-relaxed">
+            Kegiatan yang dihapus tidak dapat dikembalikan lagi.
+        </p>
+        
+        <form id="deleteActivityForm" method="POST" action="">
+            @csrf @method('DELETE')
+            <div class="flex gap-3">
+                <button type="button" onclick="closeModal('deleteActivityModal')" class="flex-1 nb-btn bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] hover:bg-gray-100 font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2">
+                    Batal
+                </button>
+                <button type="submit" class="flex-1 nb-btn bg-red-500 text-white border-2 border-[#1A1A2E] hover:bg-red-600 font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2">
+                    Ya, Hapus
+                </button>
+            </div>
+        </form>
+    </div>
+</x-modal>
+
 @endsection
 
 @push('scripts')
@@ -353,6 +372,11 @@
     function openUncheckActivityModal(activityId) {
         document.getElementById('uncheckActivityForm').action = `/activities/${activityId}/toggle`;
         openModal('uncheckActivityModal');
+    }
+
+    function openDeleteActivityModal(activityId) {
+        document.getElementById('deleteActivityForm').action = `/activities/${activityId}`;
+        openModal('deleteActivityModal');
     }
 
     // Trip actions dropdown toggle
