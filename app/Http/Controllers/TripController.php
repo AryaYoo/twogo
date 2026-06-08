@@ -73,9 +73,11 @@ class TripController extends Controller
 
         $trip->load(['days.activities' => function($q) {
             $q->orderBy('sort_order');
-        }, 'members']);
+        }, 'members', 'wishlistItems']);
 
-        return view('trips.show', compact('trip'));
+        $wishlists = $trip->wishlistItems()->orderByDesc('created_at')->get();
+
+        return view('trips.show', compact('trip', 'wishlists'));
     }
 
     public function edit(Trip $trip)

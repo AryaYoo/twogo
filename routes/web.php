@@ -37,11 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/trips/{trip}/wishlist', [\App\Http\Controllers\WishlistController::class, 'store'])->name('wishlists.store');
     Route::delete('/wishlist/{wishlist}', [\App\Http\Controllers\WishlistController::class, 'destroy'])->name('wishlists.destroy');
     Route::post('/wishlist/{wishlist}/vote', [\App\Http\Controllers\WishlistController::class, 'vote'])->name('wishlists.vote');
-    Route::get('/wishlists', function() {
-        $trip = \Illuminate\Support\Facades\Auth::user()->trips()->first();
-        if($trip) return redirect()->route('wishlists.index_for_trip', $trip);
-        return redirect()->route('trips.index')->with('error', 'Buat trip dulu untuk melihat wishlist.');
-    })->name('wishlist.index');
+    // For You page
+    Route::get('/for-you', function() {
+        return view('for-you.index');
+    })->name('for-you');
     
     // Trips
     Route::resource('trips', TripController::class);

@@ -13,7 +13,6 @@
     @if($trip->user_id === Auth::id())
     <div class="relative shrink-0">
         <button id="trip-actions-btn" type="button" aria-haspopup="true" aria-expanded="false" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-sm md:text-base">
-            <!-- simple hamburger icon -->
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -33,157 +32,259 @@
 @endsection
 
 @section('content')
-@push('floating-bottom')
-<div class="fixed left-1/2 bottom-[71px] z-50 w-full max-w-[480px] -translate-x-1/2 px-1 pointer-events-none">
-    <div class="w-full pointer-events-auto relative">
-        <button id="day-prev" class="absolute left-1 top-1/2 -translate-y-1/2 bg-white border-[3px] border-[#1A1A2E] rounded-full w-6 h-6 flex items-center justify-center z-60 hidden">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button id="day-next" class="absolute right-1 top-1/2 -translate-y-1/2 bg-white border-[3px] border-[#1A1A2E] rounded-full w-6 h-6 flex items-center justify-center z-60 hidden">
-            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="relative w-full">
-            <!-- background bar behind tabs -->
-            <div class="absolute inset-0 left-0 right-0 bottom-0 top-0 pointer-events-none">
-                <div class="w-full h-full bg-[#FFFBEB]"></div>
-            </div>
-            <div id="dayTabsContainer" class="flex w-full overflow-x-auto no-scrollbar gap-3 pb-2 pt-2 justify-center">
-                @foreach($trip->days as $day)
-                    <a href="#hari-{{ $day->day_number }}" class="shrink-0 day-tab" data-day="{{ $day->day_number }}">
-                        <div class="nb-card day-card-sm bg-white flex flex-col items-center justify-center gap-1 min-w-[56px] transition-colors hover:bg-[#FFE156]">
-                            <span class="text-xs font-bold opacity-70">Hari</span>
-                            <span class="text-xl font-heading font-bold">{{ $day->day_number }}</span>
-                        </div>
-                    </a>
-                @endforeach
+
+{{-- ===== TAB NAVIGATION ===== --}}
+<div class="flex gap-2 mb-5 bg-white border-[3px] border-[#1A1A2E] rounded-xl p-1 shadow-[2px_2px_0px_#1A1A2E]">
+    <button id="tab-itinerary-btn"
+        onclick="switchTab('itinerary')"
+        class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 tab-btn active-tab"
+        data-tab="itinerary">
+        🗓️ Itinerary
+    </button>
+    <button id="tab-wishlist-btn"
+        onclick="switchTab('wishlist')"
+        class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 tab-btn"
+        data-tab="wishlist">
+        💖 Wishlist
+        @if($wishlists->count() > 0)
+            <span class="ml-1 bg-[#FF6B9D] text-white text-xs font-bold px-1.5 py-0.5 rounded-full border border-[#1A1A2E]">{{ $wishlists->count() }}</span>
+        @endif
+    </button>
+</div>
+
+{{-- ===== TAB: ITINERARY ===== --}}
+<div id="tab-itinerary" class="tab-content">
+
+    @push('floating-bottom')
+    <div class="fixed left-1/2 bottom-[71px] z-50 w-full max-w-[480px] -translate-x-1/2 px-1 pointer-events-none">
+        <div class="w-full pointer-events-auto relative">
+            <button id="day-prev" class="absolute left-1 top-1/2 -translate-y-1/2 bg-white border-[3px] border-[#1A1A2E] rounded-full w-6 h-6 flex items-center justify-center z-60 hidden">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button id="day-next" class="absolute right-1 top-1/2 -translate-y-1/2 bg-white border-[3px] border-[#1A1A2E] rounded-full w-6 h-6 flex items-center justify-center z-60 hidden">
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="relative w-full">
+                <div class="absolute inset-0 left-0 right-0 bottom-0 top-0 pointer-events-none">
+                    <div class="w-full h-full bg-[#FFFBEB]"></div>
+                </div>
+                <div id="dayTabsContainer" class="flex w-full overflow-x-auto no-scrollbar gap-3 pb-2 pt-2 justify-center">
+                    @foreach($trip->days as $day)
+                        <a href="#hari-{{ $day->day_number }}" class="shrink-0 day-tab" data-day="{{ $day->day_number }}">
+                            <div class="nb-card day-card-sm bg-white flex flex-col items-center justify-center gap-1 min-w-[56px] transition-colors hover:bg-[#FFE156]">
+                                <span class="text-xs font-bold opacity-70">Hari</span>
+                                <span class="text-xl font-heading font-bold">{{ $day->day_number }}</span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
-</div>
-@endpush
+    @endpush
 
-<!-- Timeline -->
-<div class="flex flex-col gap-8">
-    @foreach($trip->days as $day)
-        <div id="hari-{{ $day->day_number }}" class="scroll-mt-32">
-            <div class="flex items-center gap-4 mb-4">
-                <div class="h-1 flex-1 bg-[#1A1A2E]"></div>
-                <h2 class="font-heading font-bold text-lg bg-[#FFE156] px-4 py-1 border-[3px] border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E]">
-                    Hari {{ $day->day_number }} • {{ Carbon\Carbon::parse($day->date)->translatedFormat('d M y') }}
-                </h2>
-                <div class="h-1 flex-1 bg-[#1A1A2E]"></div>
-            </div>
+    {{-- Timeline --}}
+    <div class="flex flex-col gap-8">
+        @foreach($trip->days as $day)
+            <div id="hari-{{ $day->day_number }}" class="scroll-mt-32">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="h-1 flex-1 bg-[#1A1A2E]"></div>
+                    <h2 class="font-heading font-bold text-lg bg-[#FFE156] px-4 py-1 border-[3px] border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E]">
+                        Hari {{ $day->day_number }} • {{ Carbon\Carbon::parse($day->date)->translatedFormat('d M y') }}
+                    </h2>
+                    <div class="h-1 flex-1 bg-[#1A1A2E]"></div>
+                </div>
 
-            <div class="flex flex-col gap-6 pl-2 border-l-[3px] border-[#1A1A2E] ml-4 py-2">
-                
-                @foreach(['pagi' => '🌅 PAGI', 'siang' => '🌞 SIANG', 'malam' => '🌙 MALAM'] as $session => $label)
-                    <div class="relative">
-                        <!-- Session Marker -->
-                        <div class="absolute -left-[20px] top-0 w-8 h-8 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center text-sm shadow-[2px_2px_0px_#1A1A2E] z-10">
-                            {{ $session === 'pagi' ? '🌅' : ($session === 'siang' ? '🌞' : '🌙') }}
-                        </div>
-                        
-                        <div class="ml-8 mb-3">
-                            <h3 class="font-heading font-bold text-sm">{{ $label }}</h3>
-                        </div>
-                        
-                        <div class="ml-8 flex flex-col gap-3 mb-6">
-                            @php
-                                $activities = $day->activities->where('session', $session);
-                            @endphp
+                <div class="flex flex-col gap-6 pl-2 border-l-[3px] border-[#1A1A2E] ml-4 py-2">
+                    
+                    @foreach(['pagi' => '🌅 PAGI', 'siang' => '🌞 SIANG', 'malam' => '🌙 MALAM'] as $session => $label)
+                        <div class="relative">
+                            <div class="absolute -left-[20px] top-0 w-8 h-8 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center text-sm shadow-[2px_2px_0px_#1A1A2E] z-10">
+                                {{ $session === 'pagi' ? '🌅' : ($session === 'siang' ? '🌞' : '🌙') }}
+                            </div>
                             
-                            @forelse($activities as $act)
-                                <div class="nb-card {{ $act->is_completed ? 'bg-gray-100 opacity-70' : 'bg-white' }} p-3 relative group">
-                                    <div class="flex gap-3">
-                                        <!-- Checkbox form -->
-                                        <form action="{{ route('activities.toggle', $act) }}" method="POST" class="shrink-0 mt-1">
-                                            @csrf
-                                            <button type="submit" class="w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center {{ $act->is_completed ? 'bg-[#00D4AA]' : 'bg-white' }}">
-                                                @if($act->is_completed) <span class="text-white text-xs font-bold">✓</span> @endif
-                                            </button>
-                                        </form>
-                                        
-                                        <div class="flex-1">
-                                            <div class="flex justify-between items-start">
-                                                <h4 class="font-bold font-heading text-lg {{ $act->is_completed ? 'line-through' : '' }}">{{ $act->title }}</h4>
+                            <div class="ml-8 mb-3">
+                                <h3 class="font-heading font-bold text-sm">{{ $label }}</h3>
+                            </div>
+                            
+                            <div class="ml-8 flex flex-col gap-3 mb-6">
+                                @php
+                                    $activities = $day->activities->where('session', $session);
+                                @endphp
+                                
+                                @forelse($activities as $act)
+                                    <div class="nb-card {{ $act->is_completed ? 'bg-gray-100 opacity-70' : 'bg-white' }} p-3 relative group">
+                                        <div class="flex gap-3">
+                                            <form action="{{ route('activities.toggle', $act) }}" method="POST" class="shrink-0 mt-1">
+                                                @csrf
+                                                <button type="submit" class="w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center {{ $act->is_completed ? 'bg-[#00D4AA]' : 'bg-white' }}">
+                                                    @if($act->is_completed) <span class="text-white text-xs font-bold">✓</span> @endif
+                                                </button>
+                                            </form>
+                                            
+                                            <div class="flex-1">
+                                                <div class="flex justify-between items-start">
+                                                    <h4 class="font-bold font-heading text-lg {{ $act->is_completed ? 'line-through' : '' }}">{{ $act->title }}</h4>
+                                                    
+                                                    @if($act->start_time || $act->end_time)
+                                                    <div class="text-xs text-gray-600 mt-1">
+                                                        {{ $act->start_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->start_time)->format('H:i') : '' }}
+                                                        @if($act->start_time && $act->end_time) — @endif
+                                                        {{ $act->end_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->end_time)->format('H:i') : '' }}
+                                                    </div>
+                                                    @endif
+                                                    <div class="inline-flex items-center gap-2">
+                                                        <button type="button" onclick='openEditActivityModal(@json($act))' class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">✏️</button>
+                                                        <form action="{{ route('activities.destroy', $act) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kegiatan ini?');">
+                                                            @csrf @method('DELETE')
+                                                            <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">&times;</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                                 
-                                                @if($act->start_time || $act->end_time)
-                                                <div class="text-xs text-gray-600 mt-1">
-                                                    {{ $act->start_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->start_time)->format('H:i') : '' }}
-                                                    @if($act->start_time && $act->end_time) — @endif
-                                                    {{ $act->end_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->end_time)->format('H:i') : '' }}
+                                                <div class="flex items-center gap-2 mt-1 mb-2">
+                                                    <span class="text-xs font-bold bg-gray-200 px-2 py-0.5 rounded-full border border-gray-400">
+                                                        {{ $act->category }}
+                                                    </span>
+                                                    @if($act->estimated_cost > 0)
+                                                    <span class="text-xs font-bold bg-[#FFE156] px-2 py-0.5 rounded-full border border-[#1A1A2E]">
+                                                        Rp {{ number_format($act->estimated_cost, 0, ',', '.') }}
+                                                    </span>
+                                                    @endif
                                                 </div>
+                                                
+                                                @if($act->location_name)
+                                                    <a href="{{ $act->location_url ?? '#' }}" target="_blank" class="text-sm text-[#4361EE] hover:underline font-medium inline-flex items-center gap-1">
+                                                        📍 {{ $act->location_name }}
+                                                    </a>
                                                 @endif
-                                                <div class="inline-flex items-center gap-2">
-                                                    <button type="button" onclick='openEditActivityModal(@json($act))' class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">✏️</button>
-                                                    <form action="{{ route('activities.destroy', $act) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kegiatan ini?');">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">&times;</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="flex items-center gap-2 mt-1 mb-2">
-                                                <span class="text-xs font-bold bg-gray-200 px-2 py-0.5 rounded-full border border-gray-400">
-                                                    {{ $act->category }}
-                                                </span>
-                                                @if($act->estimated_cost > 0)
-                                                <span class="text-xs font-bold bg-[#FFE156] px-2 py-0.5 rounded-full border border-[#1A1A2E]">
-                                                    Rp {{ number_format($act->estimated_cost, 0, ',', '.') }}
-                                                </span>
+                                                
+                                                @if($act->description)
+                                                    <p class="text-sm mt-2 opacity-80">{{ $act->description }}</p>
                                                 @endif
                                             </div>
-                                            
-                                            @if($act->location_name)
-                                                <a href="{{ $act->location_url ?? '#' }}" target="_blank" class="text-sm text-[#4361EE] hover:underline font-medium inline-flex items-center gap-1">
-                                                    📍 {{ $act->location_name }}
-                                                </a>
-                                            @endif
-                                            
-                                            @if($act->description)
-                                                <p class="text-sm mt-2 opacity-80">{{ $act->description }}</p>
-                                            @endif
                                         </div>
                                     </div>
-                                </div>
-                            @empty
-                                <div class="border-[2px] border-dashed border-gray-400 rounded-lg p-3 text-center">
-                                    <span class="text-xs font-bold opacity-50">Belum ada kegiatan</span>
-                                </div>
-                            @endforelse
-                            
-                            <!-- Add button for session -->
-                            <button onclick="openAddActivityModal('{{ $day->id }}', '{{ $session }}')" class="nb-btn nb-btn-ghost nb-btn-sm border-[2px] border-dashed border-[#1A1A2E] hover:bg-white text-xs w-full mt-1 justify-center gap-2">
-                                <span>+</span> Tambah Kegiatan {{ ucfirst($session) }}
-                            </button>
+                                @empty
+                                    <div class="border-[2px] border-dashed border-gray-400 rounded-lg p-3 text-center">
+                                        <span class="text-xs font-bold opacity-50">Belum ada kegiatan</span>
+                                    </div>
+                                @endforelse
+                                
+                                <button onclick="openAddActivityModal('{{ $day->id }}', '{{ $session }}')" class="nb-btn nb-btn-ghost nb-btn-sm border-[2px] border-dashed border-[#1A1A2E] hover:bg-white text-xs w-full mt-1 justify-center gap-2">
+                                    <span>+</span> Tambah Kegiatan {{ ucfirst($session) }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                @endforeach
-                
+                    @endforeach
+                    
+                </div>
             </div>
-        </div>
-    @endforeach
-</div>
+        @endforeach
+    </div>
 
-@if($trip->status !== 'completed')
-<div class="mt-6">
-    <form action="{{ route('trips.complete', $trip) }}" method="POST" onsubmit="return confirm('Tandai perjalanan ini sebagai selesai?');">
-        @csrf
-        <button type="submit" class="w-full nb-btn nb-btn-primary bg-[#FFE156] text-[#1A1A2E] border-[3px] border-[#1A1A2E] rounded-xl py-3 font-heading font-bold hover:translate-y-[-2px] transition-transform">
-            ✅ Selesaikan Perjalanan
+    @if($trip->status !== 'completed')
+    <div class="mt-6">
+        <form action="{{ route('trips.complete', $trip) }}" method="POST" onsubmit="return confirm('Tandai perjalanan ini sebagai selesai?');">
+            @csrf
+            <button type="submit" class="w-full nb-btn nb-btn-primary bg-[#FFE156] text-[#1A1A2E] border-[3px] border-[#1A1A2E] rounded-xl py-3 font-heading font-bold hover:translate-y-[-2px] transition-transform">
+                ✅ Selesaikan Perjalanan
+            </button>
+        </form>
+    </div>
+    @else
+    <div class="mt-6 p-4 bg-[#E1FCEF] border-[3px] border-[#00D4AA] rounded-xl text-[#1A1A2E] font-bold">
+        Perjalanan ini sudah ditandai sebagai selesai. Kamu dapat melihat budget-nya di halaman Budget Tracker.
+    </div>
+    @endif
+
+    <div class="h-32"></div>
+
+</div>{{-- end tab-itinerary --}}
+
+
+{{-- ===== TAB: WISHLIST ===== --}}
+<div id="tab-wishlist" class="tab-content hidden">
+
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="font-heading font-bold text-lg">Ide Destinasi 💡</h2>
+        <button onclick="openModal('addWishlistModal')" class="nb-btn nb-btn-primary nb-btn-sm">
+            + Tambah Ide
         </button>
-    </form>
-</div>
-@else
-<div class="mt-6 p-4 bg-[#E1FCEF] border-[3px] border-[#00D4AA] rounded-xl text-[#1A1A2E] font-bold">
-    Perjalanan ini sudah ditandai sebagai selesai. Kamu dapat melihat budget-nya di halaman Budget Tracker.
-</div>
-@endif
+    </div>
 
-<!-- spacer to avoid floating bottom covering important buttons -->
-<div class="h-32"></div>
+    <div class="grid grid-cols-2 gap-3">
+        @forelse($wishlists as $item)
+            <div class="nb-card p-3 bg-white flex flex-col h-full relative">
+                
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-bold {{ 
+                        $item->priority === 'wajib' ? 'text-[#FF6B9D]' : 
+                        ($item->priority === 'pengen' ? 'text-[#00D4AA]' : 'text-gray-500') 
+                    }} uppercase tracking-wider">
+                        {{ str_replace('_', ' ', $item->priority) }}
+                    </span>
+                    
+                    <form action="{{ route('wishlists.destroy', $item) }}" method="POST" onsubmit="return confirm('Hapus dari wishlist?');">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]">&times;</button>
+                    </form>
+                </div>
+                
+                <h3 class="font-heading font-bold leading-tight mb-2 flex-1">{{ $item->name }}</h3>
+                
+                <div class="flex flex-col gap-2 mt-auto pt-2">
+                    @if($item->location_name)
+                        <a href="{{ $item->location_url ?? '#' }}" target="_blank" class="text-xs text-[#4361EE] hover:underline truncate inline-block">
+                            📍 {{ $item->location_name }}
+                        </a>
+                    @endif
+                    
+                    <div class="flex justify-between items-center mt-2 border-t-2 border-dashed border-gray-200 pt-2">
+                        <form action="{{ route('wishlists.vote', $item) }}" method="POST">
+                            @csrf
+                            @php
+                                $votes = $item->votes ?? [];
+                                $hasVoted = in_array(Auth::id(), $votes);
+                            @endphp
+                            <button type="submit" class="flex items-center gap-1 {{ $hasVoted ? 'bg-[#FFE156]' : 'bg-gray-100' }} border-2 border-[#1A1A2E] rounded-full px-2 py-0.5 text-xs font-bold hover:scale-105 transition-transform">
+                                <span>👍</span>
+                                <span>{{ count($votes) }}</span>
+                            </button>
+                        </form>
+                        
+                        <span class="text-xl">
+                            @switch($item->category)
+                                @case('wisata') 🏖️ @break
+                                @case('kuliner') 🍜 @break
+                                @case('belanja') 🛍️ @break
+                                @default ✨
+                            @endswitch
+                        </span>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-span-2">
+                <x-empty-state 
+                    icon="💡" 
+                    title="Wishlist Masih Kosong" 
+                    description="Simpan ide tempat seru di sini sebelum menyusun itinerary."
+                >
+                    <button onclick="openModal('addWishlistModal')" class="nb-btn nb-btn-primary mt-4">Tambah Ide Pertama</button>
+                </x-empty-state>
+            </div>
+        @endforelse
+    </div>
 
-<!-- Modal Tambah Kegiatan -->
+    <div class="h-24"></div>
+
+</div>{{-- end tab-wishlist --}}
+
+
+{{-- ===== MODALS ===== --}}
+
+{{-- Modal Tambah Kegiatan --}}
 <x-modal id="addActivityModal" title="Tambah Kegiatan">
     <form id="addActivityForm" method="POST" action="">
         @csrf
@@ -246,7 +347,7 @@
     </form>
 </x-modal>
 
-<!-- Modal Edit Kegiatan -->
+{{-- Modal Edit Kegiatan --}}
 <x-modal id="editActivityModal" title="Edit Kegiatan">
     <form id="editActivityForm" method="POST" action="">
         @csrf @method('PUT')
@@ -283,10 +384,98 @@
     </form>
 </x-modal>
 
+{{-- Modal Tambah Wishlist --}}
+<x-modal id="addWishlistModal" title="Tambah Ide Destinasi">
+    <form action="{{ route('wishlists.store', $trip) }}" method="POST">
+        @csrf
+        
+        <x-input 
+            name="name" 
+            label="Nama Tempat / Aktivitas" 
+            placeholder="Universal Studio / Beli Oleh-oleh" 
+            required="true"
+        />
+        
+        <div class="nb-form-group">
+            <label class="nb-label">Kategori <span class="text-red-500">*</span></label>
+            <select name="category" class="nb-select" required>
+                <option value="wisata">🏖️ Wisata</option>
+                <option value="kuliner">🍜 Kuliner / Cafe</option>
+                <option value="belanja">🛍️ Belanja</option>
+                <option value="lainnya">✨ Lainnya</option>
+            </select>
+        </div>
+        
+        <div class="nb-form-group">
+            <label class="nb-label">Prioritas <span class="text-red-500">*</span></label>
+            <select name="priority" class="nb-select" required>
+                <option value="wajib">🔥 Wajib Banget!</option>
+                <option value="pengen">😊 Pengen Kesini</option>
+                <option value="kalau_sempat">🤷‍♀️ Kalau Sempat Aja</option>
+            </select>
+        </div>
+        
+        <x-input 
+            name="location_name" 
+            label="Area / Lokasi" 
+            placeholder="Kuta, Bali" 
+        />
+        
+        <x-input 
+            name="location_url" 
+            label="Link Info / Maps (Opsional)" 
+            placeholder="https://..." 
+        />
+        
+        <x-input 
+            type="textarea"
+            name="description" 
+            label="Kenapa pengen ke sini? (Opsional)" 
+            placeholder="Kata orang kopinya enak..." 
+        />
+        
+        <div class="mt-6">
+            <x-button type="submit" variant="pink" class="w-full text-lg">Simpan ke Wishlist 💖</x-button>
+        </div>
+    </form>
+</x-modal>
+
 @endsection
 
 @push('scripts')
+<style>
+    .tab-btn {
+        color: #1A1A2E;
+        background: transparent;
+    }
+    .active-tab {
+        background: #1A1A2E;
+        color: #FFE156;
+    }
+</style>
 <script>
+    function switchTab(tab) {
+        // hide all
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active-tab');
+        });
+        // show selected
+        document.getElementById('tab-' + tab).classList.remove('hidden');
+        document.querySelector('[data-tab="' + tab + '"]').classList.add('active-tab');
+
+        // show/hide the floating day-tabs bar (only for itinerary)
+        var floatingBar = document.getElementById('dayTabsContainer');
+        var prevBtn = document.getElementById('day-prev');
+        var nextBtn = document.getElementById('day-next');
+        if (floatingBar) {
+            var wrapper = floatingBar.closest('.fixed');
+            if (wrapper) {
+                wrapper.style.display = tab === 'itinerary' ? '' : 'none';
+            }
+        }
+    }
+
     function openAddActivityModal(dayId, session) {
         document.getElementById('addActivityForm').action = `/trips/days/${dayId}/activities`;
         document.getElementById('activity_session').value = session;
@@ -294,10 +483,8 @@
     }
 
     function openEditActivityModal(activity) {
-        // set form action
         document.getElementById('editActivityForm').action = `/activities/${activity.id}`;
 
-        // populate fields
         document.getElementById('edit_title').value = activity.title || '';
         document.getElementById('edit_activity_session').value = activity.session || '';
         document.getElementById('edit_start_time').value = activity.start_time || '';
@@ -306,7 +493,6 @@
         document.getElementById('edit_estimated_cost').value = activity.estimated_cost ?? '';
         document.getElementById('edit_location_name').value = activity.location_name || '';
         document.getElementById('edit_location_url').value = activity.location_url || '';
-        // textarea
         document.getElementById('edit_description').value = activity.description || '';
 
         openModal('editActivityModal');
@@ -330,6 +516,11 @@
         }
     });
 
+    // After form submit that targets wishlist (detect flash and switch tab)
+    @if(session('success') && str_contains(session('success'), 'Wishlist'))
+        document.addEventListener('DOMContentLoaded', () => switchTab('wishlist'));
+    @endif
+
     // Day tabs: center active / first item and add pagination controls
     document.addEventListener('DOMContentLoaded', function() {
         var container = document.getElementById('dayTabsContainer');
@@ -338,7 +529,7 @@
         if (!container) return;
 
         function updateControls() {
-            var isOverflow = container.scrollWidth > container.clientWidth + 1; // tolerance
+            var isOverflow = container.scrollWidth > container.clientWidth + 1;
             if (isOverflow) {
                 prevBtn.classList.remove('hidden');
                 nextBtn.classList.remove('hidden');
@@ -357,14 +548,12 @@
             container.scrollTo({ left: left, behavior: smooth ? 'smooth' : 'auto' });
         }
 
-        // center the first tab (or try to center the anchor matching location.hash)
         var target = null;
         if (location.hash) {
             var hash = location.hash.replace('#hari-', '');
             target = container.querySelector('[data-day="' + hash + '"]');
         }
         if (!target) target = container.querySelector('.day-tab');
-        // wait for layout then center if overflowing; otherwise rely on justify-center
         requestAnimationFrame(function() {
             requestAnimationFrame(function() {
                 var overflowing = updateControls();
@@ -374,7 +563,6 @@
             });
         });
 
-        // handle clicks on tabs to center
         container.querySelectorAll('.day-tab').forEach(function(a) {
             a.addEventListener('click', function(e) {
                 var box = a;
@@ -382,7 +570,6 @@
             });
         });
 
-        // pagination buttons
         prevBtn.addEventListener('click', function() {
             container.scrollBy({ left: -Math.round(container.clientWidth * 0.6), behavior: 'smooth' });
         });
@@ -390,7 +577,6 @@
             container.scrollBy({ left: Math.round(container.clientWidth * 0.6), behavior: 'smooth' });
         });
 
-        // update controls on resize/scroll
         window.addEventListener('resize', function() { updateControls(); });
         container.addEventListener('scroll', function() { updateControls(); });
         updateControls();
