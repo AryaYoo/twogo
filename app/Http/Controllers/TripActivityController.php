@@ -70,8 +70,34 @@ class TripActivityController extends Controller
         $trip = $activity->day->trip;
         if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
 
-        $activity->update(['is_completed' => !$activity->is_completed]);
-        
+        if ($activity->is_completed) {
+            // Uncheck action: delete photo & actual_cost
+            if ($activity->photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($activity->photo);
+            }
+            
+            // Delete associated expense
+            $expense = \App\Models\Expense::where('trip_id', $trip->id)
+                ->where('title', $activity->title)
+                ->where('notes', 'Dari kegiatan: ' . $activity->title)
+                ->first();
+                
+            if ($expense) {
+                $expense->splits()->delete();
+                $expense->delete();
+            }
+
+            $activity->update([
+                'is_completed' => false,
+                'photo' => null,
+                'actual_cost' => null
+            ]);
+
+            return back()->with('success', 'Kegiatan batal diselesaikan. Catatan pengeluaran & foto telah dihapus.');
+        }
+
+        // Fallback if checking directly (though usually handled by 'complete' method via modal)
+        $activity->update(['is_completed' => true]);
         return back();
     }
 

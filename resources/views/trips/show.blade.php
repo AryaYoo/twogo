@@ -118,7 +118,7 @@
                                 <div class="nb-card {{ $act->is_completed ? 'bg-gray-100 opacity-70' : 'bg-white' }} p-3 relative group">
                                     <div class="flex gap-3">
                                         @if($act->is_completed)
-                                            <form action="{{ route('activities.toggle', $act) }}" method="POST" class="shrink-0 mt-1">
+                                            <form action="{{ route('activities.toggle', $act) }}" method="POST" class="shrink-0 mt-1" onsubmit="return confirm('Batalkan penyelesaian kegiatan ini? Foto dokumentasi dan catatan pengeluaran real akan ikut dihapus.');">
                                                 @csrf
                                                 <button type="submit" class="w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-[#00D4AA]">
                                                     <span class="text-white text-xs font-bold">✓</span>
