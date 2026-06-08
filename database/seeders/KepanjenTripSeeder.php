@@ -44,6 +44,7 @@ class KepanjenTripSeeder extends Seeder
             'start_date' => '2026-06-15',
             'end_date' => '2026-06-15',
             'total_budget' => 0,
+            'invite_code' => Trip::generateInviteCode(),
             'status' => 'planning',
         ]);
 
