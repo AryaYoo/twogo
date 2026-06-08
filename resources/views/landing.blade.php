@@ -92,7 +92,7 @@
     <!-- Footer -->
     <footer class="border-t-[3px] border-[#1A1A2E] bg-white py-8">
         <div class="max-w-4xl mx-auto px-4 text-center font-bold text-sm">
-            &copy; 2026 TwoGo. V1.0.1.
+            &copy; 2026 TwoGo. V1.0.2.
         </div>
     </footer>
 </body>

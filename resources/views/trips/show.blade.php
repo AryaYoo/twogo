@@ -197,7 +197,7 @@
 </div>
 @else
 <div class="mt-6 p-4 bg-[#E1FCEF] border-[3px] border-[#00D4AA] rounded-xl text-[#1A1A2E] font-bold">
-    Perjalanan ini sudah ditandai sebagai selesai. Kamu dapat melihat budget-nya di halaman Budget Tracker.
+    Perjalanan ini sudah ditandai sebagai selesai. Kamu dapat melihat budget-nya di ringkasan perjalanan.
 </div>
 @endif
 

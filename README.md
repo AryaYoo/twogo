@@ -1,4 +1,4 @@
-# TwoGo — Travel Itinerary App 🎒
+# TwoGo V1.0.2 — Travel Itinerary App 🎒
 
 Aplikasi perencanaan perjalanan (itinerary) berbasis web yang dirancang khusus untuk dua orang (pasangan/bestie) dengan gaya visual **Neo-Brutalism**. Dibuat dengan pendekatan *mobile-first* agar mudah diakses saat sedang jalan-jalan.
 
