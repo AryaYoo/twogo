@@ -57,7 +57,10 @@
         <script>document.addEventListener('DOMContentLoaded', () => showToast('{{ session('success') }}', 'success'));</script>
         @endif
         @if(session('error'))
-        <script>document.addEventListener('DOMContentLoaded', () => showToast('{{ session('error') }}', 'error'));</script>
+        <script>document.addEventListener('DOMContentLoaded', () => showToast('{{ session('error') }}', 'error', 5000));</script>
+        @endif
+        @if($errors->any())
+        <script>document.addEventListener('DOMContentLoaded', () => showToast('{{ $errors->first() }}', 'error', 5000));</script>
         @endif
 
         @auth

@@ -111,26 +111,33 @@ class TripActivityController extends Controller
         if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
 
         $request->validate([
-            'photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|max:20480',
             'actual_cost' => 'required|numeric|min:0',
+        ], [
+            'photo.max' => 'Ukuran foto terlalu besar (Maksimal 20MB).'
         ]);
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('activities', 'public');
             
-            // Create compressed thumbnail
+            // Compress main photo and create thumbnail
             try {
                 $manager = new ImageManager(new Driver());
                 $fullPath = storage_path('app/public/' . $photoPath);
                 $thumbPath = storage_path('app/public/activities/thumb_' . basename($photoPath));
                 
                 $image = $manager->read($fullPath);
-                // Scale down to max 400px width, preserving aspect ratio
+                
+                // 1. Compress main photo (max 1920px width for lighter High-Res)
+                $image->scaleDown(width: 1920);
+                $image->save($fullPath, quality: 80);
+                
+                // 2. Create small thumbnail (max 400px width for grid)
                 $image->scaleDown(width: 400);
-                $image->save($thumbPath, quality: 60); // 60% quality for preview
+                $image->save($thumbPath, quality: 60);
             } catch (\Exception $e) {
-                // If compression fails, just continue (fallback to original in view)
+                // If compression fails, just continue
                 \Illuminate\Support\Facades\Log::error("Image compression failed: " . $e->getMessage());
             }
         }
