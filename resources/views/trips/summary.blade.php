@@ -15,11 +15,15 @@
 
 @section('content')
 <div x-data="{ tab: 'summary' }" class="flex flex-col h-full">
-    <div class="flex border-b-[3px] border-[#1A1A2E] mb-4 rounded-t-lg overflow-hidden border-[3px]">
-        <button @click="tab = 'summary'" :class="{ 'bg-[#1A1A2E] text-white': tab === 'summary', 'bg-white text-[#1A1A2E] hover:bg-gray-100': tab !== 'summary' }" class="flex-1 py-3 font-bold font-heading border-r-[3px] border-[#1A1A2E] transition-colors">
+    <div class="flex gap-2 mb-5 bg-white border-[3px] border-[#1A1A2E] rounded-xl p-1 shadow-[2px_2px_0px_#1A1A2E]">
+        <button @click="tab = 'summary'" 
+            :class="{ 'bg-[#1A1A2E] text-[#FFE156]': tab === 'summary', 'bg-transparent text-[#1A1A2E] hover:bg-gray-100': tab !== 'summary' }" 
+            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200">
             📋 Ringkasan
         </button>
-        <button @click="tab = 'docs'" :class="{ 'bg-[#1A1A2E] text-white': tab === 'docs', 'bg-white text-[#1A1A2E] hover:bg-gray-100': tab !== 'docs' }" class="flex-1 py-3 font-bold font-heading transition-colors">
+        <button @click="tab = 'docs'" 
+            :class="{ 'bg-[#1A1A2E] text-[#FFE156]': tab === 'docs', 'bg-transparent text-[#1A1A2E] hover:bg-gray-100': tab !== 'docs' }" 
+            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200">
             📸 Dokumentasi
         </button>
     </div>
