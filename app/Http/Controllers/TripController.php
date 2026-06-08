@@ -13,8 +13,13 @@ class TripController extends Controller
 {
     public function index()
     {
-        $trips = Auth::user()->trips()->orderByDesc('created_at')->get();
-        return view('trips.index', compact('trips'));
+        $allTrips = Auth::user()->trips()->with('members')->orderByDesc('created_at')->get();
+
+        // Trip dengan tanggal = trip aktif; tanpa tanggal = wishlist
+        $trips     = $allTrips->whereNotNull('start_date')->values();
+        $wishlists = $allTrips->whereNull('start_date')->values();
+
+        return view('trips.index', compact('trips', 'wishlists'));
     }
 
     public function create()
@@ -24,45 +29,53 @@ class TripController extends Controller
 
     public function store(Request $request)
     {
+        $isWishlist = empty($request->start_date) && empty($request->end_date);
+
         $request->validate([
-            'title' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'title'        => 'required|string|max:255',
+            'destination'  => 'required|string|max:255',
+            'start_date'   => $isWishlist ? 'nullable' : 'required|date',
+            'end_date'     => $isWishlist ? 'nullable' : 'required|date|after_or_equal:start_date',
             'total_budget' => 'nullable|numeric|min:0',
         ]);
 
         $trip = Trip::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
+            'user_id'     => Auth::id(),
+            'title'       => $request->title,
             'description' => $request->description,
             'destination' => $request->destination,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'total_budget' => $request->total_budget ?? 0,
+            'start_date'  => $request->start_date ?: null,
+            'end_date'    => $request->end_date ?: null,
+            'total_budget'=> $request->total_budget ?? 0,
             'invite_code' => strtoupper(Str::random(6)),
-            'status' => 'planning'
+            'status'      => 'planning',
         ]);
 
         $trip->members()->attach(Auth::id(), [
-            'role' => 'owner',
+            'role'      => 'owner',
             'joined_at' => now(),
         ]);
 
-        // Generate days
-        $start = Carbon::parse($request->start_date);
-        $end = Carbon::parse($request->end_date);
-        $daysCount = $start->diffInDays($end) + 1;
+        // Hanya generate hari-hari jika tanggal diisi
+        if (!$isWishlist) {
+            $start     = Carbon::parse($request->start_date);
+            $end       = Carbon::parse($request->end_date);
+            $daysCount = $start->diffInDays($end) + 1;
 
-        for ($i = 0; $i < $daysCount; $i++) {
-            TripDay::create([
-                'trip_id' => $trip->id,
-                'date' => $start->copy()->addDays($i)->format('Y-m-d'),
-                'day_number' => $i + 1
-            ]);
+            for ($i = 0; $i < $daysCount; $i++) {
+                TripDay::create([
+                    'trip_id'    => $trip->id,
+                    'date'       => $start->copy()->addDays($i)->format('Y-m-d'),
+                    'day_number' => $i + 1,
+                ]);
+            }
+
+            return redirect()->route('trips.show', $trip)
+                ->with('success', 'Trip berhasil dibuat! Ayo susun timeline. 🚀');
         }
 
-        return redirect()->route('trips.show', $trip)->with('success', 'Trip berhasil dibuat! Ayo susun timeline.');
+        return redirect()->route('trips.index')
+            ->with('success', 'Wishlist trip berhasil disimpan! Isi tanggal kalau udah fix. 💖');
     }
 
     public function show(Trip $trip)
@@ -73,11 +86,9 @@ class TripController extends Controller
 
         $trip->load(['days.activities' => function($q) {
             $q->orderBy('sort_order');
-        }, 'members', 'wishlistItems']);
+        }, 'members']);
 
-        $wishlists = $trip->wishlistItems()->orderByDesc('created_at')->get();
-
-        return view('trips.show', compact('trip', 'wishlists'));
+        return view('trips.show', compact('trip'));
     }
 
     public function edit(Trip $trip)

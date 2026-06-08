@@ -31,20 +31,27 @@
             required="true"
         />
         
-        <div class="grid grid-cols-2 gap-4">
-            <x-input 
-                type="date"
-                name="start_date" 
-                label="Tanggal Berangkat" 
-                required="true"
-            />
-            
-            <x-input 
-                type="date"
-                name="end_date" 
-                label="Tanggal Pulang" 
-                required="true"
-            />
+        <div class="nb-form-group">
+            <div class="flex items-center justify-between mb-1">
+                <label class="nb-label mb-0">Tanggal Berangkat & Pulang</label>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <x-input 
+                    type="date"
+                    name="start_date" 
+                    label="Berangkat" 
+                />
+                
+                <x-input 
+                    type="date"
+                    name="end_date" 
+                    label="Pulang" 
+                />
+            </div>
+            <p class="text-xs font-medium text-[#FF6B9D] mt-2 flex items-start gap-1">
+                <span>💖</span>
+                <span>Kosongkan tanggal untuk menyimpan ke <strong>Wishlist</strong> — isi tanggal nanti kalau udah fix!</span>
+            </p>
         </div>
         
         <x-input 
