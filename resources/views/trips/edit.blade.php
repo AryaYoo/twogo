@@ -58,10 +58,29 @@
         <form id="delete-trip-form" action="{{ route('trips.destroy', $trip) }}" method="POST">
             @csrf
             @method('DELETE')
-            <x-button type="button" variant="danger" class="w-full" onclick="confirmDelete('delete-trip-form', 'Yakin menghapus trip ini permanen?')">
+            <x-button type="button" variant="danger" class="w-full" onclick="openModal('deleteTripModal')">
                 Hapus Trip Permanen
             </x-button>
         </form>
     </div>
 </x-card>
+
+<x-modal id="deleteTripModal" title="Hapus Trip?">
+    <div class="text-center p-2">
+        <div class="text-5xl mb-4">🚨</div>
+        <h3 class="font-heading font-bold text-xl mb-2 text-[#1A1A2E]">Hapus Trip Permanen?</h3>
+        <p class="text-sm font-medium text-gray-600 mb-6 leading-relaxed">
+            Tindakan ini tidak dapat dibatalkan. Semua <strong class="text-red-500">aktivitas</strong>, <strong class="text-red-500">budget</strong>, dan <strong class="text-red-500">dokumen</strong> yang terkait dengan trip ini akan ikut terhapus.
+        </p>
+        
+        <div class="flex gap-3">
+            <button type="button" onclick="closeModal('deleteTripModal')" class="flex-1 nb-btn bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] hover:bg-gray-100 font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2">
+                Kembali
+            </button>
+            <button type="button" onclick="document.getElementById('delete-trip-form').submit();" class="flex-1 nb-btn bg-red-500 text-white border-2 border-[#1A1A2E] hover:bg-red-600 font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2">
+                Ya, Hapus Trip
+            </button>
+        </div>
+    </div>
+</x-modal>
 @endsection
