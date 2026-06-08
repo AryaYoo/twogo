@@ -10,10 +10,38 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
+    private function buildProfileData($user, $viewingUser)
+    {
+        $isOwn = $viewingUser && $viewingUser->id === $user->id;
+
+        // Trips & wishlists
+        $allTrips = $user->trips()->with(['members', 'likes'])->orderByDesc('created_at')->get();
+        $trips    = $allTrips->whereNotNull('start_date')
+                             ->when(!$isOwn, fn($c) => $c->where('is_public', true))
+                             ->values();
+        $wishlists = $allTrips->whereNull('start_date')
+                              ->when(!$isOwn, fn($c) => $c->where('is_public', true))
+                              ->values();
+
+        // Stats
+        $friendsCount = $user->friends()->count();
+        $tripsCount   = $isOwn ? $allTrips->whereNotNull('start_date')->count() : $trips->count();
+        $wishlistCount = $isOwn ? $allTrips->whereNull('start_date')->count() : $wishlists->count();
+
+        return compact('user', 'trips', 'wishlists', 'friendsCount', 'tripsCount', 'wishlistCount', 'isOwn');
+    }
+
     public function show()
     {
         $user = Auth::user();
-        return view('profile.show', compact('user'));
+        $data = $this->buildProfileData($user, $user);
+        return view('profile.show', $data);
+    }
+
+    public function showUser(\App\Models\User $user)
+    {
+        $data = $this->buildProfileData($user, Auth::user());
+        return view('profile.show', $data);
     }
 
     public function edit()

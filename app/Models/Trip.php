@@ -47,6 +47,7 @@ class Trip extends Model
         'total_budget',
         'invite_code',
         'status',
+        'is_public',
     ];
 
     /**
@@ -148,6 +149,22 @@ class Trip extends Model
     public function invitations(): HasMany
     {
         return $this->hasMany(TripInvitation::class);
+    }
+
+    /**
+     * Like pada trip.
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(TripLike::class);
+    }
+
+    /**
+     * Cek apakah user sudah like trip ini.
+     */
+    public function isLikedBy(User $user): bool
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
     }
 
     /* ------------------------------------------------------------------ */

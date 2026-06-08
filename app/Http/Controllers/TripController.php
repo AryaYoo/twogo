@@ -158,4 +158,107 @@ class TripController extends Controller
 
         return back()->with('success', 'Perjalanan berhasil diselesaikan! Budget tracker akan menampilkan trip ini.');
     }
+
+    public function toggleLike(Trip $trip)
+    {
+        $user = Auth::user();
+        $like = $trip->likes()->where('user_id', $user->id)->first();
+
+        if ($like) {
+            $like->delete();
+            $liked = false;
+        } else {
+            $trip->likes()->create(['user_id' => $user->id]);
+            $liked = true;
+        }
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'liked' => $liked,
+                'count' => $trip->likes()->count(),
+            ]);
+        }
+
+        return back();
+    }
+
+    public function publicShow(Trip $trip)
+    {
+        if (!$trip->is_public) abort(404);
+
+        $trip->load(['days.activities' => function($q) {
+            $q->orderBy('sort_order');
+        }, 'members', 'creator']);
+
+        $totalEstimatedBudget = $trip->days->flatMap->activities->sum('estimated_cost');
+        $likeCount = $trip->likes()->count();
+        $isLiked = Auth::check() ? $trip->isLikedBy(Auth::user()) : false;
+        $alreadyCloned = Auth::check()
+            ? Auth::user()->trips()->where('description', 'LIKE', '%[Salin dari Trip #' . $trip->id . ']%')->exists()
+            : false;
+
+        return view('trips.public_show', compact('trip', 'totalEstimatedBudget', 'likeCount', 'isLiked', 'alreadyCloned'));
+    }
+
+    public function cloneToWishlist(Trip $trip)
+    {
+        if (!$trip->is_public) abort(403);
+
+        $user = Auth::user();
+
+        // Buat trip baru (Wishlist, tanpa tanggal)
+        $clone = Trip::create([
+            'user_id'      => $user->id,
+            'title'        => $trip->title . ' (Salin)',
+            'description'  => ($trip->description ?? '') . ' [Salin dari Trip #' . $trip->id . ']',
+            'destination'  => $trip->destination,
+            'start_date'   => null,
+            'end_date'     => null,
+            'total_budget' => $trip->total_budget,
+            'status'       => 'planning',
+            'is_public'    => false,
+        ]);
+
+        $clone->members()->attach($user->id, ['role' => 'owner', 'joined_at' => now()]);
+
+        // Salin hari & kegiatan
+        foreach ($trip->days as $day) {
+            $newDay = $clone->days()->create([
+                'day_number' => $day->day_number,
+                'date'       => $day->date,
+                'note'       => $day->note ?? null,
+            ]);
+
+            foreach ($day->activities()->orderBy('sort_order')->get() as $act) {
+                $newDay->activities()->create([
+                    'title'          => $act->title,
+                    'description'    => $act->description,
+                    'session'        => $act->session,
+                    'start_time'     => $act->start_time,
+                    'end_time'       => $act->end_time,
+                    'category'       => $act->category,
+                    'location_name'  => $act->location_name,
+                    'location_url'   => $act->location_url,
+                    'estimated_cost' => $act->estimated_cost,
+                    'sort_order'     => $act->sort_order,
+                    'is_completed'   => false,
+                    'actual_cost'    => null,
+                    'photo'          => null,
+                ]);
+            }
+        }
+
+        return redirect()->route('trips.index')
+            ->with('success', 'Itinerary berhasil disalin ke Wishlist kamu! 📋');
+    }
+
+    public function toggleVisibility(Trip $trip)
+    {
+        if ($trip->user_id !== Auth::id()) abort(403);
+
+        $trip->update(['is_public' => !$trip->is_public]);
+
+        $msg = $trip->is_public ? 'Trip sekarang bisa dilihat publik 🌍' : 'Trip sekarang bersifat privat 🔒';
+        return back()->with('success', $msg);
+    }
 }

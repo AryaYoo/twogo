@@ -28,6 +28,12 @@
             <a href="{{ route('trips.edit', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">✏️ Edit Perjalanan</a>
             <a href="{{ route('invitations.show', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">🤝 Kelola Undangan</a>
             <a href="{{ route('trips.summary', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">📋 Ringkasan Perjalanan</a>
+            <form action="{{ route('trips.visibility', $trip) }}" method="POST" class="border-t border-gray-200">
+                @csrf @method('PATCH')
+                <button type="submit" class="w-full text-left px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">
+                    {{ $trip->is_public ? '🔒 Jadikan Privat' : '🌍 Jadikan Publik' }}
+                </button>
+            </form>
         </div>
     </div>
     @endif

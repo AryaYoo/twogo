@@ -92,6 +92,13 @@ Route::middleware('auth')->group(function () {
 
     // Profile
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/{user}', [\App\Http\Controllers\ProfileController::class, 'showUser'])->name('profile.user');
     Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    
+    // Trip public features
+    Route::get('/trips/{trip}/public', [\App\Http\Controllers\TripController::class, 'publicShow'])->name('trips.public_show');
+    Route::post('/trips/{trip}/like', [\App\Http\Controllers\TripController::class, 'toggleLike'])->name('trips.like');
+    Route::post('/trips/{trip}/clone', [\App\Http\Controllers\TripController::class, 'cloneToWishlist'])->name('trips.clone');
+    Route::patch('/trips/{trip}/visibility', [\App\Http\Controllers\TripController::class, 'toggleVisibility'])->name('trips.visibility');
 });
