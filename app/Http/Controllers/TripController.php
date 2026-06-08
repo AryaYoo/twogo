@@ -133,13 +133,16 @@ class TripController extends Controller
         $totalSpent = $trip->expenses->sum('amount');
         $remainingBudget = max(0, $totalBudget - $totalSpent);
 
+        $activitiesWithPhotos = $trip->days->flatMap->activities->whereNotNull('photo');
+
         return view('trips.summary', compact(
             'trip', 
             'totalActivities', 
             'completedActivities', 
             'totalBudget', 
             'totalSpent', 
-            'remainingBudget'
+            'remainingBudget',
+            'activitiesWithPhotos'
         ));
     }
 

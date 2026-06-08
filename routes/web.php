@@ -41,6 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/for-you', function() {
         return view('for-you.index');
     })->name('for-you');
+
+    // Search page
+    Route::get('/search', function() {
+        return view('search.index');
+    })->name('search');
     
     // Trips
     Route::resource('trips', TripController::class);
