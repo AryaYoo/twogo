@@ -118,12 +118,9 @@
                                 <div class="nb-card {{ $act->is_completed ? 'bg-gray-100 opacity-70' : 'bg-white' }} p-3 relative group">
                                     <div class="flex gap-3">
                                         @if($act->is_completed)
-                                            <form action="{{ route('activities.toggle', $act) }}" method="POST" class="shrink-0 mt-1" onsubmit="return confirm('Batalkan penyelesaian kegiatan ini? Foto dokumentasi dan catatan pengeluaran real akan ikut dihapus.');">
-                                                @csrf
-                                                <button type="submit" class="w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-[#00D4AA]">
-                                                    <span class="text-white text-xs font-bold">✓</span>
-                                                </button>
-                                            </form>
+                                            <button type="button" onclick="openUncheckActivityModal({{ $act->id }})" class="shrink-0 mt-1 w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-[#00D4AA] hover:bg-[#00BFA5] transition-colors">
+                                                <span class="text-white text-xs font-bold">✓</span>
+                                            </button>
                                         @else
                                             <button type="button" onclick="openCompleteActivityModal({{ $act->id }})" class="shrink-0 mt-1 w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-white hover:bg-gray-100 transition-colors"></button>
                                         @endif
@@ -302,6 +299,28 @@
     </form>
 </x-modal>
 
+<x-modal id="uncheckActivityModal" title="Batalkan Kegiatan?">
+    <div class="text-center p-2">
+        <div class="text-5xl mb-4">⚠️</div>
+        <h3 class="font-heading font-bold text-xl mb-2 text-[#1A1A2E]">Yakin Ingin Membatalkan?</h3>
+        <p class="text-sm font-medium text-gray-600 mb-6 leading-relaxed">
+            Membatalkan kegiatan ini akan menghapus <strong class="text-[#FF6B9D]">foto dokumentasi</strong> dan <strong class="text-[#FF6B9D]">catatan pengeluaran real</strong> yang telah tersimpan secara permanen.
+        </p>
+        
+        <form id="uncheckActivityForm" method="POST" action="">
+            @csrf
+            <div class="flex gap-3">
+                <button type="button" onclick="closeModal('uncheckActivityModal')" class="flex-1 nb-btn bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] hover:bg-gray-100 font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2">
+                    Kembali
+                </button>
+                <button type="submit" class="flex-1 nb-btn bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] hover:bg-[#E85D8B] font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2">
+                    Ya, Hapus Data
+                </button>
+            </div>
+        </form>
+    </div>
+</x-modal>
+
 @endsection
 
 @push('scripts')
@@ -329,6 +348,11 @@
     function openCompleteActivityModal(activityId) {
         document.getElementById('completeActivityForm').action = `/activities/${activityId}/complete`;
         openModal('completeActivityModal');
+    }
+
+    function openUncheckActivityModal(activityId) {
+        document.getElementById('uncheckActivityForm').action = `/activities/${activityId}/toggle`;
+        openModal('uncheckActivityModal');
     }
 
     // Trip actions dropdown toggle
