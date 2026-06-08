@@ -73,7 +73,8 @@ class TripActivityController extends Controller
         if ($activity->is_completed) {
             // Uncheck action: delete photo & actual_cost
             if ($activity->photo) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($activity->photo);
+                Storage::disk('public')->delete($activity->photo);
+                Storage::disk('public')->delete(dirname($activity->photo) . '/thumb_' . basename($activity->photo));
             }
             
             // Delete associated expense
@@ -114,6 +115,21 @@ class TripActivityController extends Controller
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('activities', 'public');
+            
+            // Create compressed thumbnail
+            try {
+                $manager = new ImageManager(new Driver());
+                $fullPath = storage_path('app/public/' . $photoPath);
+                $thumbPath = storage_path('app/public/activities/thumb_' . basename($photoPath));
+                
+                $image = $manager->read($fullPath);
+                // Scale down to max 400px width, preserving aspect ratio
+                $image->scaleDown(width: 400);
+                $image->save($thumbPath, quality: 60); // 60% quality for preview
+            } catch (\Exception $e) {
+                // If compression fails, just continue (fallback to original in view)
+                \Illuminate\Support\Facades\Log::error("Image compression failed: " . $e->getMessage());
+            }
         }
 
         DB::transaction(function() use ($request, $activity, $trip, $photoPath) {
@@ -173,6 +189,11 @@ class TripActivityController extends Controller
     {
         $trip = $activity->day->trip;
         if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
+
+        if ($activity->photo) {
+            Storage::disk('public')->delete($activity->photo);
+            Storage::disk('public')->delete(dirname($activity->photo) . '/thumb_' . basename($activity->photo));
+        }
 
         $activity->delete();
         

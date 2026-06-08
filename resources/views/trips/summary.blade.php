@@ -14,21 +14,19 @@
 @endsection
 
 @section('content')
-<div x-data="{ tab: 'summary' }" class="flex flex-col h-full">
+<div class="flex flex-col h-full">
     <div class="flex gap-2 mb-5 bg-white border-[3px] border-[#1A1A2E] rounded-xl p-1 shadow-[2px_2px_0px_#1A1A2E]">
-        <button @click="tab = 'summary'" 
-            :class="{ 'bg-[#1A1A2E] text-[#FFE156]': tab === 'summary', 'bg-transparent text-[#1A1A2E] hover:bg-gray-100': tab !== 'summary' }" 
-            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200">
+        <button id="tab-summary-btn" onclick="switchSummaryTab('summary')" 
+            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 summary-tab-btn active-tab" data-tab="summary">
             📋 Ringkasan
         </button>
-        <button @click="tab = 'docs'" 
-            :class="{ 'bg-[#1A1A2E] text-[#FFE156]': tab === 'docs', 'bg-transparent text-[#1A1A2E] hover:bg-gray-100': tab !== 'docs' }" 
-            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200">
+        <button id="tab-docs-btn" onclick="switchSummaryTab('docs')" 
+            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 summary-tab-btn" data-tab="docs">
             📸 Dokumentasi
         </button>
     </div>
 
-    <div x-show="tab === 'summary'" class="flex flex-col gap-6">
+    <div id="tab-summary" class="summary-tab-content flex flex-col gap-6">
 
         <div class="nb-card bg-white p-4">
             <h3 class="font-heading font-bold text-lg mb-3 border-b-2 border-dashed border-gray-200 pb-2">Status Itinerary</h3>
@@ -94,23 +92,66 @@
 
     </div>
 
-    <div x-show="tab === 'docs'" style="display: none;" class="flex flex-col gap-4">
+    <div id="tab-docs" class="summary-tab-content hidden flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-3">
         @forelse($activitiesWithPhotos as $act)
-            <div class="nb-card bg-white p-3">
-                <div class="w-full h-48 bg-gray-200 border-[3px] border-[#1A1A2E] rounded-md mb-3 overflow-hidden">
-                    <img src="{{ asset('storage/' . $act->photo) }}" class="w-full h-full object-cover" alt="Foto {{ $act->title }}">
+            @php
+                // Get filename to point to thumbnail path if needed
+                $filename = basename($act->photo);
+                $dirname = dirname($act->photo);
+                $thumbPath = $dirname . '/thumb_' . $filename;
+            @endphp
+            <div class="nb-card bg-white p-2 cursor-pointer hover:bg-gray-50 transition-colors" onclick="openPhotoModal('{{ asset('storage/' . $act->photo) }}', '{{ $act->title }}')">
+                <div class="w-full h-32 bg-gray-200 border-[3px] border-[#1A1A2E] rounded-md mb-2 overflow-hidden">
+                    {{-- Load compressed thumbnail --}}
+                    <img src="{{ asset('storage/' . $thumbPath) }}" onerror="this.src='{{ asset('storage/' . $act->photo) }}'" class="w-full h-full object-cover" alt="Foto {{ $act->title }}" loading="lazy">
                 </div>
-                <h4 class="font-bold font-heading text-lg">{{ $act->title }}</h4>
-                <p class="text-sm font-medium opacity-80">{{ $act->day->date->format('d M Y') }}</p>
+                <h4 class="font-bold font-heading text-sm truncate">{{ $act->title }}</h4>
             </div>
         @empty
-            <div class="nb-card bg-white p-8 text-center border-dashed">
+            <div class="col-span-2 nb-card bg-white p-8 text-center border-dashed">
                 <div class="text-4xl mb-2">📸</div>
                 <h4 class="font-bold font-heading text-lg mb-1">Belum Ada Dokumentasi</h4>
                 <p class="text-sm opacity-80 font-medium">Selesaikan kegiatan itinerary dan unggah foto dokumentasinya.</p>
             </div>
         @endforelse
+        </div>
     </div>
 
 </div>
+
+<x-modal id="photoModal" title="Preview Foto">
+    <div class="flex flex-col items-center p-2">
+        <div class="w-full relative mb-4">
+            <img id="modalPhotoImage" src="" class="w-full rounded-md border-[3px] border-[#1A1A2E]" alt="Dokumentasi">
+            <div class="absolute bottom-2 left-2 right-2 bg-[#1A1A2E]/80 text-white p-2 rounded text-sm font-bold truncate backdrop-blur-sm shadow-md" id="modalPhotoTitle"></div>
+        </div>
+        <a id="modalPhotoDownload" href="" download class="w-full nb-btn bg-[#00D4AA] text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:bg-[#00BFA5] py-2 flex items-center justify-center transition-transform hover:translate-y-[-1px]">
+            📥 Download Foto High-Res
+        </a>
+    </div>
+</x-modal>
+
 @endsection
+
+@push('scripts')
+<style>
+    .summary-tab-btn { color: #1A1A2E; background: transparent; }
+    .active-tab { background: #1A1A2E; color: #FFE156; }
+</style>
+<script>
+    function switchSummaryTab(tab) {
+        document.querySelectorAll('.summary-tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.summary-tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+        document.getElementById('tab-' + tab).classList.remove('hidden');
+        document.querySelector('[data-tab="' + tab + '"]').classList.add('active-tab');
+    }
+
+    function openPhotoModal(imgUrl, title) {
+        document.getElementById('modalPhotoImage').src = imgUrl;
+        document.getElementById('modalPhotoDownload').href = imgUrl;
+        document.getElementById('modalPhotoTitle').textContent = title;
+        openModal('photoModal');
+    }
+</script>
+@endpush
