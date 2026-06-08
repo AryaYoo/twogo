@@ -27,10 +27,7 @@
         <div id="trip-actions-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border-[3px] border-[#1A1A2E] rounded-lg shadow-[2px_2px_0px_#1A1A2E] z-50 overflow-hidden">
             <a href="{{ route('trips.edit', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">✏️ Edit Perjalanan</a>
             <a href="{{ route('invitations.show', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">🤝 Kelola Undangan</a>
-            <form action="{{ route('trips.split_budget', $trip) }}" method="POST" class="px-3 py-2">
-                @csrf
-                <button type="submit" class="w-full text-left text-sm font-medium hover:text-[#7B2FF7]">💸 Auto-Settlement</button>
-            </form>
+            <a href="{{ route('trips.summary', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">📋 Ringkasan Perjalanan</a>
         </div>
     </div>
     @endif

@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     
     // Trips
     Route::resource('trips', TripController::class);
+    Route::get('/trips/{trip}/summary', [TripController::class, 'summary'])->name('trips.summary');
     
     // Trip Activities
     Route::post('/trips/days/{day}/activities', [TripActivityController::class, 'store'])->name('activities.store');
@@ -69,8 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/invitations/{invitation}/accept', [\App\Http\Controllers\InvitationController::class, 'accept'])->name('invitations.accept_inapp');
     Route::post('/invitations/{invitation}/decline', [\App\Http\Controllers\InvitationController::class, 'decline'])->name('invitations.decline_inapp');
 
-    // Split budget
-    Route::post('/trips/{trip}/split-budget', [\App\Http\Controllers\TripController::class, 'splitBudget'])->name('trips.split_budget');
+    // Split budget / complete
     Route::post('/trips/{trip}/complete', [\App\Http\Controllers\TripController::class, 'complete'])->name('trips.complete');
 
     // Expenses

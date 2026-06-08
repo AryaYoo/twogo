@@ -119,46 +119,28 @@ class TripController extends Controller
         return redirect()->route('trips.index')->with('success', 'Trip dihapus.');
     }
 
-    public function splitBudget(Trip $trip)
+    public function summary(Trip $trip)
     {
         if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
+        
+        $trip->load(['days.activities', 'members', 'expenses']);
+        
+        // Statistics
+        $totalActivities = $trip->days->flatMap->activities->count();
+        $completedActivities = $trip->days->flatMap->activities->where('is_completed', true)->count();
+        
+        $totalBudget = $trip->total_budget;
+        $totalSpent = $trip->expenses->sum('amount');
+        $remainingBudget = max(0, $totalBudget - $totalSpent);
 
-        $members = $trip->members()->pluck('id')->toArray();
-        $count = count($members);
-        if ($count < 2) {
-            return back()->with('error', 'Tidak ada anggota lain untuk membagi budget.');
-        }
-
-        // Only allow splitting once
-        if ($trip->expenses()->where('title', 'Split Budget')->exists()) {
-            return back()->with('info', 'Budget sudah dibagi.');
-        }
-
-        $total = (float) $trip->total_budget;
-        if ($total <= 0) return back()->with('error', 'Total budget tidak ditentukan.');
-
-        $share = round($total / $count, 2);
-
-        // create expense paid by trip owner
-        $expense = \App\Models\Expense::create([
-            'trip_id' => $trip->id,
-            'paid_by' => $trip->user_id,
-            'title' => 'Split Budget',
-            'amount' => $total,
-            'category' => 'budget',
-            'split_type' => 'equal',
-            'expense_date' => now()->format('Y-m-d'),
-        ]);
-
-        foreach ($members as $userId) {
-            \App\Models\ExpenseSplit::create([
-                'expense_id' => $expense->id,
-                'user_id' => $userId,
-                'amount' => $share,
-            ]);
-        }
-
-        return back()->with('success', 'Budget berhasil dibagi ke anggota.');
+        return view('trips.summary', compact(
+            'trip', 
+            'totalActivities', 
+            'completedActivities', 
+            'totalBudget', 
+            'totalSpent', 
+            'remainingBudget'
+        ));
     }
 
     public function complete(Trip $trip)
