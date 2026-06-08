@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        if (app()->environment('local', 'testing')) {
+        if (app()->environment('local', 'testing') && class_exists(\Faker\Factory::class)) {
             User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',
