@@ -120,53 +120,60 @@
                             @forelse($activities as $act)
                                 <div class="nb-card {{ $act->is_completed ? 'bg-gray-100 opacity-70' : 'bg-white' }} p-3 relative group">
                                     <div class="flex gap-3">
-                                        <form action="{{ route('activities.toggle', $act) }}" method="POST" class="shrink-0 mt-1">
-                                            @csrf
-                                            <button type="submit" class="w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center {{ $act->is_completed ? 'bg-[#00D4AA]' : 'bg-white' }}">
-                                                @if($act->is_completed) <span class="text-white text-xs font-bold">✓</span> @endif
-                                            </button>
-                                        </form>
+                                        @if($act->is_completed)
+                                            <form action="{{ route('activities.toggle', $act) }}" method="POST" class="shrink-0 mt-1">
+                                                @csrf
+                                                <button type="submit" class="w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-[#00D4AA]">
+                                                    <span class="text-white text-xs font-bold">✓</span>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button" onclick="openCompleteActivityModal({{ $act->id }})" class="shrink-0 mt-1 w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-white hover:bg-gray-100 transition-colors"></button>
+                                        @endif
                                         
-                                        <div class="flex-1">
-                                            <div class="flex justify-between items-start">
-                                                <h4 class="font-bold font-heading text-lg {{ $act->is_completed ? 'line-through' : '' }}">{{ $act->title }}</h4>
+                                        <div class="flex-1 pr-14 relative">
+                                            <div class="flex flex-col">
+                                                <div class="flex items-start mb-1">
+                                                    <h4 class="font-bold font-heading text-lg {{ $act->is_completed ? 'line-through' : '' }}">{{ $act->title }}</h4>
+                                                </div>
                                                 
                                                 @if($act->start_time || $act->end_time)
-                                                <div class="text-xs text-gray-600 mt-1">
+                                                <div class="text-xs text-gray-600 mb-2">
                                                     {{ $act->start_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->start_time)->format('H:i') : '' }}
                                                     @if($act->start_time && $act->end_time) — @endif
                                                     {{ $act->end_time ? \Carbon\Carbon::createFromFormat('H:i:s', $act->end_time)->format('H:i') : '' }}
                                                 </div>
                                                 @endif
-                                                <div class="inline-flex items-center gap-2">
-                                                    <button type="button" onclick='openEditActivityModal(@json($act))' class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">✏️</button>
-                                                    <form action="{{ route('activities.destroy', $act) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kegiatan ini?');">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-sm ml-2 p-0 bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform">&times;</button>
-                                                    </form>
+                                                
+                                                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                                    <span class="text-xs font-bold bg-gray-200 px-2 py-0.5 rounded-full border border-gray-400">
+                                                        {{ $act->category }}
+                                                    </span>
+                                                    @if($act->estimated_cost > 0)
+                                                    <span class="text-xs font-bold bg-[#FFE156] px-2 py-0.5 rounded-full border border-[#1A1A2E]">
+                                                        Rp {{ number_format($act->estimated_cost, 0, ',', '.') }}
+                                                    </span>
+                                                    @endif
                                                 </div>
-                                            </div>
-                                            
-                                            <div class="flex items-center gap-2 mt-1 mb-2">
-                                                <span class="text-xs font-bold bg-gray-200 px-2 py-0.5 rounded-full border border-gray-400">
-                                                    {{ $act->category }}
-                                                </span>
-                                                @if($act->estimated_cost > 0)
-                                                <span class="text-xs font-bold bg-[#FFE156] px-2 py-0.5 rounded-full border border-[#1A1A2E]">
-                                                    Rp {{ number_format($act->estimated_cost, 0, ',', '.') }}
-                                                </span>
+                                                
+                                                @if($act->location_name)
+                                                    <a href="{{ $act->location_url ?? '#' }}" target="_blank" class="text-sm text-[#4361EE] hover:underline font-medium inline-flex items-center gap-1 mb-2">
+                                                        📍 {{ $act->location_name }}
+                                                    </a>
+                                                @endif
+                                                
+                                                @if($act->description)
+                                                    <p class="text-sm opacity-80">{{ $act->description }}</p>
                                                 @endif
                                             </div>
-                                            
-                                            @if($act->location_name)
-                                                <a href="{{ $act->location_url ?? '#' }}" target="_blank" class="text-sm text-[#4361EE] hover:underline font-medium inline-flex items-center gap-1">
-                                                    📍 {{ $act->location_name }}
-                                                </a>
-                                            @endif
-                                            
-                                            @if($act->description)
-                                                <p class="text-sm mt-2 opacity-80">{{ $act->description }}</p>
-                                            @endif
+
+                                            <div class="absolute right-0 top-0 flex flex-col items-end gap-2">
+                                                <form action="{{ route('activities.destroy', $act) }}" method="POST" onsubmit="return confirm('Hapus kegiatan ini?');">
+                                                    @csrf @method('DELETE')
+                                                    <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-sm bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-sm">&times;</button>
+                                                </form>
+                                                <button type="button" onclick='openEditActivityModal(@json($act))' class="w-10 h-10 flex items-center justify-center rounded-sm bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-lg">✏️</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -268,6 +275,36 @@
     </form>
 </x-modal>
 
+<x-modal id="completeActivityModal" title="Selesaikan Kegiatan">
+    <form id="completeActivityForm" method="POST" action="" enctype="multipart/form-data">
+        @csrf
+        
+        <x-input type="file" name="photo" label="Foto Dokumentasi (Opsional)" accept="image/*" />
+        
+        <x-input type="number" name="actual_cost" label="Budget Real (Rp)" placeholder="Berapa yang dihabiskan?" required="true" />
+        
+        @if($trip->members->count() > 1)
+        <div class="nb-form-group mt-4 p-3 bg-[#E1FCEF] border-2 border-[#00D4AA] rounded-lg">
+            <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" name="split_bill" value="1" class="w-6 h-6 border-[2px] border-[#1A1A2E] rounded-sm checked:bg-[#00D4AA] accent-[#00D4AA]">
+                <div>
+                    <span class="font-bold text-sm block">Bagi Otomatis (Split Bill)</span>
+                    <span class="text-xs opacity-80">Budget real akan dibagi rata dengan {{ $trip->members->count() - 1 }} partner kamu.</span>
+                </div>
+            </label>
+        </div>
+        @else
+        <div class="mt-4 p-3 bg-gray-100 border-2 border-gray-300 rounded-lg">
+            <span class="text-xs font-medium text-gray-600">Trip ini kamu lakukan sendiri, budget akan langsung dicatat sepenuhnya ke pengeluaranmu.</span>
+        </div>
+        @endif
+        
+        <div class="mt-6">
+            <x-button type="submit" variant="mint" class="w-full text-lg">✅ Selesai & Catat Pengeluaran</x-button>
+        </div>
+    </form>
+</x-modal>
+
 @endsection
 
 @push('scripts')
@@ -290,6 +327,11 @@
         document.getElementById('edit_location_url').value = activity.location_url || '';
         document.getElementById('edit_description').value = activity.description || '';
         openModal('editActivityModal');
+    }
+
+    function openCompleteActivityModal(activityId) {
+        document.getElementById('completeActivityForm').action = `/activities/${activityId}/complete`;
+        openModal('completeActivityModal');
     }
 
     // Trip actions dropdown toggle

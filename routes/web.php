@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/activities/{activity}', [TripActivityController::class, 'update'])->name('activities.update');
     Route::delete('/activities/{activity}', [TripActivityController::class, 'destroy'])->name('activities.destroy');
     Route::post('/activities/{activity}/toggle', [TripActivityController::class, 'toggleComplete'])->name('activities.toggle');
+    Route::post('/activities/{activity}/complete', [TripActivityController::class, 'complete'])->name('activities.complete');
     // Friends
     Route::get('/friends', [\App\Http\Controllers\FriendController::class, 'index'])->name('friends.index');
     Route::get('/friends/search', [\App\Http\Controllers\FriendController::class, 'search'])->name('friends.search');

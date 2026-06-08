@@ -40,6 +40,8 @@ class TripActivity extends Model
         'location_name',
         'location_url',
         'estimated_cost',
+        'actual_cost',
+        'photo',
         'category',
         'sort_order',
         'is_completed',

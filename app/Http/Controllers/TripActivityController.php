@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\TripActivity;
 use App\Models\TripDay;
+use App\Models\Expense;
+use App\Models\ExpenseSplit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TripActivityController extends Controller
 {
@@ -70,6 +73,74 @@ class TripActivityController extends Controller
         $activity->update(['is_completed' => !$activity->is_completed]);
         
         return back();
+    }
+
+    public function complete(Request $request, TripActivity $activity)
+    {
+        $trip = $activity->day->trip;
+        if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
+
+        $request->validate([
+            'photo' => 'nullable|image|max:2048',
+            'actual_cost' => 'required|numeric|min:0',
+        ]);
+
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('activities', 'public');
+        }
+
+        DB::transaction(function() use ($request, $activity, $trip, $photoPath) {
+            $activity->update([
+                'is_completed' => true,
+                'photo' => $photoPath,
+                'actual_cost' => $request->actual_cost
+            ]);
+
+            if ($request->actual_cost > 0) {
+                // Determine split type
+                $splitType = ($request->has('split_bill') && $trip->members->count() > 1) ? 'equal' : 'solo';
+                
+                // Map category
+                $catMapping = ['wisata' => 'tiket', 'kuliner' => 'makanan'];
+                $expenseCat = $catMapping[$activity->category] ?? (in_array($activity->category, ['akomodasi','transportasi','belanja','lainnya']) ? $activity->category : 'lainnya');
+
+                $expense = Expense::create([
+                    'trip_id' => $trip->id,
+                    'paid_by' => Auth::id(),
+                    'title' => $activity->title,
+                    'amount' => $request->actual_cost,
+                    'category' => $expenseCat,
+                    'expense_date' => $activity->day->date,
+                    'split_type' => $splitType,
+                    'notes' => 'Dari kegiatan: ' . $activity->title,
+                    'receipt_image' => $photoPath,
+                ]);
+
+                if ($splitType === 'equal') {
+                    $memberCount = $trip->members->count();
+                    $splitAmount = $request->actual_cost / $memberCount;
+                    
+                    foreach ($trip->members as $member) {
+                        ExpenseSplit::create([
+                            'expense_id' => $expense->id,
+                            'user_id' => $member->id,
+                            'amount' => $splitAmount,
+                            'is_settled' => $member->id === Auth::id()
+                        ]);
+                    }
+                } else {
+                    ExpenseSplit::create([
+                        'expense_id' => $expense->id,
+                        'user_id' => Auth::id(),
+                        'amount' => $request->actual_cost,
+                        'is_settled' => true
+                    ]);
+                }
+            }
+        });
+
+        return back()->with('success', 'Kegiatan selesai dan budget dicatat!');
     }
 
     public function destroy(TripActivity $activity)
