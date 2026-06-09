@@ -24,7 +24,7 @@
 
     <main class="pt-16 pb-20">
         <!-- Hero Section with Fullscreen background covering entire section height -->
-        <div class="w-full pt-12 pb-16 border-b-[3px] border-[#1A1A2E]" style="position: relative; overflow: hidden;">
+        <div class="w-full pt-30 pb-36 border-b-[2px] border-[#1A1A2E]" style="position: relative; overflow: hidden;">
             <!-- Background Image -->
             <img src="{{ asset('assets/images/img1.webp') }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10;">
             
@@ -38,7 +38,7 @@
                     <span class="bg-[#FFE156] px-2 py-1 inline-block border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rotate-[1deg]">Bareng-Bareng! 🎒</span>
                 </h1>
                 
-                <p class="text-xs md:text-sm font-medium mb-10 mt-3 max-w-fit mx-auto bg-white px-3 py-1 ">
+                <p class="text-xs md:text-sm font-medium mb-16 mt-3 max-w-fit mx-auto bg-white px-3 py-1 ">
                     Aplikasi perencanaan perjalanan yang bikin liburanmu<br>makin asyik, rapi, dan terorganisir.
                 </p>
                 
@@ -50,8 +50,8 @@
         </div>
 
         <!-- Features Section -->
-        <section class="max-w-4xl mx-auto px-4 py-16">
-            <h2 class="text-3xl font-heading font-bold mb-10 text-center reveal-on-scroll">Fitur yang Bikin Liburan Makin Chill 🌴</h2>
+        <section class="max-w-4xl mx-auto px-4 py-16 border-b-[3px] border-[#1A1A2E] reveal-on-scroll">
+            <h2 class="text-3xl font-heading font-bold mb-10 pb-3 text-center reveal-on-scroll">Fitur yang Bikin Liburan Makin Chill 🌴</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Feature 1 -->
