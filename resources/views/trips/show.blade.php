@@ -15,6 +15,11 @@
                 <span class="text-[#FF6B9D]">💖 Wishlist — tanggal belum diisi</span>
             @endif
         </p>
+        @if($trip->clonedFrom)
+        <p class="text-[10px] md:text-xs font-bold text-[#4361EE] truncate mt-0.5">
+            📋 Salin dari <a href="{{ route('profile.user', $trip->clonedFrom->creator) }}" class="underline hover:opacity-80">{{ '@' . $trip->clonedFrom->creator->name }}</a>
+        </p>
+        @endif
     </div>
     @if($trip->user_id === Auth::id())
     <div class="relative shrink-0">

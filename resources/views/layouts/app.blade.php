@@ -20,6 +20,8 @@
                 ->where('status', 'pending')
                 ->where('expires_at', '>', now())
                 ->count();
+            $unreadNotifications = Auth::user()->unreadNotifications->count();
+            $totalNotifications = $pendingInvites + $unreadNotifications;
         @endphp
         @endauth
 
@@ -30,10 +32,10 @@
                     @yield('header')
                 </div>
                 @auth
-                <a href="{{ route('invitations.index') }}" class="top-notification-button" title="Undangan">
+                <a href="{{ route('invitations.index') }}" class="top-notification-button" title="Notifikasi">
                     <span class="text-xl">🔔</span>
-                    @if($pendingInvites > 0)
-                        <span class="top-notification-badge">{{ $pendingInvites }}</span>
+                    @if($totalNotifications > 0)
+                        <span class="top-notification-badge">{{ $totalNotifications }}</span>
                     @endif
                 </a>
                 @endauth
@@ -67,8 +69,13 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 var pending = {{ $pendingInvites }};
-                if (pending > 0) {
+                var unread = {{ $unreadNotifications }};
+                if (pending > 0 && unread > 0) {
+                    showToast('Kamu mempunyai ' + pending + ' undangan baru dan ' + unread + ' notifikasi baru.', 'info', 5000);
+                } else if (pending > 0) {
                     showToast('Kamu mempunyai ' + pending + ' undangan baru.', 'info', 5000);
+                } else if (unread > 0) {
+                    showToast('Kamu mempunyai ' + unread + ' notifikasi baru.', 'info', 5000);
                 }
             });
         </script>

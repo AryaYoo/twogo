@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Trip;
 use App\Models\TripDay;
+use App\Notifications\AppActivityNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,9 +71,23 @@ class TripController extends Controller
                 ]);
             }
 
+            Auth::user()->notify(new AppActivityNotification(
+                "Kamu berhasil membuat trip '{$trip->title}'! ✈️",
+                '✈️',
+                route('trips.show', $trip),
+                'trip_created'
+            ));
+
             return redirect()->route('trips.show', $trip)
                 ->with('success', 'Trip berhasil dibuat! Ayo susun timeline. 🚀');
         }
+
+        Auth::user()->notify(new AppActivityNotification(
+            "Kamu berhasil membuat wishlist '{$trip->title}'! 💖",
+            '💖',
+            route('trips.show', $trip),
+            'wishlist_created'
+        ));
 
         return redirect()->route('trips.index')
             ->with('success', 'Wishlist trip berhasil disimpan! Isi tanggal kalau udah fix. 💖');
@@ -199,6 +214,15 @@ class TripController extends Controller
         } else {
             $trip->likes()->create(['user_id' => $user->id]);
             $liked = true;
+
+            if ($trip->user_id !== $user->id) {
+                $trip->creator->notify(new AppActivityNotification(
+                    "{$user->name} menyukai trip kamu '{$trip->title}'! ❤️",
+                    '❤️',
+                    route('trips.public_show', $trip),
+                    'trip_liked'
+                ));
+            }
         }
 
         if (request()->wantsJson()) {
@@ -271,6 +295,7 @@ class TripController extends Controller
         // Buat trip baru (Wishlist, tanpa tanggal)
         $clone = Trip::create([
             'user_id'      => $user->id,
+            'cloned_from_id' => $trip->id,
             'title'        => $trip->title . ' (Salin)',
             'description'  => ($trip->description ?? '') . ' [Salin dari Trip #' . $trip->id . ']',
             'destination'  => $trip->destination,
@@ -282,6 +307,22 @@ class TripController extends Controller
         ]);
 
         $clone->members()->attach($user->id, ['role' => 'owner', 'joined_at' => now()]);
+
+        if ($trip->user_id !== $user->id) {
+            $trip->creator->notify(new AppActivityNotification(
+                "{$user->name} menyalin trip kamu '{$trip->title}'! 📋",
+                '📋',
+                route('trips.public_show', $trip),
+                'trip_cloned'
+            ));
+        }
+
+        $user->notify(new AppActivityNotification(
+            "Kamu berhasil menyalin wishlist '{$trip->title}'! 💖",
+            '💖',
+            route('trips.show', $clone),
+            'wishlist_created'
+        ));
 
         // Salin hari & kegiatan
         foreach ($trip->days as $day) {

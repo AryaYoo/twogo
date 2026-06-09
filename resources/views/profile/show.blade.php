@@ -126,7 +126,10 @@
                 <span class="text-xs font-bold {{ $trip->is_public ? 'text-[#00D4AA]' : 'text-gray-400' }}">
                     {{ $trip->is_public ? '🌍' : '🔒' }}
                 </span>
-                <span class="text-xs font-medium text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                <div class="flex items-center gap-1.5 text-xs font-medium">
+                    <span class="text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                    <span class="text-[#4361EE]">📋 {{ $trip->clones()->count() }}</span>
+                </div>
             </div>
         </a>
         @endforeach
@@ -158,7 +161,10 @@
                 <span class="text-xs font-bold {{ $trip->is_public ? 'text-[#00D4AA]' : 'text-gray-400' }}">
                     {{ $trip->is_public ? '🌍' : '🔒' }}
                 </span>
-                <span class="text-xs font-medium text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                <div class="flex items-center gap-1.5 text-xs font-medium">
+                    <span class="text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                    <span class="text-[#4361EE]">📋 {{ $trip->clones()->count() }}</span>
+                </div>
             </div>
         </a>
         @endforeach

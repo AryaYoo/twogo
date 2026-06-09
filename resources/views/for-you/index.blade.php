@@ -67,9 +67,10 @@
                                     📅 {{ $trip->start_date->format('d M Y') }} – {{ $trip->end_date->format('d M Y') }}
                                 </p>
                             @endif
-                            <div class="flex items-center gap-2 mt-1 text-xs font-bold">
+                            <div class="flex items-center gap-3 mt-1 text-xs font-bold">
                                 <span class="text-[#00D4AA]">🌍 Publik</span>
                                 <span class="text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                                <span class="text-[#4361EE]">📋 {{ $trip->clones()->count() }}</span>
                             </div>
                         </div>
                     </div>

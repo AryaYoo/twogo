@@ -52,15 +52,21 @@
             @endforeach
             <a href="{{ route('profile.user', $trip->creator) }}" class="text-xs font-medium opacity-80 font-bold hover:underline">{{ $trip->creator->name }}</a>
         </div>
-        @auth
-        <button id="like-btn" onclick="toggleLike({{ $trip->id }})"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-[#1A1A2E] font-bold text-sm shadow-[2px_2px_0px_#1A1A2E] transition-all hover:translate-y-[-1px] {{ $isLiked ? 'bg-[#FF6B9D] text-white' : 'bg-white text-[#1A1A2E]' }}">
-            <span id="like-icon">{{ $isLiked ? '❤️' : '🤍' }}</span>
-            <span id="like-count">{{ $likeCount }}</span>
-        </button>
-        @else
-        <span class="text-sm font-bold text-[#FF6B9D]">❤️ {{ $likeCount }}</span>
-        @endauth
+        <div class="flex items-center gap-2">
+            @auth
+            <button id="like-btn" onclick="toggleLike({{ $trip->id }})"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-[#1A1A2E] font-bold text-sm shadow-[2px_2px_0px_#1A1A2E] transition-all hover:translate-y-[-1px] {{ $isLiked ? 'bg-[#FF6B9D] text-white' : 'bg-white text-[#1A1A2E]' }}">
+                <span id="like-icon">{{ $isLiked ? '❤️' : '🤍' }}</span>
+                <span id="like-count">{{ $likeCount }}</span>
+            </button>
+            @else
+            <span class="text-sm font-bold text-[#FF6B9D] bg-white px-2.5 py-1.5 rounded-full border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]">❤️ {{ $likeCount }}</span>
+            @endauth
+            
+            <span class="text-sm font-bold text-[#4361EE] bg-white px-2.5 py-1.5 rounded-full border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] flex items-center gap-1.5" title="Jumlah disalin">
+                📋 {{ $trip->clones()->count() }}
+            </span>
+        </div>
     </div>
 </div>
 

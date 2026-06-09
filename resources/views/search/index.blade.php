@@ -70,7 +70,8 @@
                                 @if($trip->creator)
                                     <a href="{{ route('profile.user', $trip->creator) }}" class="opacity-60 hover:underline">{{ $trip->creator->name }}</a>
                                 @endif
-                                <span class="text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                                <span class="text-[#FF6B9D] flex items-center gap-0.5">❤️ {{ $trip->likes->count() }}</span>
+                                <span class="text-[#4361EE] flex items-center gap-0.5">📋 {{ $trip->clones()->count() }}</span>
                             </div>
                         </div>
                     </div>

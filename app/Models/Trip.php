@@ -38,6 +38,7 @@ class Trip extends Model
      */
     protected $fillable = [
         'user_id',
+        'cloned_from_id',
         'title',
         'description',
         'destination',
@@ -92,6 +93,22 @@ class Trip extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Trip asal yang dikloning.
+     */
+    public function clonedFrom(): BelongsTo
+    {
+        return $this->belongsTo(Trip::class, 'cloned_from_id');
+    }
+
+    /**
+     * Semua hasil kloning dari trip ini.
+     */
+    public function clones(): HasMany
+    {
+        return $this->hasMany(Trip::class, 'cloned_from_id');
     }
 
     /**

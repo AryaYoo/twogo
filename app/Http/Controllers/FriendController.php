@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Friendship;
 use App\Models\User;
+use App\Notifications\AppActivityNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -85,6 +86,25 @@ class FriendController extends Controller
         if ($friendship->friend_id !== Auth::id()) abort(403);
         
         $friendship->update(['status' => 'accepted']);
+
+        $user = Auth::user();
+        
+        // Notify the requester
+        $friendship->user->notify(new AppActivityNotification(
+            "{$user->name} menerima permintaan pertemananmu! 🤝",
+            '🤝',
+            route('profile.user', $user),
+            'friend_connected'
+        ));
+
+        // Notify the acceptor
+        $user->notify(new AppActivityNotification(
+            "Kamu sekarang berteman dengan {$friendship->user->name}! 🤝",
+            '🤝',
+            route('profile.user', $friendship->user),
+            'friend_connected'
+        ));
+
         return back()->with('success', 'Permintaan pertemanan diterima!');
     }
 

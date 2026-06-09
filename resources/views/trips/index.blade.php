@@ -49,10 +49,14 @@
                 </x-badge>
             </div>
             
-            <div class="flex items-center gap-2 text-sm font-medium opacity-90 mb-4 relative z-10">
+            <div class="flex items-center gap-2 text-sm font-medium opacity-90 mb-4 relative z-10 flex-wrap">
                 <span>📍 {{ $trip->destination }}</span>
                 <span>•</span>
                 <span>📅 {{ $trip->start_date->format('d M y') }} — {{ $trip->end_date->format('d M y') }}</span>
+                @if($trip->clonedFrom)
+                    <span>•</span>
+                    <span class="text-xs bg-[#4361EE] text-white px-2 py-0.5 rounded border border-[#1A1A2E] font-bold">Salin dari {{ '@' . $trip->clonedFrom->creator->name }}</span>
+                @endif
             </div>
             
             <div class="flex justify-between items-end relative z-10">
@@ -94,10 +98,14 @@
                 <span class="text-xs font-bold bg-[#FF6B9D] text-white px-2 py-0.5 rounded-full border-2 border-[#1A1A2E]">Wishlist</span>
             </div>
 
-            <div class="flex items-center gap-2 text-sm font-medium opacity-70 mb-4 relative z-10">
+            <div class="flex items-center gap-2 text-sm font-medium opacity-70 mb-4 relative z-10 flex-wrap">
                 <span>📍 {{ $trip->destination }}</span>
                 <span>•</span>
                 <span class="italic">Tanggal belum ditentukan</span>
+                @if($trip->clonedFrom)
+                    <span>•</span>
+                    <span class="text-xs bg-[#4361EE] text-white px-2 py-0.5 rounded border border-[#1A1A2E] font-bold">Salin dari {{ '@' . $trip->clonedFrom->creator->name }}</span>
+                @endif
             </div>
 
             <div class="flex justify-between items-end relative z-10">

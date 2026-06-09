@@ -125,13 +125,21 @@ class InvitationController extends Controller
      */
     public function index()
     {
-        $invitations = TripInvitation::where('invited_user_id', Auth::id())
+        $user = Auth::user();
+
+        $invitations = TripInvitation::where('invited_user_id', $user->id)
             ->where('status', 'pending')
             ->where('expires_at', '>', now())
             ->with(['trip', 'inviter'])
             ->get();
 
-        return view('invitations.index', compact('invitations'));
+        $activities = $user->notifications()
+            ->orderByDesc('created_at')
+            ->get();
+
+        $user->unreadNotifications->markAsRead();
+
+        return view('invitations.index', compact('invitations', 'activities'));
     }
 
     /**
