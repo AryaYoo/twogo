@@ -10,6 +10,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+<script>
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const maxScroll = 300;
+        const progress = Math.min(scrollY / maxScroll, 1);
+
+        const opacity = 1 - progress;
+
+        // Kiri: slide ke kiri + rotate makin miring
+        document.getElementById('emoji-left').style.transform = 
+            `translateX(${-progress * 150}px) rotate(${-25 + (-20 * progress)}deg)`;
+        document.getElementById('emoji-left').style.opacity = opacity;
+
+        // Kanan: slide ke kanan + rotate makin miring
+        document.getElementById('emoji-right').style.transform = 
+            `translateY(-50%) translateX(${progress * 150}px) rotate(${15 + (25 * progress)}deg)`;
+        document.getElementById('emoji-right').style.opacity = opacity;
+    });
+</script>
 <body class="bg-[#FFFBEB] font-sans text-[#1A1A2E] overflow-x-hidden relative">
     <!-- Navbar -->
     <nav class="fixed top-0 w-full bg-[#FFFBEB] border-b-[3px] border-[#1A1A2E] z-50">
@@ -25,6 +44,9 @@
     <main class="pt-16 pb-20">
         <!-- Hero Section with Fullscreen background covering entire section height -->
         <div class="w-full pt-30 pb-36 border-b-[2px] border-[#1A1A2E]" style="position: relative; overflow: hidden;">
+            <!-- Floating Emoji Ornaments -->
+            <div id="emoji-left" style="position: absolute; bottom: 5px; left: 300px; font-size: 5rem; z-index: 1; line-height: 1; transform: rotate(-25deg);">🐟</div>
+            <div id="emoji-right" style="position: absolute; top: 70px; right: 300px; font-size: 3rem; z-index: 1; line-height: 1; transform: rotate(15deg);">🦅</div>
             <!-- Background Image -->
             <img src="{{ asset('assets/images/img1.webp') }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10;">
             
@@ -51,6 +73,7 @@
 
         <!-- Features Section -->
         <section class="max-w-4xl mx-auto px-4 py-16 border-b-[3px] border-[#1A1A2E] reveal-on-scroll">
+
             <h2 class="text-3xl font-heading font-bold mb-10 pb-3 text-center reveal-on-scroll">Fitur yang Bikin Liburan Makin Chill 🌴</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,10 +110,10 @@
         <!-- CTA Section -->
         <section class="max-w-4xl mx-auto px-4 py-16 reveal-on-scroll">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="nb-card bg-[#4361EE] text-center md:text-left p-10 h-full flex flex-col justify-center items-center md:items-start text-white">
-                    <h2 class="text-3xl font-heading font-bold mb-4 text-black">Siap untuk Liburan Berikutnya?</h2>
-                    <p class="mb-8 font-medium max-w-md mx-auto md:mx-0 text-black opacity-95">Yuk bikin itinerary pertamamu di TwoGo, gratis!</p>
-                    <a href="/register" class="nb-btn nb-btn-primary nb-btn-lg text-lg">Buat Trip Sekarang 🚀</a>
+                <div class="nb-card bg-[#4361EE] text-center md:text-center p-10 h-full flex flex-col justify-center items-center md:items-center text-white">
+                    <h2 class="text-3xl font-heading font-bold mb-4 text-black text-center">Siap untuk Liburan Berikutnya?</h2>
+                    <p class="mb-8 font-medium max-w-md mx-auto md:mx-0 text-black opacity-95 text-center">Yuk bikin itinerary pertamamu di TwoGo, gratis!</p>
+                    <a href="/register" class="nb-btn nb-btn-primary nb-btn-lg text-lg text-center">Buat Trip Sekarang 🚀</a>
                 </div>
                 <div class="w-full flex justify-center">
                     <img src="{{ asset('assets/images/img2.webp') }}" class="w-full max-w-[350px] md:max-w-full rounded-2xl border-[4px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] transform rotate-[1.5deg] hover:rotate-0 transition-transform duration-200">
