@@ -84,16 +84,11 @@ class TripActivity extends Model
     public function getCategoryIconAttribute(): string
     {
         return match ($this->category) {
-            'transportasi' => '🚗',
-            'penginapan'   => '🏨',
-            'makanan'      => '🍽️',
             'wisata'       => '🏖️',
+            'kuliner'      => '🍜',
+            'transportasi' => '🚗',
+            'akomodasi'    => '🏨',
             'belanja'      => '🛍️',
-            'hiburan'      => '🎭',
-            'olahraga'     => '⛷️',
-            'budaya'       => '🏛️',
-            'alam'         => '🌿',
-            'foto'         => '📸',
             default        => '📌',
         };
     }

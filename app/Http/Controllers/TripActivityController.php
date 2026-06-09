@@ -153,9 +153,13 @@ class TripActivityController extends Controller
                 // Determine split type
                 $splitType = ($request->has('split_bill') && $trip->members->count() > 1) ? 'equal' : 'solo';
                 
-                // Map category
-                $catMapping = ['wisata' => 'tiket', 'kuliner' => 'makanan'];
-                $expenseCat = $catMapping[$activity->category] ?? (in_array($activity->category, ['akomodasi','transportasi','belanja','lainnya']) ? $activity->category : 'lainnya');
+                // Map activity category to expense category (only wisata differs)
+                $expenseCat = match ($activity->category) {
+                    'wisata' => 'tiket',
+                    default => in_array($activity->category, ['akomodasi', 'transportasi', 'kuliner', 'belanja', 'lainnya'], true)
+                        ? $activity->category
+                        : 'lainnya',
+                };
 
                 $expense = Expense::create([
                     'trip_id' => $trip->id,

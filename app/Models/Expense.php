@@ -103,14 +103,11 @@ class Expense extends Model
     public function getCategoryIconAttribute(): string
     {
         return match ($this->category) {
+            'akomodasi'    => '🏨',
             'transportasi' => '🚗',
-            'penginapan'   => '🏨',
-            'makanan'      => '🍽️',
-            'belanja'      => '🛍️',
-            'hiburan'      => '🎭',
+            'kuliner'      => '🍜',
             'tiket'        => '🎫',
-            'kesehatan'    => '🏥',
-            'komunikasi'   => '📱',
+            'belanja'      => '🛍️',
             default        => '💰',
         };
     }
