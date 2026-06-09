@@ -3,7 +3,7 @@
 @section('title', 'Search')
 
 @section('header')
-<h1 class="text-2xl font-heading font-bold text-center">Search 🔍</h1>
+<h1 class="text-xl font-heading font-bold">Search 🔍</h1>
 @endsection
 
 @section('content')

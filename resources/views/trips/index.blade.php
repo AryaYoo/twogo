@@ -3,7 +3,7 @@
 
 @section('header')
 <div class="flex-1">
-    <h1 class="text-2xl font-heading font-bold">Trip Kamu ✈️</h1>
+    <h1 class="text-xl font-heading font-bold">Trip Kamu ✈️</h1>
     <p class="text-sm font-medium opacity-80">Rencanakan perjalanan seru berikutnya</p>
 </div>
 @endsection

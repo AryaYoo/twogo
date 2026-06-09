@@ -4,7 +4,7 @@
 @section('header')
 <div class="flex items-center gap-3 w-full">
     <div class="flex-1 overflow-hidden">
-        <h1 class="text-2xl font-heading font-bold truncate">Wishlist 📍</h1>
+        <h1 class="text-xl font-heading font-bold truncate">Wishlist 📍</h1>
         <p class="text-sm font-medium opacity-80 truncate">{{ $trip->title }}</p>
     </div>
     <button onclick="openModal('addWishlistModal')" class="nb-btn nb-btn-primary nb-btn-sm whitespace-nowrap">

@@ -101,9 +101,38 @@ class TripController extends Controller
     {
         if ($trip->user_id !== Auth::id()) abort(403);
 
+        // Wishlist mode: trip belum punya tanggal → hanya isi tanggal & generate days
+        if (!$trip->start_date) {
+            $request->validate([
+                'start_date' => 'required|date',
+                'end_date'   => 'required|date|after_or_equal:start_date',
+            ]);
+
+            $trip->update([
+                'start_date' => $request->start_date,
+                'end_date'   => $request->end_date,
+            ]);
+
+            // Generate hari-hari perjalanan
+            $start     = Carbon::parse($request->start_date);
+            $end       = Carbon::parse($request->end_date);
+            $daysCount = $start->diffInDays($end) + 1;
+
+            for ($i = 0; $i < $daysCount; $i++) {
+                TripDay::firstOrCreate(
+                    ['trip_id' => $trip->id, 'day_number' => $i + 1],
+                    ['date' => $start->copy()->addDays($i)->format('Y-m-d')]
+                );
+            }
+
+            return redirect()->route('trips.show', $trip)
+                ->with('success', 'Tanggal ditetapkan! Yuk susun itinerary. 🚀');
+        }
+
+        // Normal trip update
         $request->validate([
-            'title' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
+            'title'        => 'required|string|max:255',
+            'destination'  => 'required|string|max:255',
             'total_budget' => 'nullable|numeric|min:0',
         ]);
 

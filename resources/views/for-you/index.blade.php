@@ -4,7 +4,7 @@
 @section('header')
 <div class="flex items-center gap-3 w-full">
     <div class="flex-1 overflow-hidden">
-        <h1 class="text-2xl font-heading font-bold">For You ✨</h1>
+        <h1 class="text-xl font-heading font-bold">For You ✨</h1>
         <p class="text-sm font-medium opacity-80">Update trip & wishlist publik kamu dan temanmu</p>
     </div>
 </div>

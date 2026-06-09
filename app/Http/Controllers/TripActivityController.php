@@ -47,6 +47,16 @@ class TripActivityController extends Controller
         return $time;
     }
 
+    public function show(TripActivity $activity)
+    {
+        $trip = $activity->day->trip;
+        if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
+
+        $activity->load('day');
+
+        return view('trips.activity_show', compact('activity', 'trip'));
+    }
+
     public function store(Request $request, TripDay $day)
     {
         $trip = $day->trip;

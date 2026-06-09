@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="nb-card max-w-sm mx-auto w-full">
-    <h2 class="text-2xl font-heading font-bold mb-6 text-center">Buat Akun Baru 🚀</h2>
+    <h2 class="text-xl font-heading font-bold mb-6 text-center">Buat Akun Baru 🚀</h2>
     
     <form action="{{ route('register') }}" method="POST">
         @csrf

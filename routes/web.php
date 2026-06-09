@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     
     // Trip Activities
     Route::post('/trips/days/{day}/activities', [TripActivityController::class, 'store'])->name('activities.store');
+    Route::get('/activities/{activity}', [TripActivityController::class, 'show'])->name('activities.show');
     Route::put('/activities/{activity}', [TripActivityController::class, 'update'])->name('activities.update');
     Route::delete('/activities/{activity}', [TripActivityController::class, 'destroy'])->name('activities.destroy');
     Route::post('/activities/{activity}/toggle', [TripActivityController::class, 'toggleComplete'])->name('activities.toggle');

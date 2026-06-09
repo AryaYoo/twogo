@@ -121,14 +121,15 @@
                             @endphp
                             
                             @forelse($activities as $act)
-                                <div class="nb-card {{ $act->is_completed ? 'bg-gray-100 opacity-70' : 'bg-white' }} p-3 relative group">
+                                <div class="nb-card {{ $act->is_completed ? 'bg-gray-100 opacity-70' : 'bg-white' }} p-3 relative group cursor-pointer"
+                                     onclick="window.location='{{ route('activities.show', $act) }}'">
                                     <div class="flex gap-3">
                                         @if($act->is_completed)
-                                            <button type="button" onclick="openUncheckActivityModal({{ $act->id }})" class="shrink-0 mt-1 w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-[#00D4AA] hover:bg-[#00BFA5] transition-colors">
+                                            <button type="button" onclick="event.stopPropagation(); openUncheckActivityModal({{ $act->id }})" class="shrink-0 mt-1 w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-[#00D4AA] hover:bg-[#00BFA5] transition-colors">
                                                 <span class="text-white text-xs font-bold">✓</span>
                                             </button>
                                         @else
-                                            <button type="button" onclick="openCompleteActivityModal({{ $act->id }})" class="shrink-0 mt-1 w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-white hover:bg-gray-100 transition-colors"></button>
+                                            <button type="button" onclick="event.stopPropagation(); openCompleteActivityModal({{ $act->id }})" class="shrink-0 mt-1 w-6 h-6 border-[3px] border-[#1A1A2E] rounded-sm flex items-center justify-center bg-white hover:bg-gray-100 transition-colors"></button>
                                         @endif
                                         
                                         <div class="flex-1 pr-14 relative">
@@ -157,9 +158,9 @@
                                                 </div>
                                                 
                                                 @if($act->location_name)
-                                                    <a href="{{ $act->location_url ?? '#' }}" target="_blank" class="text-sm text-[#4361EE] hover:underline font-medium inline-flex items-center gap-1 mb-2">
+                                                    <span class="text-sm text-[#4361EE] font-medium inline-flex items-center gap-1 mb-2">
                                                         📍 {{ $act->location_name }}
-                                                    </a>
+                                                    </span>
                                                 @endif
                                                 
                                                 @if($act->description)
@@ -168,8 +169,8 @@
                                             </div>
 
                                             <div class="absolute right-0 top-0 flex flex-col items-end gap-2">
-                                                <button type="button" onclick="openDeleteActivityModal({{ $act->id }})" class="w-7 h-7 flex items-center justify-center rounded-sm bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-sm">&times;</button>
-                                                <button type="button" onclick='openEditActivityModal(@json($act))' class="w-10 h-10 flex items-center justify-center rounded-sm bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-lg">✏️</button>
+                                                <button type="button" onclick="event.stopPropagation(); openDeleteActivityModal({{ $act->id }})" class="w-7 h-7 flex items-center justify-center rounded-sm bg-red-500 text-white border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-sm">&times;</button>
+                                                <button type="button" onclick='event.stopPropagation(); openEditActivityModal(@json($act))' class="w-10 h-10 flex items-center justify-center rounded-sm bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform text-lg">✏️</button>
                                             </div>
                                         </div>
                                     </div>

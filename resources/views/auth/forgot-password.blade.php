@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="nb-card max-w-sm mx-auto w-full">
-    <h2 class="text-2xl font-heading font-bold mb-2 text-center">Lupa Password? 🧐</h2>
+    <h2 class="text-xl font-heading font-bold mb-2 text-center">Lupa Password? 🧐</h2>
     <p class="text-sm text-center mb-6 font-medium opacity-80">
         Tenang, kami akan mengirimkan link untuk mereset password ke emailmu.
     </p>

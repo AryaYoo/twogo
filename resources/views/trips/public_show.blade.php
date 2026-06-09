@@ -31,7 +31,7 @@
 <div class="nb-card bg-[#FFE156] p-4 mb-4">
     <div class="flex items-start justify-between mb-3">
         <div>
-            <h2 class="text-2xl font-heading font-bold leading-tight">{{ $trip->title }}</h2>
+            <h2 class="text-xl font-heading font-bold leading-tight">{{ $trip->title }}</h2>
             <p class="text-sm font-medium opacity-80 mt-1">📍 {{ $trip->destination }}</p>
         </div>
         <span class="text-xs font-bold bg-[#1A1A2E] text-[#FFE156] px-2 py-1 rounded-full">🌍 Publik</span>

@@ -6,7 +6,7 @@
     @if(!$isOwn)
     <a href="{{ url()->previous() }}" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform">&larr;</a>
     @endif
-    <h1 class="text-2xl font-heading font-bold">{{ $isOwn ? 'Profil Kamu 🧑‍🚀' : $user->name }}</h1>
+    <h1 class="text-xl font-heading font-bold">{{ $isOwn ? 'Profil Kamu 🧑‍🚀' : $user->name }}</h1>
 </div>
 @endsection
 
@@ -29,10 +29,10 @@
                 <p class="text-2xl font-bold font-heading">{{ $wishlistCount }}</p>
                 <p class="text-xs font-medium opacity-70">Wishlist</p>
             </div>
-            <div>
+            <a href="{{ route('friends.index') }}" class="block hover:opacity-80 transition-opacity">
                 <p class="text-2xl font-bold font-heading">{{ $friendsCount }}</p>
-                <p class="text-xs font-medium opacity-70">Teman</p>
-            </div>
+                <p class="text-xs font-medium opacity-70 underline decoration-dotted">Teman</p>
+            </a>
         </div>
     </div>
 
@@ -50,19 +50,15 @@
     {{-- Action Buttons (emoji icons) --}}
     @if($isOwn)
     <div class="flex gap-3">
-        <a href="{{ route('friends.index') }}" title="Daftar Teman"
-           class="flex-1 h-11 nb-btn bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md flex items-center justify-center text-xl">
-            👥
-        </a>
         <a href="{{ route('profile.edit') }}" title="Edit Profil"
-           class="flex-1 h-11 nb-btn bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md flex items-center justify-center text-xl">
-            ✏️
+        class="w-1/2 h-11 nb-btn bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md flex items-center justify-center gap-1.5 text-sm">
+            ✏️ Edit
         </a>
-        <form action="{{ route('logout') }}" method="POST" class="flex-1">
+        <form action="{{ route('logout') }}" method="POST" class="w-1/2 h-11 flex">
             @csrf
             <button type="submit" title="Keluar"
-                class="w-full h-11 nb-btn bg-red-100 text-red-600 border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md flex items-center justify-center text-xl">
-                🚪
+                class="w-full h-full nb-btn bg-red-100 text-red-600 border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md flex items-center justify-center gap-1.5 text-sm">
+                🚪 Logout
             </button>
         </form>
     </div>

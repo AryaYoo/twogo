@@ -7,7 +7,7 @@
         &larr;
     </a>
     <div>
-        <h1 class="text-2xl font-heading font-bold">Buat Trip Baru ✨</h1>
+        <h1 class="text-xl font-heading font-bold">Buat Trip Baru ✨</h1>
     </div>
 </div>
 @endsection

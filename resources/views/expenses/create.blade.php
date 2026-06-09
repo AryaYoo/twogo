@@ -7,7 +7,7 @@
         &larr;
     </a>
     <div>
-        <h1 class="text-2xl font-heading font-bold">Catat Pengeluaran 💸</h1>
+        <h1 class="text-xl font-heading font-bold">Catat Pengeluaran 💸</h1>
     </div>
 </div>
 @endsection

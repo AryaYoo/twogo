@@ -2,8 +2,12 @@
 @section('title', 'Teman')
 
 @section('header')
-<div class="flex-1">
-    <h1 class="text-2xl font-heading font-bold">Teman Kamu 👥</h1>
+
+<div class="flex items-center gap-3">
+    <a href="{{ route('profile.show') }}" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform">
+        &larr;
+    </a>
+    <h1 class="text-xl font-heading font-bold">Teman Kamu 👥</h1>
 </div>
 @endsection
 
