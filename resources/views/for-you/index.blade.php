@@ -5,7 +5,7 @@
 <div class="flex items-center gap-3 w-full">
     <div class="flex-1 overflow-hidden">
         <h1 class="text-2xl font-heading font-bold">For You ✨</h1>
-        <p class="text-sm font-medium opacity-80">Update terbaru dari temanmu</p>
+        <p class="text-sm font-medium opacity-80">Update trip & wishlist publik kamu dan temanmu</p>
     </div>
 </div>
 @endsection
@@ -17,9 +17,9 @@
         <div class="text-6xl mb-4">👫</div>
         <h2 class="font-heading font-bold text-xl mb-2">Belum Ada Update</h2>
         <p class="text-sm font-medium opacity-70 max-w-xs leading-relaxed mb-6">
-            Tambah teman dan pastikan mereka membagikan trip atau wishlist secara publik — nanti muncul di sini!
+            Buat trip atau wishlist dan atur sebagai publik — atau tambah teman yang juga membagikan perjalanan mereka!
         </p>
-        <a href="{{ route('friends.index') }}" class="nb-btn nb-btn-primary">Cari Teman</a>
+        <a href="{{ route('trips.create') }}" class="nb-btn nb-btn-primary">Buat Trip</a>
     </div>
 @else
     <div class="flex flex-col gap-4">
@@ -32,12 +32,16 @@
             <x-card class="bg-white p-0 overflow-hidden">
                 {{-- Header: who did what --}}
                 <div class="flex items-center gap-3 p-3 border-b-2 border-[#1A1A2E] border-dashed">
-                    <a href="{{ route('profile.user', $user) }}" class="shrink-0">
+                    <a href="{{ $item['is_own'] ? route('profile.show') : route('profile.user', $user) }}" class="shrink-0">
                         <x-avatar :user="$user" size="sm" class="border-2 border-[#1A1A2E]" />
                     </a>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium leading-snug">
-                            <a href="{{ route('profile.user', $user) }}" class="font-bold hover:underline">{{ $user->name }}</a>
+                            @if($item['is_own'])
+                                <span class="font-bold">Kamu</span>
+                            @else
+                                <a href="{{ route('profile.user', $user) }}" class="font-bold hover:underline">{{ $user->name }}</a>
+                            @endif
                             @if($isWishlist)
                                 membuat wishlist baru
                             @else
