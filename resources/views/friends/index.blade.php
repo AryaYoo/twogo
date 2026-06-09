@@ -34,13 +34,13 @@
         <div class="flex flex-col gap-3">
             @forelse($searchResults as $user)
                 <x-card class="flex justify-between items-center">
-                    <div class="flex items-center gap-3">
+                    <a href="{{ route('profile.user', $user) }}" class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity">
                         <x-avatar :user="$user" />
-                        <div>
-                            <div class="font-bold">{{ $user->name }}</div>
-                            <div class="text-xs opacity-70">{{ $user->email }}</div>
+                        <div class="min-w-0">
+                            <div class="font-bold truncate">{{ $user->name }}</div>
+                            <div class="text-xs opacity-70 truncate">{{ $user->email }}</div>
                         </div>
-                    </div>
+                    </a>
                     
                     @if($user->friendship_status === 'none')
                         <form action="{{ route('friends.request', $user) }}" method="POST">
@@ -78,13 +78,13 @@
         <div class="flex flex-col gap-3 mb-8">
             @foreach($pendingRequests as $req)
                 <x-card class="bg-[#FFFBEB] flex justify-between items-center border-[3px] border-[#FF6B9D]">
-                    <div class="flex items-center gap-3">
+                    <a href="{{ route('profile.user', $req->user) }}" class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity">
                         <x-avatar :user="$req->user" />
-                        <div>
-                            <div class="font-bold">{{ $req->user->name }}</div>
+                        <div class="min-w-0">
+                            <div class="font-bold truncate">{{ $req->user->name }}</div>
                             <div class="text-xs opacity-70">Ingin berteman denganmu</div>
                         </div>
-                    </div>
+                    </a>
                     
                     <div class="flex gap-2">
                         <form action="{{ route('friends.accept', $req) }}" method="POST">
@@ -107,13 +107,13 @@
     <div class="flex flex-col gap-3">
         @forelse($friends as $friend)
             <x-card class="flex justify-between items-center">
-                <div class="flex items-center gap-3">
+                <a href="{{ route('profile.user', $friend) }}" class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity">
                     <x-avatar :user="$friend" />
-                    <div>
-                        <div class="font-bold">{{ $friend->name }}</div>
-                        <div class="text-xs opacity-70">{{ $friend->email }}</div>
+                    <div class="min-w-0">
+                        <div class="font-bold truncate">{{ $friend->name }}</div>
+                        <div class="text-xs opacity-70 truncate">{{ $friend->email }}</div>
                     </div>
-                </div>
+                </a>
                 
                 <form action="{{ route('friends.remove', $friend) }}" method="POST" onsubmit="return confirm('Hapus dari daftar teman?');">
                     @csrf @method('DELETE')

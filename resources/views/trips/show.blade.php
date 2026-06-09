@@ -356,12 +356,19 @@
         openModal('addActivityModal');
     }
 
+    function formatTimeForInput(time) {
+        if (!time) return '';
+        const match = String(time).match(/^(\d{1,2}):(\d{2})/);
+        if (!match) return '';
+        return match[1].padStart(2, '0') + ':' + match[2];
+    }
+
     function openEditActivityModal(activity) {
         document.getElementById('editActivityForm').action = `/activities/${activity.id}`;
         document.getElementById('edit_title').value = activity.title || '';
         document.getElementById('edit_activity_session').value = activity.session || '';
-        document.getElementById('edit_start_time').value = activity.start_time || '';
-        document.getElementById('edit_end_time').value = activity.end_time || '';
+        document.getElementById('edit_start_time').value = formatTimeForInput(activity.start_time);
+        document.getElementById('edit_end_time').value = formatTimeForInput(activity.end_time);
         document.getElementById('edit_category').value = activity.category || '';
         document.getElementById('edit_estimated_cost').value = activity.estimated_cost ?? '';
         document.getElementById('edit_location_name').value = activity.location_name || '';

@@ -40,6 +40,10 @@ class ProfileController extends Controller
 
     public function showUser(\App\Models\User $user)
     {
+        if ($user->id === Auth::id()) {
+            return redirect()->route('profile.show');
+        }
+
         $data = $this->buildProfileData($user, Auth::user());
         return view('profile.show', $data);
     }

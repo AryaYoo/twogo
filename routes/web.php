@@ -42,10 +42,8 @@ Route::middleware('auth')->group(function () {
         return view('for-you.index');
     })->name('for-you');
 
-    // Search page
-    Route::get('/search', function() {
-        return view('search.index');
-    })->name('search');
+    // Search
+    Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
     
     // Trips
     Route::resource('trips', TripController::class);
@@ -90,11 +88,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/trips/{trip}/documents', [\App\Http\Controllers\DocumentController::class, 'store'])->name('documents.store');
     Route::delete('/documents/{document}', [\App\Http\Controllers\DocumentController::class, 'destroy'])->name('documents.destroy');
 
-    // Profile
+    // Profile (static routes before /profile/{user})
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/{user}', [\App\Http\Controllers\ProfileController::class, 'showUser'])->name('profile.user');
     Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/{user}', [\App\Http\Controllers\ProfileController::class, 'showUser'])->name('profile.user');
     
     // Trip public features
     Route::get('/trips/{trip}/public', [\App\Http\Controllers\TripController::class, 'publicShow'])->name('trips.public_show');

@@ -6,6 +6,7 @@ use App\Models\TripActivity;
 use App\Models\TripDay;
 use App\Models\Expense;
 use App\Models\ExpenseSplit;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,10 +16,43 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class TripActivityController extends Controller
 {
+    private function normalizeActivityTimes(Request $request): void
+    {
+        $request->merge([
+            'start_time' => $this->normalizeTimeInput($request->input('start_time')),
+            'end_time' => $this->normalizeTimeInput($request->input('end_time')),
+        ]);
+    }
+
+    private function normalizeTimeInput(?string $time): ?string
+    {
+        if ($time === null || trim($time) === '') {
+            return null;
+        }
+
+        $time = trim($time);
+
+        if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $time)) {
+            return substr($time, 0, 5);
+        }
+
+        foreach (['g:i A', 'h:i A', 'G:i'] as $format) {
+            try {
+                return Carbon::createFromFormat($format, $time)->format('H:i');
+            } catch (\Exception) {
+                continue;
+            }
+        }
+
+        return $time;
+    }
+
     public function store(Request $request, TripDay $day)
     {
         $trip = $day->trip;
         if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
+
+        $this->normalizeActivityTimes($request);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -53,12 +87,15 @@ class TripActivityController extends Controller
         $trip = $activity->day->trip;
         if (!$trip->members()->where('user_id', Auth::id())->exists()) abort(403);
 
+        $this->normalizeActivityTimes($request);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'session' => 'required|in:pagi,siang,malam',
             'start_time' => 'nullable|date_format:H:i',
             'end_time' => 'nullable|date_format:H:i|after_or_equal:start_time',
-            'category' => 'required|in:wisata,kuliner,transportasi,akomodasi,belanja,lainnya'
+            'category' => 'required|in:wisata,kuliner,transportasi,akomodasi,belanja,lainnya',
+            'estimated_cost' => 'nullable|numeric|min:0',
         ]);
 
         $activity->update($request->only([

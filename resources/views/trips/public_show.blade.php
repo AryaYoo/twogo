@@ -6,7 +6,7 @@
     <a href="{{ url()->previous() }}" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform">&larr;</a>
     <div class="flex-1 overflow-hidden">
         <h1 class="text-xl font-heading font-bold truncate">{{ $trip->title }}</h1>
-        <p class="text-xs opacity-70 font-medium">Itinerary Publik · oleh {{ $trip->creator->name }}</p>
+        <p class="text-xs opacity-70 font-medium">Itinerary Publik · oleh <a href="{{ route('profile.user', $trip->creator) }}" class="font-bold underline hover:opacity-80">{{ $trip->creator->name }}</a></p>
     </div>
 </div>
 @endsection
@@ -36,7 +36,7 @@
             @foreach($trip->members as $member)
                 <x-avatar :user="$member" size="sm" class="border-2 border-[#1A1A2E]" />
             @endforeach
-            <span class="text-xs font-medium opacity-80">{{ $trip->creator->name }}</span>
+            <a href="{{ route('profile.user', $trip->creator) }}" class="text-xs font-medium opacity-80 font-bold hover:underline">{{ $trip->creator->name }}</a>
         </div>
         {{-- Like Button --}}
         <button id="like-btn" onclick="toggleLike({{ $trip->id }})"
