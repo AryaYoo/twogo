@@ -68,13 +68,35 @@
     </div>
     @else
     <div class="flex gap-3">
-        <form action="{{ route('friends.request', $user) }}" method="POST" class="flex-1">
-            @csrf
-            <button type="submit"
-                class="w-full h-11 nb-btn bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md text-sm">
-                + Tambah Teman
-            </button>
-        </form>
+        @if($friendshipStatus === 'accepted')
+            <form action="{{ route('friends.remove', $user) }}" method="POST" class="flex-1" onsubmit="return confirm('Hapus {{ $user->name }} dari daftar teman?');">
+                @csrf @method('DELETE')
+                <button type="submit"
+                    class="w-full h-11 nb-btn bg-red-100 text-red-600 border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md text-sm">
+                    Hapus Teman
+                </button>
+            </form>
+        @elseif($friendshipStatus === 'pending')
+            @if($friendshipInitiator === Auth::id())
+                <button type="button" disabled
+                    class="w-full h-11 nb-btn bg-gray-100 text-gray-500 border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] rounded-md text-sm cursor-not-allowed">
+                    Menunggu Konfirmasi...
+                </button>
+            @else
+                <a href="{{ route('friends.index') }}"
+                    class="flex-1 h-11 nb-btn bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md text-sm flex items-center justify-center">
+                    Lihat Permintaan
+                </a>
+            @endif
+        @else
+            <form action="{{ route('friends.request', $user) }}" method="POST" class="flex-1">
+                @csrf
+                <button type="submit"
+                    class="w-full h-11 nb-btn bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-1px] transition-transform rounded-md text-sm">
+                    + Tambah Teman
+                </button>
+            </form>
+        @endif
     </div>
     @endif
 </div>

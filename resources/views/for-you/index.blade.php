@@ -5,26 +5,74 @@
 <div class="flex items-center gap-3 w-full">
     <div class="flex-1 overflow-hidden">
         <h1 class="text-2xl font-heading font-bold">For You ✨</h1>
-        <p class="text-sm font-medium opacity-80">Coming soon...</p>
+        <p class="text-sm font-medium opacity-80">Update terbaru dari temanmu</p>
     </div>
 </div>
 @endsection
 
 @section('content')
-<div class="flex flex-col items-center justify-center py-20 text-center">
-    <div class="text-7xl mb-6 animate-bounce">🚀</div>
-    <h2 class="font-heading font-bold text-2xl mb-3 text-[#1A1A2E]">Segera Hadir!</h2>
-    <p class="text-base font-medium opacity-60 max-w-xs leading-relaxed">
-        Halaman ini lagi dalam pengerjaan. Nanti di sini bakal ada rekomendasi trip, destinasi keren, dan konten seru buat kamu!
-    </p>
-    <div class="mt-10 nb-card bg-[#FFE156] p-5 w-full max-w-xs text-left shadow-[4px_4px_0px_#1A1A2E]">
-        <p class="font-heading font-bold text-sm text-[#1A1A2E] mb-2">🔮 Yang akan hadir:</p>
-        <ul class="space-y-2 text-sm font-medium text-[#1A1A2E]">
-            <li class="flex items-center gap-2"><span class="text-base">🏖️</span> Rekomendasi destinasi</li>
-            <li class="flex items-center gap-2"><span class="text-base">🍜</span> Kuliner wajib coba</li>
-            <li class="flex items-center gap-2"><span class="text-base">💡</span> Inspirasi itinerary</li>
-            <li class="flex items-center gap-2"><span class="text-base">👫</span> Trip populer TwoGo-ers</li>
-        </ul>
+
+@if($feed->isEmpty())
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="text-6xl mb-4">👫</div>
+        <h2 class="font-heading font-bold text-xl mb-2">Belum Ada Update</h2>
+        <p class="text-sm font-medium opacity-70 max-w-xs leading-relaxed mb-6">
+            Tambah teman dan pastikan mereka membagikan trip atau wishlist secara publik — nanti muncul di sini!
+        </p>
+        <a href="{{ route('friends.index') }}" class="nb-btn nb-btn-primary">Cari Teman</a>
     </div>
-</div>
+@else
+    <div class="flex flex-col gap-4">
+        @foreach($feed as $item)
+            @php
+                $trip = $item['trip'];
+                $user = $item['user'];
+                $isWishlist = $item['type'] === 'wishlist';
+            @endphp
+            <x-card class="bg-white p-0 overflow-hidden">
+                {{-- Header: who did what --}}
+                <div class="flex items-center gap-3 p-3 border-b-2 border-[#1A1A2E] border-dashed">
+                    <a href="{{ route('profile.user', $user) }}" class="shrink-0">
+                        <x-avatar :user="$user" size="sm" class="border-2 border-[#1A1A2E]" />
+                    </a>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium leading-snug">
+                            <a href="{{ route('profile.user', $user) }}" class="font-bold hover:underline">{{ $user->name }}</a>
+                            @if($isWishlist)
+                                membuat wishlist baru
+                            @else
+                                merencanakan trip baru
+                            @endif
+                        </p>
+                        <p class="text-xs opacity-60">{{ $item['created_at']->diffForHumans() }}</p>
+                    </div>
+                    <span class="text-xl shrink-0">{{ $isWishlist ? '💭' : '🗓️' }}</span>
+                </div>
+
+                {{-- Trip card --}}
+                <a href="{{ route('trips.public_show', $trip) }}" class="block p-3 hover:bg-gray-50 transition-colors">
+                    <div class="flex gap-3">
+                        <div class="w-16 h-16 shrink-0 {{ $isWishlist ? 'bg-[#FFF0F5] border-[#FF6B9D]' : 'bg-[#FFE156]' }} border-[3px] border-[#1A1A2E] rounded-md flex items-center justify-center text-2xl">
+                            {{ $isWishlist ? '💭' : '🌴' }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold font-heading truncate">{{ $trip->title }}</h3>
+                            <p class="text-sm opacity-80 truncate">📍 {{ $trip->destination }}</p>
+                            @if(!$isWishlist && $trip->start_date)
+                                <p class="text-xs opacity-70 mt-1">
+                                    📅 {{ $trip->start_date->format('d M Y') }} – {{ $trip->end_date->format('d M Y') }}
+                                </p>
+                            @endif
+                            <div class="flex items-center gap-2 mt-1 text-xs font-bold">
+                                <span class="text-[#00D4AA]">🌍 Publik</span>
+                                <span class="text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </x-card>
+        @endforeach
+    </div>
+@endif
+
 @endsection

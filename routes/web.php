@@ -38,9 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/wishlist/{wishlist}', [\App\Http\Controllers\WishlistController::class, 'destroy'])->name('wishlists.destroy');
     Route::post('/wishlist/{wishlist}/vote', [\App\Http\Controllers\WishlistController::class, 'vote'])->name('wishlists.vote');
     // For You page
-    Route::get('/for-you', function() {
-        return view('for-you.index');
-    })->name('for-you');
+    Route::get('/for-you', [\App\Http\Controllers\ForYouController::class, 'index'])->name('for-you');
 
     // Search
     Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');

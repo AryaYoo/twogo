@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Friendship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +29,23 @@ class ProfileController extends Controller
         $tripsCount   = $isOwn ? $allTrips->whereNotNull('start_date')->count() : $trips->count();
         $wishlistCount = $isOwn ? $allTrips->whereNull('start_date')->count() : $wishlists->count();
 
-        return compact('user', 'trips', 'wishlists', 'friendsCount', 'tripsCount', 'wishlistCount', 'isOwn');
+        $friendshipStatus = 'self';
+        $friendshipInitiator = null;
+        if (!$isOwn && $viewingUser) {
+            $friendship = Friendship::where(function ($q) use ($user, $viewingUser) {
+                $q->where('user_id', $viewingUser->id)->where('friend_id', $user->id);
+            })->orWhere(function ($q) use ($user, $viewingUser) {
+                $q->where('user_id', $user->id)->where('friend_id', $viewingUser->id);
+            })->first();
+
+            $friendshipStatus = $friendship ? $friendship->status : 'none';
+            $friendshipInitiator = $friendship?->user_id;
+        }
+
+        return compact(
+            'user', 'trips', 'wishlists', 'friendsCount', 'tripsCount', 'wishlistCount', 'isOwn',
+            'friendshipStatus', 'friendshipInitiator'
+        );
     }
 
     public function show()
