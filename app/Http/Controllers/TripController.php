@@ -186,9 +186,12 @@ class TripController extends Controller
     {
         if (!$trip->is_public) abort(404);
 
-        $trip->load(['days.activities' => function($q) {
-            $q->orderBy('sort_order');
-        }, 'members', 'creator']);
+        $trip->load([
+            'days.activities' => fn ($q) => $q->orderBy('sort_order'),
+            'members',
+            'creator',
+            'documents.user',
+        ]);
 
         $totalEstimatedBudget = $trip->days->flatMap->activities->sum('estimated_cost');
         $likeCount = $trip->likes()->count();
@@ -197,7 +200,37 @@ class TripController extends Controller
             ? Auth::user()->trips()->where('description', 'LIKE', '%[Salin dari Trip #' . $trip->id . ']%')->exists()
             : false;
 
-        return view('trips.public_show', compact('trip', 'totalEstimatedBudget', 'likeCount', 'isLiked', 'alreadyCloned'));
+        $documentationItems = collect();
+
+        foreach ($trip->documents as $doc) {
+            $documentationItems->push([
+                'kind'       => $doc->type,
+                'title'      => $doc->caption,
+                'content'    => $doc->content,
+                'file_path'  => $doc->file_path,
+                'user_name'  => $doc->user?->name,
+                'created_at' => $doc->created_at,
+            ]);
+        }
+
+        foreach ($trip->days->flatMap->activities->whereNotNull('photo') as $act) {
+            $documentationItems->push([
+                'kind'       => 'activity_photo',
+                'title'      => $act->title,
+                'content'    => null,
+                'file_path'  => $act->photo,
+                'user_name'  => null,
+                'created_at' => $act->updated_at,
+            ]);
+        }
+
+        $documentationItems = $documentationItems->sortByDesc('created_at')->values();
+        $hasDocumentation = $documentationItems->isNotEmpty();
+
+        return view('trips.public_show', compact(
+            'trip', 'totalEstimatedBudget', 'likeCount', 'isLiked', 'alreadyCloned',
+            'documentationItems', 'hasDocumentation'
+        ));
     }
 
     public function cloneToWishlist(Trip $trip)
