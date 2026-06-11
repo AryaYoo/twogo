@@ -119,29 +119,61 @@
 
 </div>
 
-{{-- Location Card --}}
-@if($activity->location_name)
+{{-- Location & Maps Card --}}
+@php
+    $isTripParticipant = Auth::check() && ($trip->user_id === Auth::id() || $trip->members()->where('user_id', Auth::id())->exists());
+@endphp
+
+@if($activity->location_name || $isTripParticipant)
 <div class="nb-card bg-white p-4 mb-4">
-    <p class="text-xs font-bold opacity-50 uppercase tracking-wide mb-2">Lokasi</p>
-    <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2 min-w-0">
-            <span class="text-xl shrink-0">📍</span>
-            <p class="font-bold text-sm truncate">{{ $activity->location_name }}</p>
-        </div>
-        @if($activity->location_url)
-        <a href="{{ $activity->location_url }}" target="_blank" rel="noopener noreferrer"
-           class="shrink-0 nb-btn bg-[#4361EE] text-white border-2 border-[#1A1A2E] text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 hover:translate-y-[-1px] transition-transform shadow-[2px_2px_0px_#1A1A2E] font-bold"
-           onclick="event.stopPropagation()">
-            🗺️ Lihat Lokasi
-        </a>
+    <div class="flex items-center justify-between mb-3 border-b-2 border-dashed border-gray-200 pb-2">
+        <h3 class="text-xs font-bold opacity-60 uppercase tracking-wide flex items-center gap-1.5">
+            📍 Lokasi & Peta
+        </h3>
+        @if($activity->location_name)
+            <span class="text-[10px] font-bold bg-[#E1FCEF] text-[#00875A] px-2 py-0.5 rounded border border-[#00D4AA]">
+                Tersemat
+            </span>
+        @else
+            <span class="text-[10px] font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded border border-red-200">
+                Belum Ditentukan
+            </span>
         @endif
     </div>
-    @if($activity->location_url)
-    {{-- Map preview placeholder --}}
-    <div class="mt-3 bg-[#EEF2FF] border-2 border-[#4361EE] rounded-lg p-3 flex items-center gap-2 text-[#4361EE]">
-        <span class="text-lg">🗺️</span>
-        <p class="text-xs font-medium">Buka di Google Maps untuk melihat arah dan detail lokasi</p>
-    </div>
+
+    @if($activity->location_name)
+        <div class="mb-4">
+            <h4 class="font-heading font-bold text-base text-[#1A1A2E] leading-tight mb-1">
+                {{ $activity->location_name }}
+            </h4>
+            <p class="text-xs text-gray-500 font-medium">
+                Sesi {{ ucfirst($activity->session) }} · Estimasi: Rp {{ number_format($activity->estimated_cost, 0, ',', '.') }}
+            </p>
+        </div>
+
+        @php
+            $mapsUrl = $activity->location_url ?: 'https://www.google.com/maps/search/?api=1&query=' . urlencode($activity->location_name . ' ' . $trip->destination);
+        @endphp
+
+        <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer"
+           class="w-full nb-btn nb-btn-blue flex items-center justify-center gap-2 py-3 shadow-[3px_3px_0px_#1A1A2E] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none transition-all rounded-xl font-bold text-sm"
+           onclick="event.stopPropagation()">
+            🗺️ Buka di Google Maps
+        </a>
+        
+        <p class="text-center text-[10px] text-gray-400 mt-2.5 font-medium">
+            *Membuka petunjuk arah, estimasi waktu tempuh, dan navigasi langsung.
+        </p>
+    @else
+        <div class="py-3 text-center">
+            <p class="text-xs font-medium text-gray-500 mb-3 leading-relaxed">
+                Lokasi belum ditambahkan untuk kegiatan ini. Tambahkan sekarang agar lebih mudah dinavigasi saat perjalanan!
+            </p>
+            <button type="button" onclick='openEditActivityModal(@json($activity))'
+                    class="nb-btn nb-btn-primary nb-btn-sm inline-flex items-center gap-1.5 shadow-[2px_2px_0px_#1A1A2E]">
+                ✏️ Tambah Lokasi
+            </button>
+        </div>
     @endif
 </div>
 @endif

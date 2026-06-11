@@ -162,7 +162,7 @@
                                     </div>
 
                                     @if($act->location_name)
-                                    <a href="{{ $act->location_url ?? '#' }}" target="_blank" class="text-sm text-[#4361EE] hover:underline font-medium inline-flex items-center gap-1 mb-1">
+                                    <a href="{{ $act->location_url ?: 'https://www.google.com/maps/search/?api=1&query=' . urlencode($act->location_name . ' ' . $trip->destination) }}" target="_blank" class="text-sm text-[#4361EE] hover:underline font-medium inline-flex items-center gap-1 mb-1">
                                         📍 {{ $act->location_name }}
                                     </a>
                                     @endif
