@@ -5,12 +5,13 @@ Versi 1.0.3 menghadirkan fitur interaksi modern pada kartu trip (Like dengan dou
 Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diimplementasikan pada versi ini:
 
 ## 1. Mekanisme Double-Tap/Double-Click untuk Menyukai Trip (Like)
-- **Pengalaman Pengguna (UX)**: Terinspirasi oleh Instagram, pengguna kini dapat menyukai (like) sebuah trip dengan melakukan **double-tap** (pada perangkat mobile/sentuh) atau **double-click** (pada desktop) langsung di kartu trip.
+- **Pengalaman Pengguna (UX)**: Terinspirasi oleh Instagram, pengguna kini dapat menyukai (like) sebuah trip dengan melakukan **double-tap** (pada perangkat mobile/sentuh) atau **double-click** (pada desktop) langsung di kartu trip detail publik (`public_show.blade.php`).
+- **Khusus Halaman Detail**: Fitur double-tap to like dinonaktifkan pada halaman feed *For You* agar kartu feed dapat diarahkan langsung ke halaman detail tanpa penundaan (delay) klik sama sekali.
 - **Efek Visual**: Saat double-tap/double-click dideteksi, sebuah ikon hati merah besar (`❤️`) akan muncul di tengah-tengah kartu dengan animasi transisi membesar (*scale-up*) dan memudar (*fade-out*).
 - **Integrasi AJAX**: Aksi ini memicu AJAX POST ke API `/trips/{id}/like` secara latar belakang (background) menggunakan `fetch` API.
 - **Pembaruan UI Real-Time**:
   - Jumlah total likes pada kartu (selector `.like-count-text`) akan langsung diperbarui secara dinamis tanpa memuat ulang halaman.
-  - Jika aksi dilakukan pada halaman detail trip (`public_show`), tombol like utama (`#like-btn` & `#like-icon`) juga akan otomatis ikut aktif dan berganti warna (merah muda bergaya Neo-Brutalism).
+  - Tombol like utama (`#like-btn` & `#like-icon`) juga akan otomatis ikut aktif dan berganti warna (merah muda bergaya Neo-Brutalism).
 - **Sistem Gamifikasi**:
   - Apabila trip disukai oleh pengguna lain, pencipta asli trip akan menerima push notifikasi aktivitas dan mendapatkan XP tambahan (Gamification Points).
 
@@ -31,8 +32,8 @@ Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diim
 - **Masalah**: Pada perangkat seluler, menempatkan listener double-tap pada kartu yang dibungkus tag tautan (`<a>`) akan langsung mengarahkan pengguna ke halaman detail pada sentuhan pertama, sehingga merusak gesture double-tap.
 - **Solusi**:
   - Mengubah elemen pembungkus kartu dari tag `<a>` menjadi `<div>` dengan atribut `data-url` untuk menyimpan URL target.
-  - Menerapkan **Delayed Single Click (300ms)**: Saat pengguna mengetuk satu kali, sistem menunda navigasi selama 300ms menggunakan `setTimeout` untuk memastikan tidak ada ketukan kedua (double-tap) yang menyusul.
-  - Jika ketukan kedua terdeteksi sebelum 300ms, timernya dibatalkan (`clearTimeout`) dan aksi Like dijalankan alih-alih navigasi.
+  - **Delayed Single Click (300ms)** hanya diterapkan jika double-tap diaktifkan (`data-double-tap="true"`): Saat pengguna mengetuk satu kali di halaman detail, sistem menunda navigasi selama 300ms menggunakan `setTimeout` untuk memastikan tidak ada ketukan kedua (double-tap) yang menyusul.
+  - **Navigasi Instan pada Feed**: Karena double-tap dinonaktifkan di halaman feed *For You*, pengguna feed akan langsung diarahkan ke halaman detail secara instan tanpa jeda 300ms saat kartu ditekan.
   - Membocorkan elemen klik: Sistem secara cerdas mengabaikan penundaan navigasi jika pengguna secara eksplisit menekan elemen tombol (`<button>`) atau tautan profil pengguna (`<a>`) di dalam kartu.
 
 ## 4. Visualisasi & Embed Google Maps Pintar (Smart Location Embed)
@@ -43,14 +44,18 @@ Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diim
 - **Fallback Tombol**: Jika pengguna hanya menginputkan **Link Google Maps** tanpa nama lokasi, sistem akan menyembunyikan pratinjau peta (karena tidak dapat dimuat di iframe) dan menampilkannya sebagai tombol aksi Neo-Brutalism "🗺️ Buka di Google Maps".
 - **Panduan Pengguna**: Menambahkan kotak pesan edukasi dengan tautan edit bagi pembuat trip agar mereka tahu bahwa mengisi nama lokasi akan mengaktifkan pratinjau peta otomatis.
 
+## 5. Keamanan Submit Form & AJAX di Server Production (Secure Relative URL Parsing)
+- **Masalah Peringatan Keamanan**: Di server production yang berada di balik SSL Termination / Reverse Proxy (misal Cloudflare atau Nginx SSL), Laravel helper `route()` secara default menghasilkan URL absolut berbasis `http://`. Ketika JavaScript membuat form POST atau AJAX `fetch` ke URL `http://` dari halaman HTTPS, Chrome akan menampilkan peringatan keamanan: *"The information you're about to submit is not secure"*.
+- **Solusi**: Skrip interaksi menyematkan fungsi helper `getRelativeUrl()` yang mem-parsing semua URL absolut Laravel menjadi path relatif lokal aman (seperti `/trips/9/clone`). Hal ini memaksa browser mengirimkan request menggunakan protokol halaman saat ini (`https://`), sehingga mengeliminasi peringatan mixed-content sepenuhnya.
+
 ---
 
 ### File yang Diubah/Dibuat:
-1. **[NEW]** [trip-interaction-scripts.blade.php](file:///c:/xampp/htdocs/TwoGo/resources/views/components/trip-interaction-scripts.blade.php) - Komponen Javascript pusat untuk mengelola gesture double-tap, press-and-hold (long-press), dan klik tertunda.
+1. **[NEW]** [trip-interaction-scripts.blade.php](file:///c:/xampp/htdocs/TwoGo/resources/views/components/trip-interaction-scripts.blade.php) - Komponen Javascript pusat untuk mengelola gesture double-tap, press-and-hold (long-press), secure relative URL parsing, dan klik tertunda.
 2. **[MODIFY]** [public_show.blade.php](file:///c:/xampp/htdocs/TwoGo/resources/views/trips/public_show.blade.php) - Penyesuaian struktur kartu utama trip detail publik, penyematan file skrip interaksi, dan integrasi dengan badge like real-time.
 3. **[MODIFY]** [index.blade.php (For You)](file:///c:/xampp/htdocs/TwoGo/resources/views/for-you/index.blade.php) - Refaktorisasi kartu feed dari `<a>` menjadi `<div>` interaktif dan pemanggilan skrip interaksi.
 4. **[MODIFY]** [activity_show.blade.php](file:///c:/xampp/htdocs/TwoGo/resources/views/trips/activity_show.blade.php) - Penyesuaian render peta lokasi (Smart Embed & Fallback Button) berdasarkan ada/tidaknya nama lokasi.
-5. **[MODIFY]** [TripController.php](file:///c:/xampp/htdocs/TwoGo/app/Http/Controllers/TripController.php) - API endpoint untuk `toggleLike` dan aksi `cloneToWishlist`.
+5. **[MODIFY]** [TripController.php](file:///c:/xampp/Http/Controllers/TripController.php) - API endpoint untuk `toggleLike` dan aksi `cloneToWishlist`.
 
 **Status**: Dirilis
 **Tanggal**: 11 Juni 2026

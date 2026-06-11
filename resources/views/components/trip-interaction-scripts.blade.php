@@ -1,5 +1,15 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const getRelativeUrl = (urlStr) => {
+        if (!urlStr) return '';
+        try {
+            const urlObj = new URL(urlStr, window.location.origin);
+            return urlObj.pathname + urlObj.search;
+        } catch (e) {
+            return urlStr;
+        }
+    };
+
     const cards = document.querySelectorAll('.trip-interaction-card');
     
     cards.forEach(card => {
@@ -13,16 +23,22 @@ document.addEventListener('DOMContentLoaded', function() {
         let holdProgressBar = null;
         let holdIndicator = null;
         
-        // Add giant heart element if not exists
-        let heartIcon = card.querySelector('.giant-heart');
-        if (!heartIcon) {
-            heartIcon = document.createElement('div');
-            heartIcon.className = 'giant-heart absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 transform scale-50 z-50';
-            heartIcon.innerHTML = '<span class="text-7xl drop-shadow-xl filter" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">❤️</span>';
-            card.appendChild(heartIcon);
+        const doubleTapEnabled = card.dataset.doubleTap === 'true';
+        
+        // Add giant heart element if double tap is enabled and not exists
+        let heartIcon = null;
+        if (doubleTapEnabled) {
+            heartIcon = card.querySelector('.giant-heart');
+            if (!heartIcon) {
+                heartIcon = document.createElement('div');
+                heartIcon.className = 'giant-heart absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 transform scale-50 z-50';
+                heartIcon.innerHTML = '<span class="text-7xl drop-shadow-xl filter" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">❤️</span>';
+                card.appendChild(heartIcon);
+            }
         }
 
         const triggerLike = () => {
+            if (!doubleTapEnabled || !heartIcon) return;
             // Animation
             heartIcon.classList.remove('opacity-0', 'scale-50', 'scale-150');
             heartIcon.classList.add('opacity-100', 'scale-110');
@@ -36,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 600);
 
             // Fetch request
-            const likeUrl = card.dataset.likeUrl;
+            const likeUrl = getRelativeUrl(card.dataset.likeUrl);
             if (likeUrl) {
                 fetch(likeUrl, {
                     method: 'POST',
@@ -70,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         const triggerClone = () => {
-            const cloneUrl = card.dataset.cloneUrl;
+            const cloneUrl = getRelativeUrl(card.dataset.cloneUrl);
             if (cloneUrl) {
                 // visual feedback
                 card.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
@@ -199,19 +215,21 @@ document.addEventListener('DOMContentLoaded', function() {
             let deltaX = touchendX - touchstartX;
             let deltaY = Math.abs(touchendY - touchstartY);
             
-            // Mobile Double tap
-            let currentTime = new Date().getTime();
-            let tapLength = currentTime - lastTapTime;
-            
-            if (tapLength < 500 && tapLength > 0 && Math.abs(deltaX) < 20 && deltaY < 20) {
-                e.preventDefault();
-                if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
-                cancelHold();
-                triggerLike();
-                lastTapTime = 0;
-            } else {
-                cancelHold();
-                lastTapTime = currentTime;
+            cancelHold();
+
+            if (doubleTapEnabled) {
+                // Mobile Double tap
+                let currentTime = new Date().getTime();
+                let tapLength = currentTime - lastTapTime;
+                
+                if (tapLength < 500 && tapLength > 0 && Math.abs(deltaX) < 20 && deltaY < 20) {
+                    e.preventDefault();
+                    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+                    triggerLike();
+                    lastTapTime = 0;
+                } else {
+                    lastTapTime = currentTime;
+                }
             }
         });
 
@@ -222,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // MOUSE LISTENERS
         card.addEventListener('mousedown', e => {
             if (e.button !== 0) return; // Left click only
-            if (e.detail > 1) {
+            if (doubleTapEnabled && e.detail > 1) {
                 cancelHold();
                 return;
             }
@@ -252,19 +270,25 @@ document.addEventListener('DOMContentLoaded', function() {
             // Ignore if clicked on a button or an explicit link inside
             if (e.target.closest('a') || e.target.closest('button') || e.target.closest('input')) return;
 
-            const detailUrl = card.dataset.url;
+            const detailUrl = getRelativeUrl(card.dataset.url);
             if (!detailUrl) return; // public_show doesn't have data-url
 
-            // Delay for double click check
-            if (e.detail === 1) { // Single click
-                clickTimer = setTimeout(() => {
-                    window.location.href = detailUrl;
-                }, 300);
+            if (doubleTapEnabled) {
+                // Delay for double click check
+                if (e.detail === 1) { // Single click
+                    clickTimer = setTimeout(() => {
+                        window.location.href = detailUrl;
+                    }, 300);
+                }
+            } else {
+                // Instantly navigate if double tap is disabled
+                window.location.href = detailUrl;
             }
         });
 
         // Desktop Double Click
         card.addEventListener('dblclick', e => {
+            if (!doubleTapEnabled) return;
             if (e.target.closest('a') || e.target.closest('button') || e.target.closest('input')) return;
             e.preventDefault();
             if (clickTimer) {

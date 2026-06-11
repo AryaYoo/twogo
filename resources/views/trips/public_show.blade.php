@@ -30,7 +30,8 @@
 {{-- Trip Info Card --}}
 <div class="nb-card bg-[#FFE156] p-4 mb-4 trip-interaction-card relative overflow-hidden select-none"
     data-like-url="{{ route('trips.like', $trip) }}"
-    data-clone-url="{{ route('trips.clone', $trip) }}">
+    data-clone-url="{{ route('trips.clone', $trip) }}"
+    data-double-tap="true">
     <div class="flex items-start justify-between mb-3">
         <div>
             <h2 class="text-xl font-heading font-bold leading-tight">{{ $trip->title }}</h2>
