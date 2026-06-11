@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/gamification/{user?}', [\App\Http\Controllers\ProfileController::class, 'gamification'])->name('profile.gamification');
     Route::get('/profile/{user}', [\App\Http\Controllers\ProfileController::class, 'showUser'])->name('profile.user');
     
     // Trip public features

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Trip;
 use App\Models\TripDay;
 use App\Notifications\AppActivityNotification;
+use App\Services\GamificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +78,9 @@ class TripController extends Controller
                 route('trips.show', $trip),
                 'trip_created'
             ));
+
+            // Award XP for creating a trip
+            GamificationService::awardXp(Auth::user(), 'trip_created', $trip->id);
 
             return redirect()->route('trips.show', $trip)
                 ->with('success', 'Trip berhasil dibuat! Ayo susun timeline. 🚀');
@@ -200,6 +204,18 @@ class TripController extends Controller
 
         $trip->update(['status' => 'completed']);
 
+        // Award XP for completing a trip (to all members)
+        $members = $trip->members;
+        $partner = $members->firstWhere('id', '!=', Auth::id());
+        foreach ($members as $member) {
+            $otherMember = $members->firstWhere('id', '!=', $member->id);
+            GamificationService::awardXp($member, 'trip_completed', $trip->id, $otherMember ?? null);
+            if ($members->count() >= 2) {
+                // Bonus for completing together
+                GamificationService::awardXp($member, 'partner_bonus', $trip->id, $otherMember ?? null, 'Bonus selesaikan trip berdua');
+            }
+        }
+
         return back()->with('success', 'Perjalanan berhasil diselesaikan! Budget tracker akan menampilkan trip ini.');
     }
 
@@ -222,6 +238,8 @@ class TripController extends Controller
                     route('trips.public_show', $trip),
                     'trip_liked'
                 ));
+                // Award XP to the trip creator for receiving a like
+                GamificationService::awardXp($trip->creator, 'trip_liked', $trip->id);
             }
         }
 
@@ -315,6 +333,8 @@ class TripController extends Controller
                 route('trips.public_show', $trip),
                 'trip_cloned'
             ));
+            // Award XP to the original creator when their itinerary is cloned
+            GamificationService::awardXp($trip->creator, 'trip_cloned', $trip->id);
         }
 
         $user->notify(new AppActivityNotification(

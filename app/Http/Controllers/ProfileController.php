@@ -16,7 +16,7 @@ class ProfileController extends Controller
         $isOwn = $viewingUser && $viewingUser->id === $user->id;
 
         // Trips & wishlists
-        $allTrips = $user->trips()->with(['members', 'likes'])->orderByDesc('created_at')->get();
+        $allTrips = $user->trips()->with(['members', 'likes', 'documents', 'days.activities'])->orderByDesc('created_at')->get();
         $trips    = $allTrips->whereNotNull('start_date')
                              ->when(!$isOwn, fn($c) => $c->where('is_public', true))
                              ->values();
@@ -53,6 +53,12 @@ class ProfileController extends Controller
         $user = Auth::user();
         $data = $this->buildProfileData($user, $user);
         return view('profile.show', $data);
+    }
+
+    public function gamification(\App\Models\User $user = null)
+    {
+        $user = $user ?? Auth::user();
+        return view('profile.gamification', compact('user'));
     }
 
     public function showUser(\App\Models\User $user)

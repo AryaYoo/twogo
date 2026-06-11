@@ -17,8 +17,11 @@
 
     {{-- Top Row: Avatar + Stats --}}
     <div class="flex items-center gap-4 mb-4">
-        <div class="shrink-0">
+        <div class="shrink-0 relative inline-block">
             <x-avatar :user="$user" size="xl" class="border-4 border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E]" />
+            @if($isOwn)
+                <div class="absolute bottom-0 right-0 w-5 h-5 bg-[#00D4AA] border-[3px] border-[#1A1A2E] rounded-full z-10 shadow-[2px_2px_0px_#1A1A2E]" title="Sedang Aktif"></div>
+            @endif
         </div>
         <div class="flex-1 grid grid-cols-3 text-center gap-1">
             <div>
@@ -97,6 +100,9 @@
     @endif
 </div>
 
+{{-- Gamification Level Card (Livewire) --}}
+@livewire('profile-gamification', ['user' => $user])
+
 {{-- Tabs: Trip & Wishlist Grid --}}
 <div class="flex gap-2 mb-4 bg-white border-[3px] border-[#1A1A2E] rounded-xl p-1 shadow-[2px_2px_0px_#1A1A2E]">
     <button id="tab-trips-btn" onclick="switchProfileTab('trips')"
@@ -116,10 +122,25 @@
         @foreach($trips as $trip)
         <a href="{{ $trip->is_public ? route('trips.public_show', $trip) : ($isOwn ? route('trips.show', $trip) : '#') }}"
            class="nb-card bg-white p-3 hover:bg-gray-50 transition-colors block">
-            {{-- Cover emoji --}}
-            <div class="w-full h-24 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-md mb-2 flex items-center justify-center text-4xl overflow-hidden">
-                🌴
-            </div>
+            @php
+                $docPhotos = $trip->documents->where('type', 'photo')->pluck('file_path')->toArray();
+                $activityPhotos = $trip->days->flatMap->activities->whereNotNull('photo')->pluck('photo')->toArray();
+                $photos = array_merge($docPhotos, $activityPhotos);
+            @endphp
+            @if(count($photos) > 0)
+                <div class="w-full h-24 border-[3px] border-[#1A1A2E] rounded-md mb-2 overflow-hidden relative auto-carousel">
+                    @foreach($photos as $index => $photo)
+                        <img src="{{ Storage::url($photo) }}" 
+                             class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out {{ $index === 0 ? 'opacity-100' : 'opacity-0 z-0' }} {{ $index === 0 ? 'z-10' : '' }}" 
+                             alt="Trip Photo">
+                    @endforeach
+                </div>
+            @else
+                {{-- Cover emoji --}}
+                <div class="w-full h-24 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-md mb-2 flex items-center justify-center text-4xl overflow-hidden">
+                    🌴
+                </div>
+            @endif
             <h4 class="font-bold font-heading text-sm leading-tight mb-1 truncate">{{ $trip->title }}</h4>
             <p class="text-xs opacity-70 truncate mb-2">📍 {{ $trip->destination }}</p>
             <div class="flex items-center justify-between">
@@ -194,5 +215,22 @@
         document.getElementById('tab-' + tab).classList.remove('hidden');
         document.querySelector('[data-tab="' + tab + '"]').classList.add('active-tab');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousels = document.querySelectorAll('.auto-carousel');
+        carousels.forEach(carousel => {
+            const images = carousel.querySelectorAll('img');
+            if (images.length > 1) {
+                let currentIndex = 0;
+                setInterval(() => {
+                    images[currentIndex].classList.remove('opacity-100', 'z-10');
+                    images[currentIndex].classList.add('opacity-0', 'z-0');
+                    currentIndex = (currentIndex + 1) % images.length;
+                    images[currentIndex].classList.remove('opacity-0', 'z-0');
+                    images[currentIndex].classList.add('opacity-100', 'z-10');
+                }, 3000);
+            }
+        });
+    });
 </script>
 @endpush

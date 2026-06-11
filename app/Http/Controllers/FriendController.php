@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Friendship;
 use App\Models\User;
 use App\Notifications\AppActivityNotification;
+use App\Services\GamificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -104,6 +105,10 @@ class FriendController extends Controller
             route('profile.user', $friendship->user),
             'friend_connected'
         ));
+
+        // Award XP to both users for connecting
+        GamificationService::awardXp($friendship->user, 'friend_added', null, $user);
+        GamificationService::awardXp($user, 'friend_added', null, $friendship->user);
 
         return back()->with('success', 'Permintaan pertemanan diterima!');
     }

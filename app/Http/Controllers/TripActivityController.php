@@ -6,6 +6,7 @@ use App\Models\TripActivity;
 use App\Models\TripDay;
 use App\Models\Expense;
 use App\Models\ExpenseSplit;
+use App\Services\GamificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -242,6 +243,17 @@ class TripActivityController extends Controller
                 }
             }
         });
+
+        // Award XP for completing an activity (to all members)
+        $members = $trip->members;
+        foreach ($members as $member) {
+            $partner = $members->firstWhere('id', '!=', $member->id);
+            GamificationService::awardXp($member, 'activity_completed', $activity->id, $partner ?? null);
+            if ($members->count() >= 2) {
+                // Bonus for completing activity together
+                GamificationService::awardXp($member, 'partner_bonus', $activity->id, $partner ?? null, 'Bonus selesaikan kegiatan berdua');
+            }
+        }
 
         return back()->with('success', 'Kegiatan selesai dan budget dicatat!');
     }

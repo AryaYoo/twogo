@@ -225,7 +225,7 @@ img {
     z-index: 30;
     background-color: #FFFBEB;
     border-bottom: 3px solid #1A1A2E;
-    padding: 0.75rem 0.75rem;
+    padding: 0.5rem 0.75rem;
 }
 
 .page-header-inner {
@@ -237,12 +237,47 @@ img {
 
 @media (min-width: 768px) {
     .page-header {
-        padding: 0.875rem 1rem;
+        padding: 0.625rem 1rem;
     }
     
     .page-header-inner {
         gap: 0.75rem;
     }
+}
+
+.page-header h1 {
+    font-size: 1.125rem !important;
+}
+
+.page-header p {
+    font-size: 0.75rem !important;
+}
+
+.page-header a.bg-white,
+.page-header button.bg-white,
+.page-header .top-notification-button {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    font-size: 0.875rem !important;
+    border-width: 2.5px !important;
+}
+
+.page-header a.bg-white svg,
+.page-header button.bg-white svg {
+    width: 0.875rem !important;
+    height: 0.875rem !important;
+}
+
+.page-header .top-notification-button span {
+    font-size: 1.125rem !important;
+}
+
+.page-header .top-notification-badge {
+    top: 0.125rem;
+    right: 0.125rem;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    font-size: 0.7rem;
 }
 
 .header-main {
@@ -252,7 +287,7 @@ img {
 
 .page-header-title {
     font-family: var(--font-heading);
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
