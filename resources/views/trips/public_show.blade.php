@@ -243,7 +243,7 @@
 @auth
 <div class="sticky bottom-20 left-0 right-0 pb-2 mt-4">
     @if($alreadyCloned)
-    <div class="nb-card bg-[#00D4AA] text-white p-3 text-center font-bold">
+    <div class="nb-card bg-[#00D4AA] text-black p-3 text-center font-bold">
         ✅ Sudah tersalin ke Wishlist kamu!
     </div>
     @elseif(Auth::id() !== $trip->user_id)

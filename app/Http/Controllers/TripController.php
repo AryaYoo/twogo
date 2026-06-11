@@ -371,6 +371,14 @@ class TripController extends Controller
             }
         }
 
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success'  => true,
+                'redirect' => route('trips.index'),
+                'message'  => 'Itinerary berhasil disalin ke Wishlist kamu! 📋',
+            ]);
+        }
+
         return redirect()->route('trips.index')
             ->with('success', 'Itinerary berhasil disalin ke Wishlist kamu! 📋');
     }
