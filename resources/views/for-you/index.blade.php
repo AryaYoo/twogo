@@ -54,8 +54,11 @@
                 </div>
 
                 {{-- Trip card --}}
-                <a href="{{ route('trips.public_show', $trip) }}" class="block p-3 hover:bg-gray-50 transition-colors">
-                    <div class="flex gap-3">
+                <div class="block p-3 hover:bg-gray-50 transition-colors trip-interaction-card relative overflow-hidden select-none cursor-pointer"
+                    data-url="{{ route('trips.public_show', $trip) }}"
+                    data-like-url="{{ route('trips.like', $trip) }}"
+                    data-clone-url="{{ route('trips.clone', $trip) }}">
+                    <div class="flex gap-3 relative z-10 pointer-events-none">
                         <div class="w-16 h-16 shrink-0 {{ $isWishlist ? 'bg-[#FFF0F5] border-[#FF6B9D]' : 'bg-[#FFE156]' }} border-[3px] border-[#1A1A2E] rounded-md flex items-center justify-center text-2xl">
                             {{ $isWishlist ? '💭' : '🌴' }}
                         </div>
@@ -69,15 +72,19 @@
                             @endif
                             <div class="flex items-center gap-3 mt-1 text-xs font-bold">
                                 <span class="text-[#00D4AA]">🌍 Publik</span>
-                                <span class="text-[#FF6B9D]">❤️ {{ $trip->likes->count() }}</span>
+                                <span class="text-[#FF6B9D] like-count-text">❤️ {{ $trip->likes->count() }}</span>
                                 <span class="text-[#4361EE]">📋 {{ $trip->clones()->count() }}</span>
                             </div>
                         </div>
                     </div>
-                </a>
+                </div>
             </x-card>
         @endforeach
     </div>
 @endif
 
 @endsection
+
+@push('scripts')
+@include('components.trip-interaction-scripts')
+@endpush
