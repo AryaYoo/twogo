@@ -142,28 +142,66 @@
     </div>
 
     @if($activity->location_name || $activity->location_url)
-        <div class="mb-4">
-            <h4 class="font-heading font-bold text-base text-[#1A1A2E] leading-tight mb-1">
-                {{ $activity->location_name ?: 'Petunjuk Jalan / Rute' }}
-            </h4>
-            <p class="text-xs text-gray-500 font-medium">
-                Sesi {{ ucfirst($activity->session) }} · Estimasi: Rp {{ number_format($activity->estimated_cost, 0, ',', '.') }}
-            </p>
-        </div>
-
         @php
             $mapsUrl = $activity->location_url ?: 'https://www.google.com/maps/search/?api=1&query=' . urlencode($activity->location_name . ' ' . $trip->destination);
         @endphp
 
-        <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer"
-           class="w-full nb-btn nb-btn-blue flex items-center justify-center gap-2 py-3 shadow-[3px_3px_0px_#1A1A2E] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none transition-all rounded-xl font-bold text-sm"
-           onclick="event.stopPropagation()">
-            🗺️ Buka di Google Maps
-        </a>
-        
-        <p class="text-center text-[10px] text-gray-400 mt-2.5 font-medium">
-            *Membuka petunjuk arah, estimasi waktu tempuh, dan navigasi langsung.
-        </p>
+        @if($activity->location_name)
+            {{-- Embed maps preview + clickable card --}}
+            <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="block group">
+                {{-- Nama lokasi --}}
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-lg shrink-0">📍</span>
+                        <p class="font-heading font-bold text-sm truncate">{{ $activity->location_name }}</p>
+                    </div>
+                    <span class="shrink-0 text-xs font-bold text-[#4361EE] bg-[#EEF2FF] border border-[#4361EE] px-2 py-0.5 rounded-full group-hover:bg-[#4361EE] group-hover:text-white transition-colors whitespace-nowrap">
+                        Buka ↗
+                    </span>
+                </div>
+
+                {{-- Embedded Map --}}
+                <div class="relative w-full overflow-hidden border-[3px] border-[#1A1A2E] rounded-xl shadow-[3px_3px_0px_#1A1A2E] group-hover:shadow-[5px_5px_0px_#1A1A2E] group-hover:-translate-y-0.5 transition-all" style="height: 180px;">
+                    <iframe
+                        src="https://maps.google.com/maps?q={{ urlencode($activity->location_name . ' ' . $trip->destination) }}&output=embed&hl=id&z=15"
+                        width="100%"
+                        height="100%"
+                        style="border:0; pointer-events: none;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Peta Lokasi {{ $activity->location_name }}">
+                    </iframe>
+                    {{-- Overlay agar seluruh area bisa diklik --}}
+                    <div class="absolute inset-0 bg-transparent cursor-pointer"></div>
+                </div>
+
+                <p class="text-center text-[10px] text-gray-400 mt-2 font-medium">
+                    Ketuk peta untuk membuka navigasi lengkap di Google Maps →
+                </p>
+            </a>
+        @else
+            {{-- Hanya ada location_url tanpa nama — fallback tombol + hint --}}
+            <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer"
+               class="w-full nb-btn nb-btn-blue flex items-center justify-center gap-2 py-3 shadow-[3px_3px_0px_#1A1A2E] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none transition-all rounded-xl font-bold text-sm">
+                🗺️ Buka di Google Maps
+            </a>
+            @if($isTripParticipant)
+            <div class="mt-3 bg-[#FFF3C4] border-2 border-dashed border-[#FFB800] rounded-lg p-2.5 flex items-start gap-2">
+                <span class="text-base shrink-0 mt-0.5">💡</span>
+                <div>
+                    <p class="text-[11px] font-bold text-[#7A5800] leading-snug">Tambahkan Nama Lokasi</p>
+                    <p class="text-[10px] text-[#7A5800] opacity-80 leading-snug mt-0.5">
+                        Isi kolom <span class="font-bold">Nama Lokasi</span> saat edit kegiatan agar pratinjau peta bisa ditampilkan langsung di sini.
+                    </p>
+                    <button type="button" onclick='openEditActivityModal(@json($activity))'
+                            class="mt-1.5 text-[10px] font-bold text-[#7A5800] underline underline-offset-2 hover:opacity-70 transition-opacity">
+                        ✏️ Edit & isi nama lokasi →
+                    </button>
+                </div>
+            </div>
+            @endif
+        @endif
     @else
         <div class="py-3 text-center">
             <p class="text-xs font-medium text-gray-500 mb-3 leading-relaxed">
