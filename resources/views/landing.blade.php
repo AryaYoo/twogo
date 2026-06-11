@@ -43,10 +43,7 @@
 
     <main class="pt-16">
         <!-- Hero Section -->
-        <div class="w-full relative overflow-hidden bg-[#B2F5E4] border-b-[3px] border-[#1A1A2E] min-h-[90vh] flex items-center">
-            <!-- Background Image -->
-            <img src="{{ asset('assets/images/img1.webp') }}" class="absolute top-0 left-0 w-full h-full object-cover z-0" alt="Background TwoGo">
-
+        <div class="w-full relative overflow-hidden bg-[#B2F5E4] border-b-[3px] border-[#1A1A2E] min-h-[90vh] flex items-center bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('assets/images/img1.webp') }}');">
             <!-- Subtle gradient overlay to ensure text contrast at the bottom if needed -->
             <div class="absolute inset-0 hero-bg-overlay z-0"></div>
 
