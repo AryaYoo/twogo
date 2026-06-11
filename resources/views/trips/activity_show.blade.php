@@ -124,13 +124,13 @@
     $isTripParticipant = Auth::check() && ($trip->user_id === Auth::id() || $trip->members()->where('user_id', Auth::id())->exists());
 @endphp
 
-@if($activity->location_name || $isTripParticipant)
+@if($activity->location_name || $activity->location_url || $isTripParticipant)
 <div class="nb-card bg-white p-4 mb-4">
     <div class="flex items-center justify-between mb-3 border-b-2 border-dashed border-gray-200 pb-2">
         <h3 class="text-xs font-bold opacity-60 uppercase tracking-wide flex items-center gap-1.5">
             📍 Lokasi & Peta
         </h3>
-        @if($activity->location_name)
+        @if($activity->location_name || $activity->location_url)
             <span class="text-[10px] font-bold bg-[#E1FCEF] text-[#00875A] px-2 py-0.5 rounded border border-[#00D4AA]">
                 Tersemat
             </span>
@@ -141,10 +141,10 @@
         @endif
     </div>
 
-    @if($activity->location_name)
+    @if($activity->location_name || $activity->location_url)
         <div class="mb-4">
             <h4 class="font-heading font-bold text-base text-[#1A1A2E] leading-tight mb-1">
-                {{ $activity->location_name }}
+                {{ $activity->location_name ?: 'Petunjuk Jalan / Rute' }}
             </h4>
             <p class="text-xs text-gray-500 font-medium">
                 Sesi {{ ucfirst($activity->session) }} · Estimasi: Rp {{ number_format($activity->estimated_cost, 0, ',', '.') }}
