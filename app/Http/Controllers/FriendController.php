@@ -76,6 +76,15 @@ class FriendController extends Controller
                 'friend_id' => $friend->id,
                 'status' => 'pending'
             ]);
+
+            // Notify the recipient
+            $friend->notify(new AppActivityNotification(
+                Auth::user()->name . " mengirim permintaan pertemanan kepadamu! 👤",
+                '👤',
+                route('friends.index'),
+                'friend_request'
+            ));
+
             return back()->with('success', 'Permintaan pertemanan dikirim!');
         }
         

@@ -1,6 +1,6 @@
-# TwoGo V1.0.3 - Fitur Interaksi Trip & Peta Lokasi
+# TwoGo V1.0.3 - Fitur Interaksi Trip, Peta Lokasi & Notifikasi Pertemanan
 
-Versi 1.0.3 menghadirkan fitur interaksi modern pada kartu trip (Like dengan double-tap & Clone dengan press-and-hold) serta perbaikan fungsionalitas visualisasi peta Google Maps.
+Versi 1.0.3 menghadirkan fitur interaksi modern pada kartu trip (Like dengan double-tap & Clone dengan press-and-hold), perbaikan fungsionalitas visualisasi peta Google Maps, serta notifikasi untuk permintaan pertemanan baru.
 
 Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diimplementasikan pada versi ini:
 
@@ -16,17 +16,17 @@ Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diim
   - Apabila trip disukai oleh pengguna lain, pencipta asli trip akan menerima push notifikasi aktivitas dan mendapatkan XP tambahan (Gamification Points).
 
 ## 2. Fitur Press-and-Hold (Tahan) untuk Menyalin Trip/Wishlist (Clone)
-- **Kemudahan Duplikasi (Clone)**: Pengguna dapat menyalin/menyimpan trip publik milik orang lain langsung ke wishlist mereka secara instan dengan menekan dan menahan (**press-and-hold / long-press**) kartu trip selama **800ms**.
+- **Kemudahan Duplikasi (Clone)**: Pengguna dapat menyalin/menyimpan trip publik milik orang lain langsung ke wishlist mereka secara instan dengan menekan dan menahan (**press-and-hold / long-press**) kartu trip selama **600ms** (dioptimasi agar lebih responsif). Fitur hold-to-clone ini **hanya aktif pada halaman feed *For You*** dan **dihilangkan di halaman detail trip publik** karena sudah tersedia tombol CTA khusus "Salin ke Wishlist Saya" yang lengket di bagian bawah layar.
 - **Deteksi Gerakan (Gesture Detection)**: Menerapkan pointer/mouse listener (`touchstart`, `mousedown`, `touchmove`, `mousemove`, `touchend`, `mouseup`) yang memicu timer penahanan.
 - **Umpan Balik Visual Premium**:
   - Saat mulai ditekan, kartu trip akan beranimasi menyusut sedikit (`scale(0.97)`) dengan transisi halus.
-  - Sebuah progress bar berwarna biru (`#4361EE`) dengan ketebalan 2px bergaya Neo-Brutalism akan muncul di tepi bawah kartu dan bertambah panjang hingga 100% seiring berjalannya waktu penahanan.
+  - Sebuah progress bar berwarna biru (`#4361EE`) dengan ketebalan 8px bergaya Neo-Brutalism akan muncul di tepi bawah kartu dan bertambah panjang hingga 100% seiring berjalannya waktu penahanan.
   - Label indikator mengambang bertuliskan `⏱️ Tahan untuk menyimpan...` akan muncul di bagian atas kartu.
-  - Jika penahanan dilepas sebelum 800ms atau posisi sentuhan/mouse bergeser lebih dari 15px, seluruh status penahanan, progress bar, dan label indikator akan langsung dibatalkan dan menghilang tanpa mengganggu event navigasi/click standar.
+  - Jika penahanan dilepas sebelum 600ms atau posisi sentuhan/mouse bergeser lebih dari 15px (menggunakan perbandingan kuadrat jarak yang cepat), seluruh status penahanan, progress bar, dan label indikator akan langsung dibatalkan dan menghilang tanpa mengganggu event navigasi/click standar.
 - **Efek Keberhasilan**:
-  - Setelah 800ms terlewati, progress bar berubah menjadi hijau (`#00D4AA`), label berubah menjadi `📋 Menyalin...`, dan kartu trip akan melakukan efek animasi melengkung menyusut (`scale(0.93) rotate(-1.5deg)`).
+  - Setelah 600ms terlewati, progress bar berubah menjadi hijau (`#00D4AA`), label berubah menjadi `📋 Menyalin...`, dan kartu trip akan melakukan efek animasi melengkung menyusut (`scale(0.93) rotate(-1.5deg)`).
   - Mengirimkan getaran singkat (`vibrate` 50ms) jika didukung oleh perangkat keras seluler.
-  - Form POST dikirimkan secara otomatis ke endpoint `/trips/{id}/clone`.
+  - Melakukan `fetch` POST ke API `/trips/{id}/clone` tanpa memicu submit form halaman penuh, kemudian meredireksi pengguna ke halaman daftar trip jika sukses.
 
 ## 3. Penanganan Konflik Navigasi & Klik Tertunda (Delayed Single Click)
 - **Masalah**: Pada perangkat seluler, menempatkan listener double-tap pada kartu yang dibungkus tag tautan (`<a>`) akan langsung mengarahkan pengguna ke halaman detail pada sentuhan pertama, sehingga merusak gesture double-tap.
@@ -34,7 +34,7 @@ Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diim
   - Mengubah elemen pembungkus kartu dari tag `<a>` menjadi `<div>` dengan atribut `data-url` untuk menyimpan URL target.
   - **Delayed Single Click (300ms)** hanya diterapkan jika double-tap diaktifkan (`data-double-tap="true"`): Saat pengguna mengetuk satu kali di halaman detail, sistem menunda navigasi selama 300ms menggunakan `setTimeout` untuk memastikan tidak ada ketukan kedua (double-tap) yang menyusul.
   - **Navigasi Instan pada Feed**: Karena double-tap dinonaktifkan di halaman feed *For You*, pengguna feed akan langsung diarahkan ke halaman detail secara instan tanpa jeda 300ms saat kartu ditekan.
-  - Membocorkan elemen klik: Sistem secara cerdas mengabaikan penundaan navigasi jika pengguna secara eksplisit menekan elemen tombol (`<button>`) atau tautan profil pengguna (`<a>`) di dalam kartu.
+  - Membocorkan elemen klik: Sistem secara cerdas mengabaikan penundaan navigasi jika pengguna secara eksplisit menekan elemen tombol (`<button>`) atau tautan profil pengguna (`<a>`) di dalam kartu atau jika pengguna baru saja berhasil menyalin trip lewat hold.
 
 ## 4. Visualisasi & Embed Google Maps Pintar (Smart Location Embed)
 - **Peta Interaktif**: Jika kegiatan memiliki **Nama Lokasi** (`location_name`), sistem akan secara otomatis menampilkan pratinjau peta interaktif menggunakan Google Maps Embed iframe.
@@ -46,7 +46,16 @@ Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diim
 
 ## 5. Keamanan Submit Form & AJAX di Server Production (Secure Relative URL Parsing)
 - **Masalah Peringatan Keamanan**: Di server production yang berada di balik SSL Termination / Reverse Proxy (misal Cloudflare atau Nginx SSL), Laravel helper `route()` secara default menghasilkan URL absolut berbasis `http://`. Ketika JavaScript membuat form POST atau AJAX `fetch` ke URL `http://` dari halaman HTTPS, Chrome akan menampilkan peringatan keamanan: *"The information you're about to submit is not secure"*.
-- **Solusi**: Skrip interaksi menyematkan fungsi helper `getRelativeUrl()` yang mem-parsing semua URL absolut Laravel menjadi path relatif lokal aman (seperti `/trips/9/clone`). Hal ini memaksa browser mengirimkan request menggunakan protokol halaman saat ini (`https://`), sehingga mengeliminasi peringatan mixed-content sepenuhnya.
+- **Solusi**: Skrip interaksi menyematkan fungsi helper `rel()` yang mem-parsing semua URL absolut Laravel menjadi path relatif lokal aman (seperti `/trips/9/clone`). Hal ini memaksa browser mengirimkan request menggunakan protokol halaman saat ini (`https://`), sehingga mengeliminasi peringatan mixed-content sepenuhnya.
+
+## 6. Notifikasi Permintaan Pertemanan Baru
+- **Notifikasi Instan**: Ketika seorang pengguna mengirimkan permintaan pertemanan ke pengguna lain, penerima permintaan pertemanan tersebut akan langsung menerima notifikasi aktivitas.
+- **Isi Notifikasi**: `[Nama Pengirim] mengirim permintaan pertemanan kepadamu! 👤`
+- **Rute Tautan**: Mengarahkan penerima notifikasi langsung ke halaman pertemanan (`/friends`) sehingga mereka dapat menerima atau menolaknya dengan cepat.
+
+## 7. Indikator Jumlah Penyelesaian Misi
+- **Detail Informasi**: Pada halaman Level & Misi (`gamification.blade.php`), setiap kartu misi kini dilengkapi dengan indikator angka riil berapa kali tindakan terkait misi tersebut telah diselesaikan oleh pengguna (misal: "Selesai: 12x").
+- **Indikator Neo-Brutalism**: Ditampilkan sebagai lencana (*badge*) kecil berwarna biru lembut bergaya Neo-Brutalism (`✨ Selesai: [Jumlah]x`) yang diletakkan di sebelah kiri status progres bar.
 
 ---
 
@@ -55,7 +64,10 @@ Berikut adalah dokumentasi lengkap dari fitur-fitur baru dan perubahan yang diim
 2. **[MODIFY]** [public_show.blade.php](file:///c:/xampp/htdocs/TwoGo/resources/views/trips/public_show.blade.php) - Penyesuaian struktur kartu utama trip detail publik, penyematan file skrip interaksi, dan integrasi dengan badge like real-time.
 3. **[MODIFY]** [index.blade.php (For You)](file:///c:/xampp/htdocs/TwoGo/resources/views/for-you/index.blade.php) - Refaktorisasi kartu feed dari `<a>` menjadi `<div>` interaktif dan pemanggilan skrip interaksi.
 4. **[MODIFY]** [activity_show.blade.php](file:///c:/xampp/htdocs/TwoGo/resources/views/trips/activity_show.blade.php) - Penyesuaian render peta lokasi (Smart Embed & Fallback Button) berdasarkan ada/tidaknya nama lokasi.
-5. **[MODIFY]** [TripController.php](file:///c:/xampp/Http/Controllers/TripController.php) - API endpoint untuk `toggleLike` dan aksi `cloneToWishlist`.
+5. **[MODIFY]** [TripController.php](file:///c:/xampp/htdocs/TwoGo/app/Http/Controllers/TripController.php) - API endpoint untuk `toggleLike` dan aksi `cloneToWishlist` (mendukung AJAX/JSON).
+6. **[MODIFY]** [FriendController.php](file:///c:/xampp/htdocs/TwoGo/app/Http/Controllers/FriendController.php) - Menambahkan notifikasi baru saat permintaan pertemanan dikirimkan (`sendRequest`).
+7. **[MODIFY]** [GamificationService.php](file:///c:/xampp/htdocs/TwoGo/app/Services/GamificationService.php) - Menambahkan kalkulasi parameter `total_count` ke list misi untuk melacak total penyelesaian tugas di luar batas target misi.
+8. **[MODIFY]** [gamification.blade.php](file:///c:/xampp/htdocs/TwoGo/resources/views/profile/gamification.blade.php) - Memperbarui tampilan antarmuka kartu list misi untuk menampilkan indikator total penyelesaian aksi.
 
 **Status**: Dirilis
 **Tanggal**: 11 Juni 2026

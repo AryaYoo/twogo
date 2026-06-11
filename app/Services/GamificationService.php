@@ -201,78 +201,94 @@ class GamificationService
     {
         $logs = XpLog::where('user_id', $user->id)->get();
 
+        $tripCreatedCount = $logs->where('source_type', 'trip_created')->count();
+        $activityCompletedCount = $logs->where('source_type', 'activity_completed')->count();
+        $tripCompletedCount = $logs->where('source_type', 'trip_completed')->count();
+        $tripLikedCount = $logs->where('source_type', 'trip_liked')->count();
+        $tripClonedCount = $logs->where('source_type', 'trip_cloned')->count();
+        $friendAddedCount = $logs->where('source_type', 'friend_added')->count();
+        $partnerBonusCount = $logs->where('source_type', 'partner_bonus')->count();
+
         return [
             [
                 'title'       => 'Buat Trip Pertama',
                 'description' => 'Rencanakan perjalananmu pertama',
                 'xp'          => 50,
                 'emoji'       => '✈️',
-                'done'        => $logs->where('source_type', 'trip_created')->count() >= 1,
-                'progress'    => min(1, $logs->where('source_type', 'trip_created')->count()),
+                'done'        => $tripCreatedCount >= 1,
+                'progress'    => min(1, $tripCreatedCount),
                 'target'      => 1,
+                'total_count' => $tripCreatedCount,
             ],
             [
                 'title'       => 'Buat 5 Trip',
                 'description' => 'Jadilah pelancong aktif',
                 'xp'          => 50 * 5,
                 'emoji'       => '🗓️',
-                'done'        => $logs->where('source_type', 'trip_created')->count() >= 5,
-                'progress'    => min(5, $logs->where('source_type', 'trip_created')->count()),
+                'done'        => $tripCreatedCount >= 5,
+                'progress'    => min(5, $tripCreatedCount),
                 'target'      => 5,
+                'total_count' => $tripCreatedCount,
             ],
             [
                 'title'       => 'Selesaikan 10 Kegiatan',
                 'description' => 'Tuntaskan 10 kegiatan dalam itinerary',
                 'xp'          => 10 * 10,
                 'emoji'       => '✅',
-                'done'        => $logs->where('source_type', 'activity_completed')->count() >= 10,
-                'progress'    => min(10, $logs->where('source_type', 'activity_completed')->count()),
+                'done'        => $activityCompletedCount >= 10,
+                'progress'    => min(10, $activityCompletedCount),
                 'target'      => 10,
+                'total_count' => $activityCompletedCount,
             ],
             [
                 'title'       => 'Selesaikan Trip',
                 'description' => 'Tandai trip pertamamu sebagai selesai',
                 'xp'          => 100,
                 'emoji'       => '🏁',
-                'done'        => $logs->where('source_type', 'trip_completed')->count() >= 1,
-                'progress'    => min(1, $logs->where('source_type', 'trip_completed')->count()),
+                'done'        => $tripCompletedCount >= 1,
+                'progress'    => min(1, $tripCompletedCount),
                 'target'      => 1,
+                'total_count' => $tripCompletedCount,
             ],
             [
                 'title'       => 'Dapat 5 Likes',
                 'description' => 'Inspirasi 5 pengguna lain dengan tripmu',
                 'xp'          => 20 * 5,
                 'emoji'       => '❤️',
-                'done'        => $logs->where('source_type', 'trip_liked')->count() >= 5,
-                'progress'    => min(5, $logs->where('source_type', 'trip_liked')->count()),
+                'done'        => $tripLikedCount >= 5,
+                'progress'    => min(5, $tripLikedCount),
                 'target'      => 5,
+                'total_count' => $tripLikedCount,
             ],
             [
                 'title'       => 'Itinerary Disalin Orang Lain',
                 'description' => 'Itinerarimu dijadikan inspirasi orang lain',
                 'xp'          => 50,
                 'emoji'       => '📋',
-                'done'        => $logs->where('source_type', 'trip_cloned')->count() >= 1,
-                'progress'    => min(1, $logs->where('source_type', 'trip_cloned')->count()),
+                'done'        => $tripClonedCount >= 1,
+                'progress'    => min(1, $tripClonedCount),
                 'target'      => 1,
+                'total_count' => $tripClonedCount,
             ],
             [
                 'title'       => 'Tambah 3 Teman',
                 'description' => 'Bangun jaringan perjalananmu',
                 'xp'          => 15 * 3,
                 'emoji'       => '👫',
-                'done'        => $logs->where('source_type', 'friend_added')->count() >= 3,
-                'progress'    => min(3, $logs->where('source_type', 'friend_added')->count()),
+                'done'        => $friendAddedCount >= 3,
+                'progress'    => min(3, $friendAddedCount),
                 'target'      => 3,
+                'total_count' => $friendAddedCount,
             ],
             [
                 'title'       => 'Trip Bareng Partner',
                 'description' => 'Selesaikan trip bersama partner untuk bonus XP',
                 'xp'          => 50,
                 'emoji'       => '👫',
-                'done'        => $logs->where('source_type', 'partner_bonus')->count() >= 1,
-                'progress'    => min(1, $logs->where('source_type', 'partner_bonus')->count()),
+                'done'        => $partnerBonusCount >= 1,
+                'progress'    => min(1, $partnerBonusCount),
                 'target'      => 1,
+                'total_count' => $partnerBonusCount,
             ],
         ];
     }

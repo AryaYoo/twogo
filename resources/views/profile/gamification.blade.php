@@ -127,7 +127,12 @@
                          style="width: {{ $mission['target'] > 0 ? min(100, round(($mission['progress'] / $mission['target']) * 100)) : 100 }}%">
                     </div>
                 </div>
-                <p class="text-xs opacity-60 mt-1 text-right">{{ $mission['progress'] }}/{{ $mission['target'] }}</p>
+                <div class="flex justify-between items-center mt-1">
+                    <span class="text-[10px] font-bold text-[#4361EE] bg-[#4361EE]/10 px-2 py-0.5 rounded border border-[#4361EE]/20 shadow-[1px_1px_0px_#4361EE]">
+                        ✨ Selesai: {{ $mission['total_count'] }}x
+                    </span>
+                    <p class="text-xs font-bold text-[#1A1A2E]">{{ $mission['progress'] }}/{{ $mission['target'] }}</p>
+                </div>
             </div>
             @if($mission['done'])
             <span class="text-2xl shrink-0">✅</span>
