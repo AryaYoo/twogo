@@ -4,7 +4,7 @@
 
     // ── Cached globals (parsed once, shared across all cards) ──────────────
     const CSRF    = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
-    const rel     = url => { try { return new URL(url, location.origin).pathname; } catch { return url || ''; } };
+    const rel     = url => { if (!url || url === 'undefined') return ''; try { return new URL(url, location.origin).pathname; } catch { return url || ''; } };
     const dist2   = (ax, ay, bx, by) => (ax - bx) ** 2 + (ay - by) ** 2; // avoids Math.sqrt
 
     // ── Init all cards when DOM is ready ───────────────────────────────────
@@ -25,6 +25,7 @@
         let clickTimer = null;
         let holdTimer  = null;
         let isHolding  = false;
+        let hasJustCloned = false;
         let bar = null, badge = null;
 
         // ── Heart icon (only when double-tap is enabled) ───────────────────
@@ -139,6 +140,7 @@
                 badge.style.boxShadow   = '2px 2px 0 #1A1A2E';
                 navigator.vibrate?.(50);
                 isHolding = false;
+                hasJustCloned = true;
                 triggerClone();
             }, 600);
         }
@@ -213,8 +215,12 @@
 
         // ── Click / navigate ──────────────────────────────────────────────
         card.addEventListener('click', e => {
+            if (hasJustCloned) {
+                hasJustCloned = false;
+                return;
+            }
             if (e.target.closest('a,button,input')) return;
-            if (!detailUrl) return;
+            if (!detailUrl || detailUrl === '/undefined') return;
 
             if (doubleTap) {
                 // Delay 300ms so dblclick can cancel it
