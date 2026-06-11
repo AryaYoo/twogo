@@ -55,7 +55,7 @@ class ProfileController extends Controller
         return view('profile.show', $data);
     }
 
-    public function gamification(\App\Models\User $user = null)
+    public function gamification(?\App\Models\User $user = null)
     {
         $user = $user ?? Auth::user();
         return view('profile.gamification', compact('user'));
