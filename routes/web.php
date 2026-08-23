@@ -25,6 +25,15 @@ Route::get('/', function () {
     return view('landing', compact('settings', 'features', 'showcases', 'stats', 'testimonials'));
 })->name('landing');
 
+// Public Sub-Navbar Routes (Berita, Kontak, Photobooth Digital)
+Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
+Route::get('/news/{slug}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+
+Route::get('/contact', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+
+Route::get('/photobooth', [\App\Http\Controllers\PhotoboothController::class, 'index'])->name('photobooth.index');
+
 // Guest routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -162,6 +171,14 @@ Route::prefix('ctrl-twogo-admin')->name('admin.')->group(function () {
         Route::post('/landing/testimonials', [\App\Http\Controllers\Admin\AdminLandingController::class, 'storeTestimonial'])->name('landing.testimonials.store');
         Route::put('/landing/testimonials/{testimonial}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'updateTestimonial'])->name('landing.testimonials.update');
         Route::delete('/landing/testimonials/{testimonial}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'destroyTestimonial'])->name('landing.testimonials.destroy');
+
+        // News CMS CRUD
+        Route::resource('news', \App\Http\Controllers\Admin\AdminNewsController::class);
+
+        // Feedback / Kritik & Saran
+        Route::get('/feedback', [\App\Http\Controllers\Admin\AdminFeedbackController::class, 'index'])->name('feedback.index');
+        Route::post('/feedback/{feedback}/read', [\App\Http\Controllers\Admin\AdminFeedbackController::class, 'toggleRead'])->name('feedback.read');
+        Route::delete('/feedback/{feedback}', [\App\Http\Controllers\Admin\AdminFeedbackController::class, 'destroy'])->name('feedback.destroy');
     });
 });
 

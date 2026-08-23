@@ -178,6 +178,16 @@
                     <span>Landing Page CMS</span>
                 </a>
 
+                <a href="{{ route('admin.news.index') }}" class="admin-nav-item {{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
+                    <span class="text-xl">📰</span>
+                    <span>Manajemen Berita</span>
+                </a>
+
+                <a href="{{ route('admin.feedback.index') }}" class="admin-nav-item {{ request()->routeIs('admin.feedback.*') ? 'active' : '' }}">
+                    <span class="text-xl">📬</span>
+                    <span>Kritik & Saran</span>
+                </a>
+
                 <div class="my-3 border-t-2 border-dashed border-[#E2E8F0]"></div>
 
                 <div class="text-xs font-extrabold uppercase tracking-wider text-[#94A3B8] px-3 mb-1">Aplikasi</div>

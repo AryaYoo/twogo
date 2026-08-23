@@ -71,6 +71,9 @@
         </div>
     </nav>
 
+    <!-- Sub-Navbar Section -->
+    <x-sub-navbar />
+
     <!-- SECTION 1: HERO SECTION -->
     <section class="py-12 md:py-20 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB] overflow-hidden">
         <div class="max-w-6xl mx-auto px-4 md:px-8">
