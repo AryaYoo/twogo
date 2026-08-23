@@ -49,6 +49,52 @@
         .animate-float-slow {
             animation: float-slow 4s ease-in-out infinite;
         }
+
+        /* Neo-Brutalism Scroll Animations */
+        .nb-reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Slight bounce back effect typical of neo-brutalism */
+        }
+        .nb-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nb-reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .nb-reveal-left.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nb-reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .nb-reveal-right.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nb-reveal-zoom {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .nb-reveal-zoom.is-visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
     </style>
 </head>
 <body class="bg-[#FFFBEB] text-[#1A1A2E] antialiased selection:bg-[#FFE156] selection:text-[#1A1A2E]">
@@ -80,7 +126,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 
                 <!-- Left Content -->
-                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left nb-reveal-left">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-full font-bold text-xs md:text-sm">
                         <span>✨</span>
                         <span>{{ $settings['hero_badge'] ?? '✨ Aplikasi Itinerary #1 buat Berdua' }}</span>
@@ -105,7 +151,7 @@
                 </div>
 
                 <!-- Right Visual Decorative Card -->
-                <div class="lg:col-span-5 relative">
+                <div class="lg:col-span-5 relative nb-reveal-zoom delay-100">
                     <div class="relative mx-auto max-w-md lg:max-w-none">
                         <!-- Decorative Pins -->
                         <div class="absolute -top-4 -left-4 w-8 h-8 bg-[#FF6B9D] border-[3px] border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E] z-20"></div>
@@ -163,7 +209,7 @@
     <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB]">
         <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-12">
             
-            <div class="text-center max-w-2xl mx-auto space-y-3">
+            <div class="text-center max-w-2xl mx-auto space-y-3 nb-reveal">
                 <h2 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E]">
                     Fitur Utama yang Bikin Liburan Chill 🌴
                 </h2>
@@ -174,7 +220,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($features as $f)
-                    <div class="p-6 border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all" style="background-color: {{ $f->bg_color }}; color: {{ $f->text_color }};">
+                    <div class="p-6 border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all nb-reveal {{ 'delay-' . (min($loop->iteration, 4) * 100) }}" style="background-color: {{ $f->bg_color }}; color: {{ $f->text_color }};">
                         <div class="w-12 h-12 bg-white text-[#1A1A2E] rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
                             {{ $f->icon }}
                         </div>
@@ -185,7 +231,7 @@
                     </div>
                 @empty
                     <!-- Fallback default features if database empty -->
-                    <div class="p-6 bg-[#00D4AA] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4">
+                    <div class="p-6 bg-[#00D4AA] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 nb-reveal delay-100">
                         <div class="w-12 h-12 bg-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">📅</div>
                         <h3 class="font-heading font-extrabold text-xl text-[#1A1A2E]">Timeline Fleksibel</h3>
                         <p class="font-bold text-xs md:text-sm text-[#1A1A2E] opacity-90 leading-relaxed">Atur jadwal per hari dengan santai.</p>
@@ -391,7 +437,7 @@
     <!-- SECTION 7: CTA AKHIR + FOOTER -->
     <section class="py-16 md:py-20 bg-[#FFFBEB]">
         <div class="max-w-5xl mx-auto px-4 md:px-8">
-            <div class="bg-[#4361EE] border-[4px] border-[#1A1A2E] shadow-[12px_12px_0px_#1A1A2E] rounded-3xl p-8 md:p-14 text-center space-y-6 text-white">
+            <div class="bg-[#4361EE] border-[4px] border-[#1A1A2E] shadow-[12px_12px_0px_#1A1A2E] rounded-3xl p-8 md:p-14 text-center space-y-6 text-white nb-reveal-zoom">
                 <div class="inline-block px-4 py-1.5 bg-[#00D4AA] text-[#1A1A2E] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-full font-heading font-extrabold text-xs md:text-sm">
                     {{ $settings['cta_badge'] ?? 'Tunggu Apa Lagi? 🎒' }}
                 </div>
@@ -448,5 +494,26 @@
         </div>
     </footer>
 
+    <!-- Scroll Animation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, observerOptions);
+
+            const animElements = document.querySelectorAll('.nb-reveal, .nb-reveal-left, .nb-reveal-right, .nb-reveal-zoom');
+            animElements.forEach(el => observer.observe(el));
+        });
+    </script>
 </body>
 </html>
