@@ -85,14 +85,6 @@
                 </button>
             </form>
 
-            <!-- Credential helper notice -->
-            <div class="mt-6 pt-5 border-t-2 border-dashed border-slate-200 text-xs text-slate-500 text-center">
-                <div class="font-extrabold text-slate-700 mb-1">🔐 Akun Admin Default:</div>
-                <div class="bg-slate-100 p-2.5 rounded-lg border border-slate-300 font-mono text-[11px] text-slate-800 space-y-1">
-                    <div>User: <b class="text-[#4361EE]">YohanesMA</b> | Pass: <b class="text-[#4361EE]">AryaSangCEO</b></div>
-                    <div>User: <b class="text-slate-600">admin@twogo.com</b> | Pass: <b class="text-slate-600">password123</b></div>
-                </div>
-            </div>
         </div>
     </div>
 </body>
