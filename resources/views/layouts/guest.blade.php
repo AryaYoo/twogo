@@ -14,11 +14,6 @@
 <body class="bg-[#FFE156]">
     <div class="app-container" style="background-color: transparent; box-shadow: none;">
         <main class="p-6 min-h-screen flex flex-col justify-center animate-fade-in-up">
-            <div class="text-center mb-8">
-                <h1 class="text-4xl font-heading font-bold text-[#1A1A2E] tracking-tight">TwoGo<span class="text-[#FF6B9D]">.</span></h1>
-                <p class="text-sm font-medium mt-2">Rencana Seru, Bareng-Bareng! 🎒</p>
-            </div>
-            
             @yield('content')
             
         </main>

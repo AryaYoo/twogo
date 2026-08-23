@@ -8,6 +8,7 @@
     
     <!-- Main form card -->
     <div class="relative bg-[#FFFBEB] border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl p-6 md:p-8 z-10">
+        <h1 class="text-xl font-heading font-extrabold text-[#1A1A2E] tracking-tight text-center mb-1">TwoGo<span class="text-[#FF6B9D]">.</span></h1>
         <h2 class="text-2xl font-heading font-extrabold mb-6 text-center text-[#1A1A2E]">Selamat Datang<br>Kembali 👋</h2>
     
     <form action="{{ route('login') }}" method="POST">
