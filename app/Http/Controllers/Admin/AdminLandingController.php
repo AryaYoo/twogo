@@ -31,6 +31,22 @@ class AdminLandingController extends Controller
             LandingSetting::setValue($key, $value);
         }
 
+        // Handle hero card image upload
+        if ($request->hasFile('hero_card_image') && $request->file('hero_card_image')->isValid()) {
+            $file = $request->file('hero_card_image');
+            $filename = 'hero_card_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('assets/images'), $filename);
+            LandingSetting::setValue('hero_card_image', 'assets/images/' . $filename);
+        }
+
+        // Handle auth background image upload
+        if ($request->hasFile('auth_bg_image') && $request->file('auth_bg_image')->isValid()) {
+            $file = $request->file('auth_bg_image');
+            $filename = 'auth_bg_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('assets/images'), $filename);
+            LandingSetting::setValue('auth_bg_image', 'assets/images/' . $filename);
+        }
+
         return back()->with('success', 'Pengaturan teks Landing Page berhasil disimpan!');
     }
 

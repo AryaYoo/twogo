@@ -173,7 +173,7 @@
                         <div class="bg-white border-[4px] border-[#1A1A2E] shadow-[10px_10px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4 animate-float-slow">
                             <!-- Hero Image -->
                             <div class="rounded-2xl border-[3px] border-[#1A1A2E] overflow-hidden relative aspect-[4/3] bg-[#B2F5E4]">
-                                <img src="{{ asset('assets/images/img1.webp') }}" alt="Liburan TwoGo" class="w-full h-full object-cover">
+                                <img src="{{ asset($settings['hero_card_image'] ?? 'assets/images/img1.webp') }}" alt="Liburan TwoGo" class="w-full h-full object-cover">
                                 <div class="absolute top-3 right-3 px-3 py-1 bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg font-heading font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E]">
                                     {{ $settings['hero_card_rating'] ?? '⭐ 4.9 Rating' }}
                                 </div>

@@ -55,7 +55,7 @@
                 </a>
             </div>
 
-            <form action="{{ route('admin.landing.settings') }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.landing.settings') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
                 <!-- Section Hero -->
@@ -119,6 +119,35 @@
                         <div>
                             <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Floating Badge Bawah Kiri (contoh: 📍 50+ Destinasi Impian)</label>
                             <input type="text" name="settings[hero_card_floating_badge]" value="{{ $settings['hero_card_floating_badge'] ?? '📍 50+ Destinasi Impian' }}" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
+                        </div>
+
+                        <!-- Upload Gambar Hero Card -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-bold text-xs text-[#1A1A2E] mb-1">🖼️ Gambar Hero Card (kiri landing page)</label>
+                                @if(!empty($settings['hero_card_image']))
+                                    <div class="mb-2 flex items-center gap-2">
+                                        <img src="{{ asset($settings['hero_card_image']) }}" class="h-16 w-24 object-cover rounded-lg border-2 border-[#1A1A2E]" alt="Hero Card Preview">
+                                        <span class="text-xs font-bold text-slate-500">Gambar saat ini</span>
+                                    </div>
+                                @endif
+                                <input type="file" name="hero_card_image" accept="image/*"
+                                    class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:font-bold file:text-xs file:bg-[#FFE156] file:text-[#1A1A2E] file:cursor-pointer">
+                                <p class="text-[10px] text-slate-400 mt-1 font-bold">Format: JPG, PNG, WEBP. Gambar akan replace gambar lama.</p>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-xs text-[#1A1A2E] mb-1">🏖️ Background Halaman Login &amp; Register</label>
+                                @if(!empty($settings['auth_bg_image']))
+                                    <div class="mb-2 flex items-center gap-2">
+                                        <img src="{{ asset($settings['auth_bg_image']) }}" class="h-16 w-24 object-cover rounded-lg border-2 border-[#1A1A2E]" alt="Auth BG Preview">
+                                        <span class="text-xs font-bold text-slate-500">Gambar saat ini</span>
+                                    </div>
+                                @endif
+                                <input type="file" name="auth_bg_image" accept="image/*"
+                                    class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:font-bold file:text-xs file:bg-[#00D4AA] file:text-[#1A1A2E] file:cursor-pointer">
+                                <p class="text-[10px] text-slate-400 mt-1 font-bold">Format: JPG, PNG, WEBP. Gambar akan replace gambar lama.</p>
+                            </div>
                         </div>
                     </div>
                 </div>

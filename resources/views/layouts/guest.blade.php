@@ -11,7 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#FFE156] bg-cover bg-center bg-no-repeat bg-fixed relative" style="background-image: url('{{ asset('assets/images/img1.webp') }}');">
+@php
+    $authBg = \App\Models\LandingSetting::getValue('auth_bg_image', 'assets/images/img1.webp');
+@endphp
+<body class="bg-[#FFE156] bg-cover bg-center bg-no-repeat bg-fixed relative" style="background-image: url('{{ asset($authBg) }}');">
     <style>
         /* ===== PIXEL-ART WATER SPARKLE ===== */
         @keyframes sparkleGlint {
