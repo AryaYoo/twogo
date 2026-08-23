@@ -117,7 +117,7 @@
                 @php $activities = $day->activities->where('session', $session); @endphp
                 @if($activities->count() > 0)
                 <div class="relative">
-                    <div class="absolute -left-[20px] top-0 w-8 h-8 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center text-sm shadow-[2px_2px_0px_#1A1A2E] z-10">
+                    <div class="absolute -left-[20px] top-0 w-8 h-8 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center text-sm shadow-[2px_2px_0px_#1A1A2E] z-[5]">
                         {{ $session === 'pagi' ? '🌅' : ($session === 'siang' ? '🌞' : '🌙') }}
                     </div>
 
@@ -240,7 +240,7 @@
 
 {{-- Clone to Wishlist CTA --}}
 @auth
-<div class="sticky bottom-20 left-0 right-0 pb-2 mt-4">
+<div class="sticky bottom-20 left-0 right-0 pb-2 mt-4 z-30 bg-[#FEFCE8]">
     @if($alreadyCloned)
     <div class="nb-card bg-[#00D4AA] text-black p-3 text-center font-bold">
         ✅ Sudah tersalin ke Wishlist kamu!
