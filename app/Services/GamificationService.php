@@ -125,6 +125,23 @@ class GamificationService
     }
 
     /**
+     * Get reward XP amount dynamically from XpRule database table or fallback to default REWARDS.
+     */
+    public static function getRewardAmount(string $sourceType): int
+    {
+        try {
+            $rule = \App\Models\XpRule::where('key', $sourceType)->where('is_active', true)->first();
+            if ($rule) {
+                return (int) $rule->xp_amount;
+            }
+        } catch (\Throwable $e) {
+            // Fallback to static rewards if table does not exist or database error
+        }
+
+        return self::REWARDS[$sourceType] ?? 0;
+    }
+
+    /**
      * Award XP to a user and log the event.
      * Returns true if tier changed (for popup notification).
      */
@@ -135,7 +152,7 @@ class GamificationService
         ?User   $partner   = null,
         ?string $description = null
     ): bool {
-        $amount = self::REWARDS[$sourceType] ?? 0;
+        $amount = self::getRewardAmount($sourceType);
         if ($amount === 0) return false;
 
         $user->refresh();

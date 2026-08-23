@@ -100,3 +100,35 @@ Route::middleware('auth')->group(function () {
     Route::post('/trips/{trip}/clone', [\App\Http\Controllers\TripController::class, 'cloneToWishlist'])->name('trips.clone');
     Route::patch('/trips/{trip}/visibility', [\App\Http\Controllers\TripController::class, 'toggleVisibility'])->name('trips.visibility');
 });
+
+/* ------------------------------------------------------------------ */
+/*  Admin Routes (/ctrl-twogo-admin/login)                           */
+/* ------------------------------------------------------------------ */
+Route::prefix('ctrl-twogo-admin')->name('admin.')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Admin\AdminAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Admin\AdminAuthController::class, 'login']);
+
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::post('/logout', [\App\Http\Controllers\Admin\AdminAuthController::class, 'logout'])->name('logout');
+
+        Route::get('/', [\App\Http\Controllers\Admin\AdminOverviewController::class, 'index'])->name('overview');
+
+        // Users Management
+        Route::get('/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'show'])->name('users.show');
+        Route::post('/users/{user}/status', [\App\Http\Controllers\Admin\AdminUserController::class, 'updateStatus'])->name('users.status');
+        Route::post('/users/{user}/reset-password', [\App\Http\Controllers\Admin\AdminUserController::class, 'resetPassword'])->name('users.reset_password');
+        Route::delete('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy'])->name('users.destroy');
+
+        // Itinerary Management
+        Route::get('/itineraries', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'index'])->name('itineraries.index');
+        Route::get('/itineraries/{trip}', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'show'])->name('itineraries.show');
+        Route::post('/itineraries/{trip}/flag', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'toggleFlag'])->name('itineraries.flag');
+        Route::delete('/itineraries/{trip}', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'destroy'])->name('itineraries.destroy');
+
+        // Gamification & XP System
+        Route::get('/gamification', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'index'])->name('gamification.index');
+        Route::post('/gamification/rules', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'updateRules'])->name('gamification.rules');
+    });
+});
+

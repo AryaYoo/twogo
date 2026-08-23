@@ -49,6 +49,7 @@ class Trip extends Model
         'invite_code',
         'status',
         'is_public',
+        'is_flagged',
     ];
 
     /**
@@ -62,6 +63,7 @@ class Trip extends Model
             'start_date'   => 'date',
             'end_date'     => 'date',
             'total_budget' => 'decimal:2',
+            'is_flagged'   => 'boolean',
         ];
     }
 
@@ -174,6 +176,14 @@ class Trip extends Model
     public function likes(): HasMany
     {
         return $this->hasMany(TripLike::class);
+    }
+
+    /**
+     * Laporan moderasi pada trip.
+     */
+    public function reports(): HasMany
+    {
+        return $this->hasMany(ContentReport::class);
     }
 
     /**

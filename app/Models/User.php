@@ -39,6 +39,9 @@ class User extends Authenticatable
         'phone',
         'bio',
         'xp',
+        'is_admin',
+        'status',
+        'last_login_at',
     ];
 
     /**
@@ -61,7 +64,29 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
+            'last_login_at' => 'datetime',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'active' || empty($this->status);
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->status === 'banned';
     }
 
     /* ------------------------------------------------------------------ */
