@@ -175,7 +175,7 @@
                             <div class="rounded-2xl border-[3px] border-[#1A1A2E] overflow-hidden relative aspect-[4/3] bg-[#B2F5E4]">
                                 <img src="{{ asset('assets/images/img1.webp') }}" alt="Liburan TwoGo" class="w-full h-full object-cover">
                                 <div class="absolute top-3 right-3 px-3 py-1 bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg font-heading font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E]">
-                                    ⭐ 4.9 Rating
+                                    {{ $settings['hero_card_rating'] ?? '⭐ 4.9 Rating' }}
                                 </div>
                             </div>
 
@@ -186,17 +186,17 @@
                                         ✈️
                                     </div>
                                     <div>
-                                        <div class="font-heading font-extrabold text-sm text-[#1A1A2E]">Liburan Bali 4H3N</div>
-                                        <div class="text-xs font-bold text-slate-500">Arya & Yohanes • Active</div>
+                                        <div class="font-heading font-extrabold text-sm text-[#1A1A2E]">{{ $settings['hero_card_trip_title'] ?? 'Liburan Bali 4H3N' }}</div>
+                                        <div class="text-xs font-bold text-slate-500">{{ $settings['hero_card_trip_members'] ?? 'Arya & Yohanes • Active' }}</div>
                                     </div>
                                 </div>
-                                <span class="px-2.5 py-1 bg-[#00D4AA] border border-[#1A1A2E] rounded-md font-extrabold text-[11px]">Rapi</span>
+                                <span class="px-2.5 py-1 bg-[#00D4AA] border border-[#1A1A2E] rounded-md font-extrabold text-[11px]">{{ $settings['hero_card_trip_badge'] ?? 'Rapi' }}</span>
                             </div>
                         </div>
 
                         <!-- Floating Badges -->
                         <div class="absolute -bottom-6 -left-6 px-4 py-2 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rounded-xl font-heading font-extrabold text-xs hidden sm:block">
-                            📍 50+ Destinasi Impian
+                            {{ $settings['hero_card_floating_badge'] ?? '📍 50+ Destinasi Impian' }}
                         </div>
                     </div>
                 </div>

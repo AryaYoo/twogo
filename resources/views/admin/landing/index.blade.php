@@ -89,6 +89,38 @@
                             <input type="text" name="settings[hero_btn_secondary]" value="{{ $settings['hero_btn_secondary'] ?? 'Sudah Punya Akun' }}" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
                         </div>
                     </div>
+
+                    <!-- Hero Card Kanan -->
+                    <div class="mt-4 p-4 bg-white border-2 border-dashed border-[#4361EE] rounded-xl space-y-4">
+                        <p class="font-heading font-bold text-xs text-[#4361EE] uppercase tracking-widest">✦ Kartu Dekorasi Hero Kanan</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Rating Badge (contoh: ⭐ 4.9 Rating)</label>
+                                <input type="text" name="settings[hero_card_rating]" value="{{ $settings['hero_card_rating'] ?? '⭐ 4.9 Rating' }}" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Judul Trip Demo (contoh: Liburan Bali 4H3N)</label>
+                                <input type="text" name="settings[hero_card_trip_title]" value="{{ $settings['hero_card_trip_title'] ?? 'Liburan Bali 4H3N' }}" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Sub-info Trip (contoh: Arya &amp; Yohanes • Active)</label>
+                                <input type="text" name="settings[hero_card_trip_members]" value="{{ $settings['hero_card_trip_members'] ?? 'Arya & Yohanes • Active' }}" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Badge Status Trip (contoh: Rapi)</label>
+                                <input type="text" name="settings[hero_card_trip_badge]" value="{{ $settings['hero_card_trip_badge'] ?? 'Rapi' }}" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Floating Badge Bawah Kiri (contoh: 📍 50+ Destinasi Impian)</label>
+                            <input type="text" name="settings[hero_card_floating_badge]" value="{{ $settings['hero_card_floating_badge'] ?? '📍 50+ Destinasi Impian' }}" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section Marquee -->
