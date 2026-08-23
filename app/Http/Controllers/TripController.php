@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Trip;
 use App\Models\TripDay;
+use App\Models\TripLike;
 use App\Notifications\AppActivityNotification;
 use App\Services\GamificationService;
 use Carbon\Carbon;
@@ -393,5 +394,35 @@ class TripController extends Controller
 
         $msg = $trip->is_public ? 'Trip sekarang bisa dilihat publik 🌍' : 'Trip sekarang bersifat privat 🔒';
         return back()->with('success', $msg);
+    }
+
+    /**
+     * Toggle like pada trip — like jika belum, unlike jika sudah.
+     */
+    public function toggleLike(Trip $trip)
+    {
+        $user = Auth::user();
+
+        $existing = TripLike::where('trip_id', $trip->id)
+                            ->where('user_id', $user->id)
+                            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $liked = false;
+        } else {
+            TripLike::create([
+                'trip_id' => $trip->id,
+                'user_id' => $user->id,
+            ]);
+            $liked = true;
+        }
+
+        $count = $trip->likes()->count();
+
+        return response()->json([
+            'liked' => $liked,
+            'count' => $count,
+        ]);
     }
 }

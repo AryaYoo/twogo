@@ -244,6 +244,7 @@ function fypStackedCarousel(totalItems) {
         dragOffsetY: 0,
         touchThreshold: 35,
         lastTapTime: 0,
+        isLiking: false,
         showCloneModal: false,
         selectedTripTitle: '',
         selectedCloneUrl: '',
@@ -282,6 +283,11 @@ function fypStackedCarousel(totalItems) {
         },
 
         triggerLikeActive() {
+            // Debounce: prevent double-fire from simultaneous touch + dblclick events
+            if (this.isLiking) return;
+            this.isLiking = true;
+            setTimeout(() => { this.isLiking = false; }, 600);
+
             const activeEl = document.querySelector(`.fyp-card-${this.currentIndex}`);
             if (!activeEl) return;
             
@@ -289,7 +295,15 @@ function fypStackedCarousel(totalItems) {
             const likeUrl = activeEl.dataset.likeUrl;
             const heartPop = activeEl.querySelector('.heart-pop');
             
+            // Determine current liked state to show correct emoji
+            const isCurrentlyLiked = likeBtn && likeBtn.classList.contains('bg-[#FF6B9D]');
+            const heartEmoji = isCurrentlyLiked ? '💔' : '❤️';
+            
             if (heartPop) {
+                // Update emoji to reflect toggle direction
+                const emojiSpan = heartPop.querySelector('span');
+                if (emojiSpan) emojiSpan.textContent = heartEmoji;
+
                 heartPop.classList.remove('scale-50', 'opacity-0');
                 heartPop.classList.add('scale-125', 'opacity-100');
                 setTimeout(() => {
@@ -298,6 +312,8 @@ function fypStackedCarousel(totalItems) {
                     setTimeout(() => {
                         heartPop.classList.remove('scale-150');
                         heartPop.classList.add('scale-50');
+                        // Reset back to heart for next double-tap
+                        if (emojiSpan) emojiSpan.textContent = '❤️';
                     }, 250);
                 }, 400);
             }
