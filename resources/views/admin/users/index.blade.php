@@ -126,49 +126,51 @@
                             </td>
 
                             <!-- Actions -->
-                            <td class="py-3.5 px-5 text-right space-x-1">
-                                <!-- Detail Button -->
-                                <button 
-                                    @click="fetchUserDetail({{ $user->id }})" 
-                                    class="px-2.5 py-1.5 bg-[#00D4AA] hover:bg-[#00b894] border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer"
-                                    title="Lihat Detail User"
-                                >
-                                    👁️ Detail
-                                </button>
-
-                                <!-- Status Toggle Action -->
-                                <form action="{{ route('admin.users.status', $user) }}" method="POST" class="inline">
-                                    @csrf
-                                    @if($user->status === 'suspended' || $user->status === 'banned')
-                                        <input type="hidden" name="status" value="active">
-                                        <button type="submit" onclick="return confirm('Aktifkan kembali akun ini?')" class="px-2.5 py-1.5 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer">
-                                            ✔️ Aktifkan
-                                        </button>
-                                    @else
-                                        <input type="hidden" name="status" value="suspended">
-                                        <button type="submit" onclick="return confirm('Tangguhkan (suspend) akun pengguna ini?')" class="px-2.5 py-1.5 bg-amber-200 hover:bg-amber-300 border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer">
-                                            ⚠️ Suspend
-                                        </button>
-                                    @endif
-                                </form>
-
-                                <!-- Reset Password Button -->
-                                <button 
-                                    @click="openResetPasswordModal({{ json_encode($user) }})" 
-                                    class="px-2.5 py-1.5 bg-[#4361EE] hover:bg-blue-600 text-white border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer"
-                                    title="Reset Password"
-                                >
-                                    🔑 Reset
-                                </button>
-
-                                <!-- Delete Account -->
-                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="return confirm('APAKAH ANDA YAKIN INGIN MENGHAPUS PERMANEN AKUN USER INI? Data trip dan pengeluaran terkait akan dihapus!')" class="px-2 py-1.5 bg-red-500 hover:bg-red-600 text-white border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer">
-                                        🗑️ Hapus
+                            <td class="py-3.5 px-5 text-right">
+                                <div class="flex items-center justify-end gap-2 flex-wrap">
+                                    <!-- Detail Button -->
+                                    <button 
+                                        @click="fetchUserDetail({{ $user->id }})" 
+                                        class="px-2.5 py-1.5 bg-[#00D4AA] hover:bg-[#00b894] border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer"
+                                        title="Lihat Detail User"
+                                    >
+                                        👁️ Detail
                                     </button>
-                                </form>
+
+                                    <!-- Status Toggle Action -->
+                                    <form action="{{ route('admin.users.status', $user) }}" method="POST" class="inline">
+                                        @csrf
+                                        @if($user->status === 'suspended' || $user->status === 'banned')
+                                            <input type="hidden" name="status" value="active">
+                                            <button type="submit" onclick="return confirm('Aktifkan kembali akun ini?')" class="px-2.5 py-1.5 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer">
+                                                ✔️ Aktifkan
+                                            </button>
+                                        @else
+                                            <input type="hidden" name="status" value="suspended">
+                                            <button type="submit" onclick="return confirm('Tangguhkan (suspend) akun pengguna ini?')" class="px-2.5 py-1.5 bg-amber-200 hover:bg-amber-300 border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer">
+                                                ⚠️ Suspend
+                                            </button>
+                                        @endif
+                                    </form>
+
+                                    <!-- Reset Password Button -->
+                                    <button 
+                                        @click="openResetPasswordModal({{ json_encode($user) }})" 
+                                        class="px-2.5 py-1.5 bg-[#4361EE] hover:bg-blue-600 text-white border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer"
+                                        title="Reset Password"
+                                    >
+                                        🔑 Reset
+                                    </button>
+
+                                    <!-- Delete Account -->
+                                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('APAKAH ANDA YAKIN INGIN MENGHAPUS PERMANEN AKUN USER INI? Data trip dan pengeluaran terkait akan dihapus!')" class="px-2 py-1.5 bg-red-500 hover:bg-red-600 text-white border-2 border-[#1A1A2E] rounded-lg font-bold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer">
+                                            🗑️ Hapus
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
