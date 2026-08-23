@@ -2,199 +2,513 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#FFFBEB">
     <title>TwoGo — Rencana Seru, Bareng-Bareng! 🎒</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <style>
-        .animate-float {
-            animation: float 4s ease-in-out infinite;
+        body {
+            background-color: #FFFBEB;
+            color: #1A1A2E;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        .animate-float-delayed {
-            animation: float 4s ease-in-out 2s infinite;
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
         }
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
-            50% { transform: translateY(-15px) rotate(calc(var(--rot, 0deg) + 5deg)); }
-            100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+
+        /* Marquee Ticker Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
         }
-        .hero-bg-overlay {
-            background: linear-gradient(to bottom, rgba(255,251,235,0.2) 0%, rgba(255,251,235,0.9) 100%);
+
+        .animate-marquee {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+        }
+
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        /* Floating animation for hero elements */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .animate-float-slow {
+            animation: float-slow 4s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="bg-[#FFFBEB] font-sans text-[#1A1A2E] overflow-x-hidden relative">
+<body class="bg-[#FFFBEB] text-[#1A1A2E] antialiased selection:bg-[#FFE156] selection:text-[#1A1A2E]">
+
     <!-- Navbar -->
-    <nav class="fixed top-0 w-full bg-[#FFFBEB] border-b-[3px] border-[#1A1A2E] z-50 transition-all duration-300" id="navbar">
-        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="font-heading font-extrabold text-2xl tracking-tight flex items-center gap-1">
-                TwoGo<span class="text-[#FF6B9D] text-3xl leading-none">.</span>
-            </div>
-            <div class="flex items-center gap-2 sm:gap-3">
-                <a href="/login" class="nb-btn nb-btn-secondary nb-btn-sm border-[2px] shadow-[2px_2px_0px_#1A1A2E]">Masuk</a>
-                <a href="/register" class="nb-btn nb-btn-primary nb-btn-sm border-[2px] shadow-[2px_2px_0px_#1A1A2E]">Daftar</a>
+    <nav class="sticky top-0 w-full bg-[#FFFBEB] border-b-[3px] border-[#1A1A2E] z-50">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+            <a href="{{ route('landing') }}" class="font-heading font-extrabold text-2xl md:text-3xl tracking-tight flex items-center gap-1">
+                TwoGo<span class="text-[#FF6B9D] text-4xl leading-none">.</span>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="{{ route('login') }}" class="px-4 py-2 bg-white hover:bg-slate-100 border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-xs md:text-sm text-[#1A1A2E] transition-all">
+                    Masuk
+                </a>
+                <a href="{{ route('register') }}" class="px-5 py-2 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-xs md:text-sm text-[#1A1A2E] transition-all">
+                    Daftar
+                </a>
             </div>
         </div>
     </nav>
 
-    <main class="pt-16">
-        <!-- Hero Section -->
-        <div class="w-full relative overflow-hidden bg-[#B2F5E4] border-b-[3px] border-[#1A1A2E] min-h-[90vh] flex items-center bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('assets/images/img1.webp') }}');">
-            <!-- Subtle gradient overlay to ensure text contrast at the bottom if needed -->
-            <div class="absolute inset-0 hero-bg-overlay z-0"></div>
-
-            <!-- Floating Emojis -->
-            <div id="emoji-left" class="absolute hidden md:flex items-center justify-center animate-float" style="bottom: 15%; left: 8%; font-size: 5rem; z-index: 5; --rot: -20deg;">😆</div>
-            <div id="emoji-right" class="absolute hidden md:flex items-center justify-center animate-float-delayed" style="top: 20%; right: 8%; font-size: 4rem; z-index: 5; --rot: 15deg;">😎</div>
-            <div id="emoji-center" class="absolute hidden lg:flex items-center justify-center animate-float" style="top: 15%; left: 20%; font-size: 3.5rem; z-index: 5; --rot: -10deg;">😀</div>
-
-            <section class="max-w-5xl mx-auto px-4 py-12 relative z-10 w-full flex flex-col items-center">
-                <!-- Clean Hero Card -->
-                <div class="bg-white border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] md:shadow-[12px_12px_0px_#1A1A2E] rounded-[2rem] p-8 md:p-14 text-center max-w-3xl w-full transform -rotate-1 hover:rotate-0 transition-transform duration-300 relative">
-                    <!-- Decorative pins -->
-                    <div class="absolute -top-4 -left-4 w-8 h-8 bg-[#FF6B9D] border-[3px] border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E]"></div>
-                    <div class="absolute -bottom-4 -right-4 w-8 h-8 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E]"></div>
-
-                    <div class="inline-block nb-badge nb-badge-pink mb-6 rotate-[-2deg] px-4 py-2 text-xs md:text-sm border-[2px] border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] font-bold">
-                        ✨ Aplikasi Itinerary #1 buat Berdua
+    <!-- SECTION 1: HERO SECTION -->
+    <section class="py-12 md:py-20 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB] overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Content -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-full font-bold text-xs md:text-sm">
+                        <span>✨</span>
+                        <span>Aplikasi Itinerary #1 buat Berdua</span>
                     </div>
 
-                    <h1 class="text-4xl md:text-6xl font-heading font-extrabold leading-tight mb-6 tracking-tight text-[#1A1A2E]">
+                    <h1 class="font-heading font-extrabold text-4xl sm:text-5xl lg:text-6xl text-[#1A1A2E] leading-[1.1] tracking-tight">
                         Rencana Seru, <br class="hidden sm:block">
-                        <span class="bg-[#FFE156] px-4 py-1 mt-2 inline-block border-[4px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rotate-[1deg]">Bareng-Bareng! 🎒</span>
+                        <span class="inline-block bg-[#FFE156] px-4 py-1 border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] rounded-2xl rotate-[-1deg] mt-1">
+                            Bareng-Bareng! 🎒
+                        </span>
                     </h1>
 
-                    <p class="text-base md:text-lg font-bold mb-10 max-w-xl mx-auto text-[#1A1A2E] opacity-90 leading-relaxed">
-                        Aplikasi perencanaan perjalanan yang bikin liburanmu makin asyik, rapi, dan terorganisir tanpa ribet.
+                    <p class="font-bold text-base md:text-lg text-slate-700 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        Aplikasi perencanaan perjalanan yang bikin liburanmu makin asyik, rapi, dan terorganisir tanpa ribet adu argumen budget.
                     </p>
 
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <a href="/register" class="nb-btn nb-btn-primary nb-btn-xl text-lg w-full sm:w-auto border-[3px] shadow-[4px_4px_0px_#1A1A2E] hover:shadow-[0px_0px_0px_#1A1A2E] hover:translate-y-[4px] hover:translate-x-[4px] transition-all">
+                    <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a href="{{ route('register') }}" class="w-full sm:w-auto px-8 py-4 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] transition-all text-center">
                             Mulai Sekarang 🔥
                         </a>
-                        <a href="/login" class="nb-btn nb-btn-secondary nb-btn-xl text-lg w-full sm:w-auto border-[3px] shadow-[4px_4px_0px_#1A1A2E] hover:shadow-[0px_0px_0px_#1A1A2E] hover:translate-y-[4px] hover:translate-x-[4px] transition-all">
+                        <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-100 border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] transition-all text-center">
                             Sudah Punya Akun
                         </a>
                     </div>
                 </div>
-            </section>
-        </div>
 
-        <!-- Features Section -->
-        <section class="max-w-5xl mx-auto px-4 py-20 border-b-[3px] border-[#1A1A2E]">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-5xl font-heading font-extrabold inline-block relative">
-                    <span class="relative z-10">Fitur yang Bikin Liburan Makin Chill 🌴</span>
-                    <div class="absolute bottom-1 left-0 w-full h-4 bg-[#00D4AA] z-0 -rotate-1 opacity-50"></div>
+                <!-- Right Visual Decorative Card -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        <!-- Decorative Pins -->
+                        <div class="absolute -top-4 -left-4 w-8 h-8 bg-[#FF6B9D] border-[3px] border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E] z-20"></div>
+                        <div class="absolute -bottom-4 -right-4 w-8 h-8 bg-[#00D4AA] border-[3px] border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E] z-20"></div>
+
+                        <!-- Main Decorative Container -->
+                        <div class="bg-white border-[4px] border-[#1A1A2E] shadow-[10px_10px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4 animate-float-slow">
+                            <!-- Hero Image -->
+                            <div class="rounded-2xl border-[3px] border-[#1A1A2E] overflow-hidden relative aspect-[4/3] bg-[#B2F5E4]">
+                                <img src="{{ asset('assets/images/img1.webp') }}" alt="Liburan TwoGo" class="w-full h-full object-cover">
+                                <div class="absolute top-3 right-3 px-3 py-1 bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg font-heading font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E]">
+                                    ⭐ 4.9 Rating
+                                </div>
+                            </div>
+
+                            <!-- Quick Stats Card Inside Hero -->
+                            <div class="p-3.5 bg-[#FFFBEB] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-[#7B2FF7] text-white border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-lg">
+                                        ✈️
+                                    </div>
+                                    <div>
+                                        <div class="font-heading font-extrabold text-sm text-[#1A1A2E]">Liburan Bali 4H3N</div>
+                                        <div class="text-xs font-bold text-slate-500">Arya & Yohanes • Active</div>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 bg-[#00D4AA] border border-[#1A1A2E] rounded-md font-extrabold text-[11px]">Rapi</span>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badges -->
+                        <div class="absolute -bottom-6 -left-6 px-4 py-2 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rounded-xl font-heading font-extrabold text-xs hidden sm:block">
+                            📍 50+ Destinasi Impian
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: MARQUEE / TICKER BAR -->
+    <div class="border-b-[3px] border-[#1A1A2E] bg-[#FFE156] py-3.5 overflow-hidden">
+        <div class="animate-marquee font-heading font-extrabold text-sm sm:text-base text-[#1A1A2E] tracking-widest uppercase">
+            <span class="mx-6">BALI • JOGJA • LOMBOK • RAJA AMPAT • BANDUNG • LABUAN BAJO • MALANG • SURABAYA • UBUD • FLORES •</span>
+            <span class="mx-6">BALI • JOGJA • LOMBOK • RAJA AMPAT • BANDUNG • LABUAN BAJO • MALANG • SURABAYA • UBUD • FLORES •</span>
+            <span class="mx-6">BALI • JOGJA • LOMBOK • RAJA AMPAT • BANDUNG • LABUAN BAJO • MALANG • SURABAYA • UBUD • FLORES •</span>
+        </div>
+    </div>
+
+    <!-- SECTION 3: FITUR UTAMA (4 CARDS) -->
+    <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB]">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-12">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-3">
+                <h2 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E]">
+                    Fitur Utama yang Bikin Liburan Chill 🌴
                 </h2>
+                <p class="font-bold text-slate-600 text-sm md:text-base">
+                    Semua kebutuhan perencanaan trip berdua dirancang simpel, transparan, dan estetik.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Card 1: Timeline Fleksibel -->
+                <div class="p-6 bg-[#00D4AA] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
+                    <div class="w-12 h-12 bg-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
+                        📅
+                    </div>
+                    <h3 class="font-heading font-extrabold text-xl text-[#1A1A2E]">Timeline Fleksibel</h3>
+                    <p class="font-bold text-xs md:text-sm text-[#1A1A2E] opacity-90 leading-relaxed">
+                        Atur jadwal per hari dengan santai. Pagi, Siang, Malam tanpa dikejar waktu karena liburan butuh kepastian tanpa stres.
+                    </p>
+                </div>
+
+                <!-- Card 2: Budget Tracker -->
+                <div class="p-6 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
+                    <div class="w-12 h-12 bg-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
+                        💰
+                    </div>
+                    <h3 class="font-heading font-extrabold text-xl text-[#1A1A2E]">Budget Tracker</h3>
+                    <p class="font-bold text-xs md:text-sm text-[#1A1A2E] opacity-90 leading-relaxed">
+                        Catat pengeluaran bersama secara riil. Siapa bayar apa langsung tercatat rapi dan otomatis ngitung pembagian utang.
+                    </p>
+                </div>
+
+                <!-- Card 3: Wishlist Destinasi -->
+                <div class="p-6 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
+                    <div class="w-12 h-12 bg-white text-[#1A1A2E] rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
+                        📍
+                    </div>
+                    <h3 class="font-heading font-extrabold text-xl text-white">Wishlist Destinasi</h3>
+                    <p class="font-bold text-xs md:text-sm text-white opacity-95 leading-relaxed">
+                        Kumpulkan ide destinasi di bucket list bersama. Pilih dan vote tempat mana saja yang wajib dikunjungi.
+                    </p>
+                </div>
+
+                <!-- Card 4: Dokumentasi -->
+                <div class="p-6 bg-[#7B2FF7] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
+                    <div class="w-12 h-12 bg-[#FF8C42] text-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
+                        📸
+                    </div>
+                    <h3 class="font-heading font-extrabold text-xl text-white">Dokumentasi</h3>
+                    <p class="font-bold text-xs md:text-sm text-white opacity-95 leading-relaxed">
+                        Abadikan momen dan berkas perjalanan. Foto serta catatan tiket tersimpan rapi per trip sebagai kenangan digital.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: SHOWCASE APLIKASI (2 BIG BLOCKS ALTERNATING) -->
+    <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-white">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-20">
+            
+            <!-- Block 1: Timeline & Itinerary (Text Left, Card Right) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <!-- Text Left -->
+                <div class="lg:col-span-6 space-y-4">
+                    <div class="inline-block px-3 py-1 bg-[#4361EE] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase">
+                        Fitur #1 • Itinerary Builder
+                    </div>
+                    <h3 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E] leading-tight">
+                        Timeline & Itinerary Harian yang Terstruktur
+                    </h3>
+                    <p class="font-bold text-slate-600 text-sm md:text-base leading-relaxed">
+                        Menyusun kegiatan harian dari pagi hingga malam jadi lebih mudah. Setiap aktivitas dilengkapi lokasi, jam, dan status penyelesaian.
+                    </p>
+                    
+                    <ul class="space-y-2.5 text-xs md:text-sm font-bold text-slate-700 pt-2">
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                            <span>Pengelompokan jadwal per hari yang fleksibel</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                            <span>Penanda aktivitas selesai (Checklist real-time)</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                            <span>Sistem bonus XP setiap kegiatan dituntaskan</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card Right (UI Mockup Preview) -->
+                <div class="lg:col-span-6">
+                    <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
+                        <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
+                            <div class="font-heading font-extrabold text-base text-[#1A1A2E]">📅 Hari 1 — Eksplor Seminyak</div>
+                            <span class="px-2.5 py-1 bg-[#FFE156] border border-[#1A1A2E] rounded-md font-extrabold text-xs">3 Kegiatan</span>
+                        </div>
+
+                        <!-- Activities list mockup -->
+                        <div class="space-y-3">
+                            <div class="p-3.5 bg-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-6 h-6 rounded-md bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center text-xs">✓</span>
+                                    <div>
+                                        <div class="font-bold text-xs md:text-sm text-[#1A1A2E] line-through opacity-70">Sarapan Nasi Campur Bali</div>
+                                        <div class="text-[10px] font-bold text-slate-400">08:30 - 09:30</div>
+                                    </div>
+                                </div>
+                                <span class="font-extrabold text-xs text-emerald-600">+10 XP</span>
+                            </div>
+
+                            <div class="p-3.5 bg-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-6 h-6 rounded-md bg-slate-100 border-2 border-[#1A1A2E] flex items-center justify-center text-xs"></span>
+                                    <div>
+                                        <div class="font-bold text-xs md:text-sm text-[#1A1A2E]">Surfing di Pantai Batu Bolong</div>
+                                        <div class="text-[10px] font-bold text-slate-500">14:00 - 17:00</div>
+                                    </div>
+                                </div>
+                                <span class="font-extrabold text-xs text-[#7B2FF7]">Rp 150.000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Block 2: Budget Tracker & Split Bill (Card Left, Text Right) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <!-- Card Left (UI Mockup Preview) -->
+                <div class="lg:col-span-6 order-2 lg:order-1">
+                    <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
+                        <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
+                            <div>
+                                <div class="text-[10px] font-extrabold text-slate-500 uppercase">Total Pengeluaran</div>
+                                <div class="font-heading font-extrabold text-2xl text-[#7B2FF7]">Rp 2.450.000</div>
+                            </div>
+                            <span class="px-3 py-1 bg-[#00D4AA] border-2 border-[#1A1A2E] rounded-lg font-extrabold text-xs">Auto Split</span>
+                        </div>
+
+                        <!-- Split Bill Info Mockup -->
+                        <div class="p-4 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl space-y-1">
+                            <div class="text-xs font-extrabold text-[#1A1A2E]">🤝 Ringkasan Utang-Piutang</div>
+                            <div class="text-xs font-bold text-[#1A1A2E]">
+                                <b>Yohanes</b> harus bayar ke <b>Arya</b> sebesar <span class="underline font-extrabold">Rp 350.000</span>
+                            </div>
+                        </div>
+
+                        <!-- Expense item list mockup -->
+                        <div class="space-y-2 text-xs font-bold">
+                            <div class="p-3 bg-white border-2 border-[#1A1A2E] rounded-xl flex justify-between">
+                                <span>🏨 Hotel Seminyak (Dibayar Arya)</span>
+                                <span class="font-extrabold text-[#1A1A2E]">Rp 1.200.000</span>
+                            </div>
+                            <div class="p-3 bg-white border-2 border-[#1A1A2E] rounded-xl flex justify-between">
+                                <span>🍽️ Makan Malam Seafood (Dibayar Yohanes)</span>
+                                <span class="font-extrabold text-[#1A1A2E]">Rp 500.000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Right -->
+                <div class="lg:col-span-6 space-y-4 order-1 lg:order-2">
+                    <div class="inline-block px-3 py-1 bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase">
+                        Fitur #2 • Budget & Split Bill
+                    </div>
+                    <h3 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E] leading-tight">
+                        Auto Hitung Budget & Transparan Berdua
+                    </h3>
+                    <p class="font-bold text-slate-600 text-sm md:text-base leading-relaxed">
+                        Tidak perlu lagi mencatat manual di kertas atau kalkulator HP. Setiap pengeluaran langsung dihitung secara otomatis siapa bayar apa.
+                    </p>
+                    
+                    <ul class="space-y-2.5 text-xs md:text-sm font-bold text-slate-700 pt-2">
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                            <span>Pencatatan pengeluaran riil per kategori</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                            <span>Kalkulasi otomatis utang-piutang antar partner</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                            <span>Pantau sisa anggaran trip secara transparan</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 5: ANGKA PENCAPAIAN (4 STATS CARDS) -->
+    <section class="py-16 md:py-20 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB]">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-10">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E]">
+                    Pencapaian TwoGo Dalam Angka 🚀
+                </h2>
+                <p class="font-bold text-slate-600 text-sm">
+                    Angka nyata dari komunitas pengguna pelancong TwoGo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Stat 1 -->
+                <div class="p-6 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
+                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-[#1A1A2E]">15.000+</div>
+                    <div class="font-extrabold text-xs md:text-sm text-[#1A1A2E] uppercase tracking-wider">Itinerary Dibuat</div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="p-6 bg-[#00D4AA] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
+                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-[#1A1A2E]">500+</div>
+                    <div class="font-extrabold text-xs md:text-sm text-[#1A1A2E] uppercase tracking-wider">Destinasi Populer</div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="p-6 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
+                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-white">4.9 ★</div>
+                    <div class="font-extrabold text-xs md:text-sm text-white uppercase tracking-wider">Rating Kepuasan</div>
+                </div>
+
+                <!-- Stat 4 -->
+                <div class="p-6 bg-[#4361EE] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
+                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-white">28.000+</div>
+                    <div class="font-extrabold text-xs md:text-sm text-white uppercase tracking-wider">Trip Selesai</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 6: TESTIMONIAL SECTION (2 CARDS SIDE BY SIDE) -->
+    <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-white">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-12">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E]">
+                    Apa Kata Pengguna TwoGo? 💬
+                </h2>
+                <p class="font-bold text-slate-600 text-sm md:text-base">
+                    Pengalaman nyata pelancong yang udah nyobain liburan rapi bareng TwoGo.
+                </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Feature 1 -->
-                <div class="nb-card bg-white hover:-translate-y-2 border-[3px] shadow-[6px_6px_0px_#1A1A2E] group rounded-2xl">
-                    <div class="w-14 h-14 bg-[#00D4AA] rounded-full border-[3px] border-[#1A1A2E] flex items-center justify-center text-3xl mb-6 shadow-[3px_3px_0px_#1A1A2E] group-hover:rotate-12 transition-transform">📅</div>
-                    <h3 class="text-2xl font-extrabold font-heading mb-3">Timeline Fleksibel</h3>
-                    <p class="text-base font-semibold text-[#475569] leading-relaxed">Atur jadwal per hari dengan santai. Pagi, Siang, Malam — tanpa dikejar waktu karena liburan itu butuh chill.</p>
-                </div>
-
-                <!-- Feature 2 -->
-                <div class="nb-card bg-[#FFE156] hover:-translate-y-2 border-[3px] shadow-[6px_6px_0px_#1A1A2E] group rounded-2xl">
-                    <div class="w-14 h-14 bg-white rounded-full border-[3px] border-[#1A1A2E] flex items-center justify-center text-3xl mb-6 shadow-[3px_3px_0px_#1A1A2E] group-hover:-rotate-12 transition-transform">💰</div>
-                    <h3 class="text-2xl font-extrabold font-heading mb-3">Budget Tracker</h3>
-                    <p class="text-base font-semibold text-[#1A1A2E] opacity-90 leading-relaxed">Catat pengeluaran bersama. Siapa bayar apa, langsung tercatat rapi dan auto ngitung utang-piutang.</p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="nb-card bg-[#FF6B9D] hover:-translate-y-2 border-[3px] shadow-[6px_6px_0px_#1A1A2E] group rounded-2xl text-white">
-                    <div class="w-14 h-14 bg-white rounded-full border-[3px] border-[#1A1A2E] flex items-center justify-center text-3xl mb-6 shadow-[3px_3px_0px_#1A1A2E] group-hover:rotate-12 transition-transform">📍</div>
-                    <h3 class="text-2xl font-extrabold font-heading mb-3 text-black">Wishlist Destinasi</h3>
-                    <p class="text-base font-semibold text-black opacity-90 leading-relaxed">Kumpulkan ide tempat seru di bucket list sebelum finalisasi rencana. Vote mana yang wajib didatangi.</p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="nb-card bg-[#7B2FF7] hover:-translate-y-2 border-[3px] shadow-[6px_6px_0px_#1A1A2E] group rounded-2xl text-white">
-                    <div class="w-14 h-14 bg-[#FF8C42] rounded-full border-[3px] border-[#1A1A2E] flex items-center justify-center text-3xl mb-6 shadow-[3px_3px_0px_#1A1A2E] group-hover:-rotate-12 transition-transform">📸</div>
-                    <h3 class="text-2xl font-extrabold font-heading mb-3 text-black">Dokumentasi</h3>
-                    <p class="text-base font-semibold text-black opacity-90 leading-relaxed">Abadikan momen perjalanan. Foto dan catatan tersimpan rapi per trip, jadi kenangan digital yang aesthetic.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="max-w-5xl mx-auto px-4 py-24">
-            <div class="bg-[#4361EE] rounded-[2.5rem] border-[4px] border-[#1A1A2E] shadow-[12px_12px_0px_#1A1A2E] overflow-hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-0 items-center">
-                    <div class="p-10 md:p-16 flex flex-col justify-center items-center md:items-start text-center md:text-left">
-                        <div class="inline-block nb-badge bg-[#00D4AA] text-[#1A1A2E] mb-6 rotate-[-2deg] px-4 py-2 border-[2px] border-[#1A1A2E] font-bold">
-                            Tunggu Apa Lagi?
+                
+                <!-- Testimonial 1 -->
+                <div class="p-6 md:p-8 bg-[#FFF3C4] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl space-y-6 flex flex-col justify-between">
+                    <p class="font-bold text-base md:text-lg text-[#1A1A2E] leading-relaxed italic">
+                        "Liburan ke Bali minggu lalu rapi banget pakenya TwoGo! Gak pake adu argumen soal pengeluaran karena utang-piutang langsung auto dihitung. Recommended parah!"
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t-2 border-[#1A1A2E]">
+                        <div class="w-12 h-12 rounded-2xl bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] flex items-center justify-center font-extrabold text-lg">
+                            🌟
                         </div>
-                        <h2 class="text-3xl md:text-5xl font-heading font-extrabold mb-6 text-white leading-tight">
-                            Siap untuk Liburan Berikutnya?
-                        </h2>
-                        <p class="mb-10 font-semibold text-lg max-w-md text-white opacity-90">
-                            Yuk bikin itinerary pertamamu di TwoGo, gratis!
-                        </p>
-                        <a href="/register" class="nb-btn nb-btn-primary nb-btn-xl text-lg border-[3px] shadow-[4px_4px_0px_#1A1A2E] hover:shadow-[0px_0px_0px_#1A1A2E] hover:translate-y-[4px] hover:translate-x-[4px] transition-all">
-                            Buat Trip Sekarang 🚀
-                        </a>
-                    </div>
-                    <div class="w-full flex justify-center items-end bg-[#FFD1E3] h-full p-8 md:p-12 border-t-[4px] md:border-t-0 md:border-l-[4px] border-[#1A1A2E]">
-                        <img src="{{ asset('assets/images/img2.webp') }}" alt="Ilustrasi TwoGo" class="w-full max-w-[320px] rounded-2xl border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] transform rotate-[3deg] hover:rotate-0 transition-transform duration-300">
+                        <div>
+                            <div class="font-heading font-extrabold text-base text-[#1A1A2E]">Budi & Sarah</div>
+                            <div class="text-xs font-bold text-slate-600">Traveler Sejati 🌟</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
 
-    <!-- Footer -->
-    <footer class="border-t-[4px] border-[#1A1A2E] bg-white py-10">
-        <div class="max-w-5xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="font-heading font-extrabold text-2xl tracking-tight">
-                TwoGo<span class="text-[#FF6B9D]">.</span>
+                <!-- Testimonial 2 -->
+                <div class="p-6 md:p-8 bg-[#FFD1E3] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl space-y-6 flex flex-col justify-between">
+                    <p class="font-bold text-base md:text-lg text-[#1A1A2E] leading-relaxed italic">
+                        "Buat itinerary berdua sama doi langsung gampang. Tinggal nyusun hari demi hari trus foto kenangannya tersimpan rapi per trip. Gak bingung nyari foto lama."
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t-2 border-[#1A1A2E]">
+                        <div class="w-12 h-12 rounded-2xl bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] flex items-center justify-center font-extrabold text-lg">
+                            👑
+                        </div>
+                        <div>
+                            <div class="font-heading font-extrabold text-base text-[#1A1A2E]">Reza & Amanda</div>
+                            <div class="text-xs font-bold text-slate-700">TwoGo-er Legend 👑</div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="text-center md:text-left font-bold text-sm text-[#475569]">
-                &copy; 2026 TwoGo. V1.0.2.
+
+        </div>
+    </section>
+
+    <!-- SECTION 7: CTA AKHIR + FOOTER -->
+    <section class="py-16 md:py-20 bg-[#FFFBEB]">
+        <div class="max-w-5xl mx-auto px-4 md:px-8">
+            <div class="bg-[#4361EE] border-[4px] border-[#1A1A2E] shadow-[12px_12px_0px_#1A1A2E] rounded-3xl p-8 md:p-14 text-center space-y-6 text-white">
+                <div class="inline-block px-4 py-1.5 bg-[#00D4AA] text-[#1A1A2E] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-full font-heading font-extrabold text-xs md:text-sm">
+                    Tunggu Apa Lagi? 🎒
+                </div>
+
+                <h2 class="font-heading font-extrabold text-3xl md:text-5xl text-white leading-tight">
+                    Siap untuk Liburan Berikutnya?
+                </h2>
+
+                <p class="font-bold text-base md:text-lg text-white opacity-95 max-w-lg mx-auto">
+                    Yuk bikin itinerary pertamamu di TwoGo secara gratis!
+                </p>
+
+                <div class="pt-2">
+                    <a href="{{ route('register') }}" class="inline-block px-8 py-4 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] transition-all">
+                        Buat Trip Sekarang 🚀
+                    </a>
+                </div>
             </div>
-            <div class="font-bold text-sm text-[#1A1A2E] border-b-2 border-[#1A1A2E]">
-                <a href="mailto:adventuretwogo@gmail.com">adventuretwogo@gmail.com</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t-[4px] border-[#1A1A2E] bg-white py-12">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+            
+            <!-- Col 1: Brand -->
+            <div class="md:col-span-5 space-y-3">
+                <div class="font-heading font-extrabold text-2xl md:text-3xl tracking-tight flex items-center gap-1">
+                    TwoGo<span class="text-[#FF6B9D] text-4xl leading-none">.</span>
+                </div>
+                <p class="font-bold text-xs md:text-sm text-slate-600 max-w-sm">
+                    Rencana Seru, Bareng-Bareng! Aplikasi itinerary & budget tracker perjalanan #1 di Indonesia.
+                </p>
             </div>
+
+            <!-- Col 2: Navigation Links -->
+            <div class="md:col-span-4 space-y-2 text-xs md:text-sm font-bold text-slate-700">
+                <div class="font-heading font-extrabold text-sm text-[#1A1A2E] uppercase tracking-wider mb-2">Navigasi</div>
+                <div class="flex flex-wrap gap-x-6 gap-y-2">
+                    <a href="{{ route('landing') }}" class="hover:text-[#4361EE] transition-colors">Beranda</a>
+                    <a href="{{ route('login') }}" class="hover:text-[#4361EE] transition-colors">Masuk</a>
+                    <a href="{{ route('register') }}" class="hover:text-[#4361EE] transition-colors">Daftar</a>
+                    <a href="{{ route('admin.login') }}" class="hover:text-[#4361EE] transition-colors text-purple-700 font-extrabold">Admin Panel</a>
+                </div>
+            </div>
+
+            <!-- Col 3: Contact & Copyright -->
+            <div class="md:col-span-3 space-y-2 text-xs font-bold text-slate-600 md:text-right">
+                <div class="font-heading font-extrabold text-sm text-[#1A1A2E] uppercase tracking-wider mb-2">Hubungi Kami</div>
+                <div>📧 <a href="mailto:adventuretwogo@gmail.com" class="underline hover:text-[#4361EE]">adventuretwogo@gmail.com</a></div>
+                <div class="pt-2 text-slate-500">&copy; 2026 TwoGo. All rights reserved.</div>
+            </div>
+
         </div>
     </footer>
 
-    <script>
-        // Navbar shadow on scroll
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 10) {
-                navbar.classList.add('shadow-[0_4px_0px_#1A1A2E]');
-            } else {
-                navbar.classList.remove('shadow-[0_4px_0px_#1A1A2E]');
-            }
-        });
-
-        // Parallax effect for emojis
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            const maxScroll = 500;
-            const progress = Math.min(scrollY / maxScroll, 1);
-
-            const opacity = Math.max(1 - (progress * 1.5), 0);
-
-            const emojiLeft = document.getElementById('emoji-left');
-            if (emojiLeft) {
-                emojiLeft.style.transform = `translateY(${-progress * 100}px) translateX(${-progress * 50}px) rotate(${-20 + (-20 * progress)}deg)`;
-                emojiLeft.style.opacity = opacity;
-            }
-
-            const emojiRight = document.getElementById('emoji-right');
-            if (emojiRight) {
-                emojiRight.style.transform = `translateY(${-progress * 150}px) translateX(${progress * 50}px) rotate(${15 + (20 * progress)}deg)`;
-                emojiRight.style.opacity = opacity;
-            }
-        });
-    </script>
 </body>
 </html>
