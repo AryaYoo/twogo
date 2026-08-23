@@ -20,7 +20,9 @@
             Buat trip atau wishlist dan atur sebagai publik — atau tambah teman yang juga membagikan perjalanan mereka!
         </p>
         <a href="{{ route('trips.create') }}" class="nb-btn nb-btn-primary">Buat Trip Baru</a>
-    </div>    <div 
+    </div>
+@else
+    <div 
         x-data="fypStackedCarousel({{ count($feed) }})"
         x-on:touchstart="onTouchStart($event)"
         x-on:touchmove="onTouchMove($event)"
