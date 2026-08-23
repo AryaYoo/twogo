@@ -25,29 +25,40 @@ class AdminLandingController extends Controller
 
     public function updateSettings(Request $request)
     {
-        $settings = $request->input('settings', []);
+        try {
+            $settings = $request->input('settings', []);
 
-        foreach ($settings as $key => $value) {
-            LandingSetting::setValue($key, $value);
+            if (is_array($settings)) {
+                foreach ($settings as $key => $value) {
+                    LandingSetting::setValue($key, is_array($value) ? json_encode($value) : $value);
+                }
+            }
+
+            $targetDir = public_path('assets/images');
+            if (!file_exists($targetDir)) {
+                @mkdir($targetDir, 0755, true);
+            }
+
+            // Handle hero card image upload
+            if ($request->hasFile('hero_card_image') && $request->file('hero_card_image')->isValid()) {
+                $file = $request->file('hero_card_image');
+                $filename = 'hero_card_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move($targetDir, $filename);
+                LandingSetting::setValue('hero_card_image', 'assets/images/' . $filename);
+            }
+
+            // Handle auth background image upload
+            if ($request->hasFile('auth_bg_image') && $request->file('auth_bg_image')->isValid()) {
+                $file = $request->file('auth_bg_image');
+                $filename = 'auth_bg_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move($targetDir, $filename);
+                LandingSetting::setValue('auth_bg_image', 'assets/images/' . $filename);
+            }
+
+            return back()->with('success', 'Pengaturan teks Landing Page berhasil disimpan!');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
         }
-
-        // Handle hero card image upload
-        if ($request->hasFile('hero_card_image') && $request->file('hero_card_image')->isValid()) {
-            $file = $request->file('hero_card_image');
-            $filename = 'hero_card_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('assets/images'), $filename);
-            LandingSetting::setValue('hero_card_image', 'assets/images/' . $filename);
-        }
-
-        // Handle auth background image upload
-        if ($request->hasFile('auth_bg_image') && $request->file('auth_bg_image')->isValid()) {
-            $file = $request->file('auth_bg_image');
-            $filename = 'auth_bg_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('assets/images'), $filename);
-            LandingSetting::setValue('auth_bg_image', 'assets/images/' . $filename);
-        }
-
-        return back()->with('success', 'Pengaturan teks Landing Page berhasil disimpan!');
     }
 
     /* ------------------------------------------------------------------ */
