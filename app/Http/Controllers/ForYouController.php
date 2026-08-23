@@ -17,13 +17,25 @@ class ForYouController extends Controller
             ->orderByDesc('created_at')
             ->limit(30)
             ->get()
-            ->map(fn (Trip $trip) => [
-                'type'       => $trip->start_date ? 'trip' : 'wishlist',
-                'trip'       => $trip,
-                'user'       => $trip->creator,
-                'is_own'     => $trip->user_id === Auth::id(),
-                'created_at' => $trip->created_at,
-            ]);
+            ->map(function (Trip $trip) {
+                $imageUrl = null;
+                if ($trip->cover_image) {
+                    $imageUrl = str_starts_with($trip->cover_image, 'assets/') || str_starts_with($trip->cover_image, 'storage/') 
+                        ? asset($trip->cover_image) 
+                        : asset('storage/' . $trip->cover_image);
+                } else {
+                    $imageUrl = $trip->id % 2 === 0 ? asset('assets/images/img1.webp') : asset('assets/images/img2.webp');
+                }
+
+                return [
+                    'type'       => $trip->start_date ? 'trip' : 'wishlist',
+                    'trip'       => $trip,
+                    'user'       => $trip->creator,
+                    'is_own'     => $trip->user_id === Auth::id(),
+                    'created_at' => $trip->created_at,
+                    'image_url'  => $imageUrl,
+                ];
+            });
 
         return view('for-you.index', compact('feed'));
     }
