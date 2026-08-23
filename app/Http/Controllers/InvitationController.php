@@ -137,9 +137,11 @@ class InvitationController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        $unreadCount = $user->unreadNotifications->count();
+
         $user->unreadNotifications->markAsRead();
 
-        return view('invitations.index', compact('invitations', 'activities'));
+        return view('invitations.index', compact('invitations', 'activities', 'unreadCount'));
     }
 
     /**

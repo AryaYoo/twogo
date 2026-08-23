@@ -17,15 +17,18 @@
     {{-- Tabs --}}
     <div class="flex gap-2 mb-5 bg-white border-[3px] border-[#1A1A2E] rounded-xl p-1 shadow-[2px_2px_0px_#1A1A2E]">
         <button id="tab-invitations-btn" onclick="switchNotificationTab('invitations')"
-            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 notification-tab-btn active-tab" data-tab="invitations">
+            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 notification-tab-btn active-tab relative" data-tab="invitations">
             🔔 Undangan
             @if($invitations->count() > 0)
-                <span class="ml-1 bg-[#1A1A2E] text-[#FFE156] text-xs font-bold px-1.5 py-0.5 rounded-full">{{ $invitations->count() }}</span>
+                <span class="ml-1 bg-[#FF6B9D] text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full align-middle">{{ $invitations->count() }}</span>
             @endif
         </button>
         <button id="tab-activities-btn" onclick="switchNotificationTab('activities')"
-            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 notification-tab-btn" data-tab="activities">
+            class="flex-1 py-2 px-3 rounded-lg font-heading font-bold text-sm transition-all duration-200 notification-tab-btn relative" data-tab="activities">
             ⚡ Aktivitas
+            @if($unreadCount > 0)
+                <span class="ml-1 bg-[#FF6B9D] text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full align-middle">{{ $unreadCount }}</span>
+            @endif
         </button>
     </div>
 
@@ -93,6 +96,7 @@
 <style>
     .notification-tab-btn { color: #1A1A2E; background: transparent; }
     .active-tab { background: #1A1A2E; color: #FFE156; }
+    .active-tab span.ml-1 { background: #FFE156 !important; color: #1A1A2E !important; }
 </style>
 <script>
     function switchNotificationTab(tab) {
@@ -101,5 +105,14 @@
         document.getElementById('tab-' + tab).classList.remove('hidden');
         document.querySelector('[data-tab="' + tab + '"]').classList.add('active-tab');
     }
+
+    // Auto-switch to Aktivitas tab if no pending invitations but has unread activities
+    document.addEventListener('DOMContentLoaded', function () {
+        const pendingInvitations = {{ $invitations->count() }};
+        const unreadActivities  = {{ $unreadCount }};
+        if (pendingInvitations === 0 && unreadActivities > 0) {
+            switchNotificationTab('activities');
+        }
+    });
 </script>
 @endpush
