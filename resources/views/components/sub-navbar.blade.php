@@ -4,21 +4,21 @@
         <!-- Link 1: Utama -->
         <a href="{{ route('landing') }}" 
            class="px-4 py-1.5 rounded-xl border-2 border-[#1A1A2E] transition-all whitespace-nowrap flex items-center gap-1.5 {{ request()->routeIs('landing') ? 'bg-[#FFE156] text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]' : 'bg-white hover:bg-[#FFFBEB] text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]' }}">
-            <span>🏠</span>
+            <span class="hidden md:inline">🏠</span>
             <span>Utama</span>
         </a>
 
         <!-- Link 2: Berita -->
         <a href="{{ route('news.index') }}" 
            class="px-4 py-1.5 rounded-xl border-2 border-[#1A1A2E] transition-all whitespace-nowrap flex items-center gap-1.5 {{ request()->routeIs('news.*') ? 'bg-[#FFE156] text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]' : 'bg-white hover:bg-[#FFFBEB] text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]' }}">
-            <span>📰</span>
+            <span class="hidden md:inline">📰</span>
             <span>Berita</span>
         </a>
 
         <!-- Link 3: Kontak -->
         <a href="{{ route('contact.index') }}" 
            class="px-4 py-1.5 rounded-xl border-2 border-[#1A1A2E] transition-all whitespace-nowrap flex items-center gap-1.5 {{ request()->routeIs('contact.*') ? 'bg-[#FFE156] text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]' : 'bg-white hover:bg-[#FFFBEB] text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]' }}">
-            <span>📞</span>
+            <span class="hidden md:inline">📞</span>
             <span>Kontak</span>
         </a>
 
@@ -26,8 +26,8 @@
         <a href="{{ route('photobooth.index') }}" 
            class="px-4 py-1.5 rounded-xl border-2 border-[#1A1A2E] transition-all whitespace-nowrap flex items-center gap-1.5 {{ request()->routeIs('photobooth.*') ? 'bg-[#FFE156] text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]' : 'bg-[#FF6B9D] hover:bg-[#ff528c] text-white shadow-[2px_2px_0px_#1A1A2E]' }}">
             <span>📸</span>
-            <span>Photobooth Digital</span>
-            <span class="px-1.5 py-0.5 bg-[#FFE156] text-[#1A1A2E] text-[10px] rounded-md border border-[#1A1A2E] animate-pulse">BARU</span>
+            <span class="hidden md:inline">Photobooth Digital</span>
+            <span class="px-1.5 py-0.5 bg-[#FFE156] text-[#1A1A2E] text-[10px] rounded-md border border-[#1A1A2E] animate-pulse hidden md:inline-block">BARU</span>
         </a>
 
     </div>
