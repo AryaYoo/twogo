@@ -1,5 +1,5 @@
-<div class="w-full bg-white border-b-[3px] border-[#1A1A2E] py-2.5">
-    <div class="max-w-6xl mx-auto px-4 md:px-8 flex items-center justify-start md:justify-center gap-2 md:gap-3 overflow-x-auto text-xs md:text-sm font-heading font-extrabold scrollbar-none">
+<div class="w-full bg-white border-b-[3px] border-[#1A1A2E] py-2.5 overflow-x-auto scrollbar-none">
+    <div class="flex items-center justify-start lg:justify-center gap-2 md:gap-3 px-4 md:px-8 mx-auto max-w-6xl min-w-max text-xs md:text-sm font-heading font-extrabold">
         
         <!-- Link 1: Utama -->
         <a href="{{ route('landing') }}" 
