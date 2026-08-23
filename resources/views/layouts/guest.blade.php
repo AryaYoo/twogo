@@ -13,18 +13,61 @@
 </head>
 <body class="bg-[#FFE156] bg-cover bg-center bg-no-repeat bg-fixed relative" style="background-image: url('{{ asset('assets/images/img1.webp') }}');">
     <style>
-        @keyframes water-shimmer {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
+        /* ===== WATER SHIMMER ANIMATION ===== */
+        @keyframes water-shimmer-a {
+            0%, 100% { opacity: 0; }
+            50%       { opacity: 0.55; }
         }
-        .animate-water-shimmer {
-            animation: water-shimmer 3.5s ease-in-out infinite;
+        @keyframes water-shimmer-b {
+            0%, 100% { opacity: 0.45; }
+            50%       { opacity: 0; }
+        }
+        @keyframes water-shimmer-c {
+            0%, 100% { opacity: 0.1; }
+            40%       { opacity: 0.5; }
+            80%       { opacity: 0.05; }
+        }
+
+        /* Shimmer strip — base horizontal band of white over the water */
+        .shimmer-layer {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            pointer-events: none;
+            z-index: 1;
             will-change: opacity;
+            background: rgba(255,255,255,0.38);
+        }
+
+        /* Three strips stacked at different heights in water zone (~55%–75% from top) */
+        .shimmer-layer-1 {
+            top: 72%;
+            height: 6px;
+            animation: water-shimmer-a 3.5s ease-in-out infinite;
+        }
+        .shimmer-layer-2 {
+            top: 66%;
+            height: 4px;
+            animation: water-shimmer-b 4s ease-in-out infinite;
+            animation-delay: 0.8s;
+        }
+        .shimmer-layer-3 {
+            top: 60%;
+            height: 3px;
+            animation: water-shimmer-c 4.5s ease-in-out infinite;
+            animation-delay: 1.6s;
+        }
+
+        /* Disable on mobile — waves too small to matter */
+        @media (max-width: 639px) {
+            .shimmer-layer { display: none !important; }
         }
     </style>
-    
-    <!-- Subtle Water Shimmer Overlay for Desktop -->
-    <div class="hidden sm:block fixed bottom-0 left-0 w-full h-[40%] bg-gradient-to-t from-white/20 via-white/5 to-transparent mix-blend-overlay animate-water-shimmer pointer-events-none z-0"></div>
+
+    <!-- Water Shimmer Strips (Desktop only) -->
+    <div class="shimmer-layer shimmer-layer-1" aria-hidden="true"></div>
+    <div class="shimmer-layer shimmer-layer-2" aria-hidden="true"></div>
+    <div class="shimmer-layer shimmer-layer-3" aria-hidden="true"></div>
 
     <div class="app-container relative z-10" style="background-color: transparent; box-shadow: none;">
         <main class="p-6 min-h-screen flex flex-col justify-center animate-fade-in-up">
