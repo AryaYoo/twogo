@@ -323,6 +323,7 @@ class TripController extends Controller
             'total_budget'   => $trip->total_budget,
             'status'         => 'planning',
             'is_public'      => false,
+            'invite_code'    => strtoupper(Str::random(6)),
         ]);
 
         $clone->members()->attach($user->id, ['role' => 'owner', 'joined_at' => now()]);

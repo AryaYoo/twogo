@@ -44,7 +44,7 @@
                 @endphp
                 <div 
                     class="absolute inset-x-0 mx-auto w-full max-w-sm transition-all duration-300 ease-out origin-bottom fyp-card-{{ $index }}"
-                    data-title="{{ $trip->title }}"
+                    data-title="{{ e($trip->title) }}"
                     data-clone-url="{{ route('trips.clone', $trip) }}"
                     data-like-url="{{ route('trips.like', $trip) }}"
                     :style="getCardStyle({{ $index }})"
@@ -122,7 +122,7 @@
 
                                 <button 
                                     type="button"
-                                    @click="openCloneModal('{{ $trip->title }}', '{{ route('trips.clone', $trip) }}')"
+                                    @click="openCloneModal('{!! addslashes(e($trip->title)) !!}', '{{ route('trips.clone', $trip) }}')"
                                     class="px-2 py-1 bg-[#FFFBEB] hover:bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
                                     title="Swipe Kiri atau Klik untuk Salin Itinerary"
                                 >
@@ -147,7 +147,7 @@
         </div>
 
         <!-- Bottom Controls & Navigation Buttons -->
-        <div class="w-full flex items-center justify-between px-1 pt-2 pb-1 z-40">
+        <div class="w-full flex items-center justify-between px-4 pt-6 pb-2 z-40 mt-12 sm:mt-16">
             <!-- Progress Bar Indicator -->
             <div class="flex-1 mr-3 bg-slate-200 border-2 border-[#1A1A2E] rounded-full h-2.5 sm:h-3 overflow-hidden shadow-[2px_2px_0px_#1A1A2E]">
                 <div 
