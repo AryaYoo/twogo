@@ -8,11 +8,19 @@ use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripActivityController;
 
 Route::get('/', function () {
-    $settings = \App\Models\LandingSetting::all()->pluck('value', 'key')->toArray();
-    $features = \App\Models\LandingFeature::where('is_active', true)->orderBy('order')->get();
-    $showcases = \App\Models\LandingShowcase::where('is_active', true)->orderBy('order')->get();
-    $stats = \App\Models\LandingStat::where('is_active', true)->orderBy('order')->get();
-    $testimonials = \App\Models\LandingTestimonial::where('is_active', true)->orderBy('order')->get();
+    try {
+        $settings = \App\Models\LandingSetting::all()->pluck('value', 'key')->toArray();
+        $features = \App\Models\LandingFeature::where('is_active', true)->orderBy('order')->get();
+        $showcases = \App\Models\LandingShowcase::where('is_active', true)->orderBy('order')->get();
+        $stats = \App\Models\LandingStat::where('is_active', true)->orderBy('order')->get();
+        $testimonials = \App\Models\LandingTestimonial::where('is_active', true)->orderBy('order')->get();
+    } catch (\Throwable $e) {
+        $settings = [];
+        $features = collect();
+        $showcases = collect();
+        $stats = collect();
+        $testimonials = collect();
+    }
 
     return view('landing', compact('settings', 'features', 'showcases', 'stats', 'testimonials'));
 })->name('landing');
