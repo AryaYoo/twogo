@@ -81,7 +81,7 @@
                             </td>
 
                             <!-- Status -->
-                            <td class="py-3.5 px-4">
+                            <td class="py-3.5 px-4 whitespace-nowrap">
                                 @if($user->status === 'banned')
                                     <span class="px-3 py-1 bg-red-100 text-red-700 font-extrabold text-xs border border-red-400 rounded-lg">
                                         🚫 Banned
@@ -102,16 +102,16 @@
                                 <div class="flex items-center gap-2">
                                     <span class="text-lg">{{ $user->level_info['tier']['emoji'] }}</span>
                                     <div>
-                                        <div class="font-extrabold text-xs text-[#1A1A2E]">Lvl {{ $user->level_info['level'] }} — {{ $user->level_info['tier']['name'] }}</div>
-                                        <div class="text-[11px] font-extrabold text-[#7B2FF7]">{{ number_format($user->xp ?? 0) }} XP</div>
+                                        <div class="font-extrabold text-xs text-[#1A1A2E] whitespace-nowrap">Lvl {{ $user->level_info['level'] }} — {{ $user->level_info['tier']['name'] }}</div>
+                                        <div class="text-[11px] font-extrabold text-[#7B2FF7] whitespace-nowrap">{{ number_format($user->xp ?? 0) }} XP</div>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Total Trips -->
                             <td class="py-3.5 px-4">
-                                <span class="font-extrabold bg-slate-100 border border-slate-300 px-2.5 py-1 rounded-lg text-xs">
-                                    🗺️ {{ $user->owned_trips_count }} Trip
+                                <span class="font-extrabold bg-slate-100 border border-slate-300 px-2.5 py-1 rounded-lg text-xs whitespace-nowrap inline-flex items-center gap-1">
+                                    <span>🗺️</span> <span>{{ $user->owned_trips_count }} Trip</span>
                                 </span>
                             </td>
 
