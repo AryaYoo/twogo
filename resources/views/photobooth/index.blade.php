@@ -60,51 +60,31 @@
                             <!-- Video Stream -->
                             <video x-ref="videoElement" autoplay playsinline class="w-full h-full object-cover" x-show="!hasCaptured"></video>
                             
+                            <!-- Sequence Status Overlay -->
+                            <div x-show="isCapturing" class="absolute top-4 left-4 z-40 bg-[#FFE156] text-[#1A1A2E] px-4 py-2 rounded-xl font-heading font-extrabold text-sm border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]" style="display: none;">
+                                Foto <span x-text="photos.length + 1"></span> dari <span x-text="maxPhotos"></span>
+                            </div>
+
                             <!-- Countdown Overlay -->
                             <div x-show="countdown > 0" class="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-30" style="display: none;">
                                 <span x-text="countdown" class="font-heading font-extrabold text-8xl text-[#FFE156] animate-bounce drop-shadow-[4px_4px_0px_#1A1A2E]"></span>
                             </div>
 
                             <!-- Live Frame Overlay Preview on Video -->
-                            <div x-show="!hasCaptured" class="absolute inset-0 pointer-events-none z-10">
-                                <!-- Template 1 Overlay -->
-                                <template x-if="selectedTemplate === 1">
-                                    <div class="w-full h-full border-[14px] border-[#FFE156] flex flex-col justify-between p-3 relative">
-                                        <div class="flex justify-between items-start">
-                                            <span class="px-2.5 py-1 bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] font-heading font-extrabold text-[10px] rounded-md shadow-[2px_2px_0px_#1A1A2E]">✨ TwoGo Holiday Vibes</span>
-                                            <span class="w-6 h-6 bg-[#00D4AA] border-2 border-[#1A1A2E] rounded-full shadow-[2px_2px_0px_#1A1A2E]"></span>
-                                        </div>
-                                        <div class="bg-white/90 border-2 border-[#1A1A2E] p-2 rounded-xl text-center shadow-[2px_2px_0px_#1A1A2E]">
-                                            <div class="font-heading font-extrabold text-xs text-[#1A1A2E]">Rencana Seru, Bareng-Bareng! 🎒</div>
-                                            <div class="text-[9px] font-bold text-slate-500">📍 TwoGo Digital Moment • 2026</div>
-                                        </div>
-                                    </div>
-                                </template>
-
-                                <!-- Template 2 Overlay -->
-                                <template x-if="selectedTemplate === 2">
-                                    <div class="w-full h-full border-[14px] border-[#00D4AA] flex flex-col justify-between p-3 relative">
-                                        <div class="flex justify-between items-start">
-                                            <span class="px-2.5 py-1 bg-[#4361EE] text-white border-2 border-[#1A1A2E] font-heading font-extrabold text-[10px] rounded-md shadow-[2px_2px_0px_#1A1A2E]">APPROVED ✈️ OFFICIAL PASSPORT</span>
-                                            <span class="px-2 py-0.5 bg-[#FFE156] text-[#1A1A2E] border border-[#1A1A2E] font-extrabold text-[9px] rounded">TwoGo Stamp</span>
-                                        </div>
-                                        <div class="bg-[#1A1A2E] text-[#FFE156] border-2 border-[#1A1A2E] p-2 rounded-xl text-center shadow-[2px_2px_0px_#FFE156]">
-                                            <div class="font-heading font-extrabold text-xs">BALI • JOGJA • LOMBOK • RAJA AMPAT</div>
-                                            <div class="text-[9px] font-bold text-slate-300">EXPLORER BADGE 🌟</div>
-                                        </div>
-                                    </div>
-                                </template>
+                            <div x-show="!hasCaptured && isCameraActive" class="absolute inset-0 pointer-events-none z-10 border-[16px] transition-colors" :class="selectedTemplate === 1 ? 'border-[#FFE156]' : 'border-[#00D4AA]'">
                             </div>
 
                             <!-- Final Rendered Canvas (When Captured) -->
-                            <canvas x-ref="canvasElement" class="w-full h-full object-contain" x-show="hasCaptured"></canvas>
+                            <div x-show="hasCaptured" class="absolute inset-0 z-20 bg-slate-100 overflow-y-auto p-4 scrollbar-none flex justify-center" style="display: none;">
+                                <canvas x-ref="canvasElement" class="w-[80%] max-w-[300px] h-auto object-contain shadow-[4px_4px_0px_#1A1A2E] border-2 border-[#1A1A2E]"></canvas>
+                            </div>
 
                             <!-- Placeholder when camera disabled -->
-                            <div x-show="!isCameraActive && !hasCaptured" class="text-center text-white space-y-3 p-6">
+                            <div x-show="!isCameraActive && !hasCaptured" class="absolute inset-0 flex flex-col items-center justify-center text-center text-white space-y-3 p-6 bg-[#1A1A2E] z-20">
                                 <span class="text-5xl">📷</span>
                                 <div class="font-heading font-extrabold text-lg">Kamera Belum Aktif</div>
                                 <p class="text-xs text-slate-300">Izinkan akses kamera di browser kamu untuk memulai Photobooth.</p>
-                                <button @click="initCamera()" class="px-5 py-2.5 bg-[#FFE156] text-[#1A1A2E] border-2 border-white rounded-xl font-heading font-extrabold text-xs shadow-[3px_3px_0px_#000] cursor-pointer">
+                                <button @click="initCamera()" class="mt-2 px-5 py-2.5 bg-[#FFE156] text-[#1A1A2E] border-2 border-white rounded-xl font-heading font-extrabold text-xs shadow-[3px_3px_0px_#000] cursor-pointer">
                                     ▶️ Izinkan & Aktifkan Kamera
                                 </button>
                             </div>
@@ -113,9 +93,9 @@
                         <!-- Action Buttons -->
                         <div class="flex items-center justify-between gap-4 pt-2">
                             <template x-if="!hasCaptured">
-                                <button @click="startCountdown()" :disabled="!isCameraActive || countdown > 0" class="w-full py-3.5 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-2xl font-heading font-extrabold text-sm text-[#1A1A2E] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50">
+                                <button @click="startSequence()" :disabled="!isCameraActive || isCapturing" class="w-full py-3.5 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-2xl font-heading font-extrabold text-sm text-[#1A1A2E] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50">
                                     <span>📸</span>
-                                    <span>Ambil Foto (Timer 3 Detik)</span>
+                                    <span x-text="isCapturing ? 'Sedang Mengambil Foto...' : 'Mulai Foto (3x Jepret)'"></span>
                                 </button>
                             </template>
 
@@ -126,7 +106,7 @@
                                     </button>
                                     <button @click="downloadPhoto()" class="w-1/2 py-3 bg-[#00D4AA] hover:bg-[#00be98] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl font-heading font-extrabold text-xs text-[#1A1A2E] cursor-pointer flex items-center justify-center gap-1.5">
                                         <span>⬇️</span>
-                                        <span>Download Foto PNG</span>
+                                        <span>Download Strip (PNG)</span>
                                     </button>
                                 </div>
                             </template>
@@ -183,6 +163,9 @@
                 hasCaptured: false,
                 selectedTemplate: 1,
                 countdown: 0,
+                photos: [],
+                maxPhotos: 3,
+                isCapturing: false,
 
                 initCamera() {
                     const video = this.$refs.videoElement;
@@ -204,155 +187,202 @@
                     }
                 },
 
-                startCountdown() {
-                    if (this.countdown > 0) return;
+                startSequence() {
+                    if (!this.isCameraActive || this.isCapturing) return;
+                    this.photos = [];
+                    this.isCapturing = true;
+                    this.hasCaptured = false;
+                    this.takeNextPhoto();
+                },
+
+                takeNextPhoto() {
+                    if (this.photos.length >= this.maxPhotos) {
+                        this.isCapturing = false;
+                        this.hasCaptured = true;
+                        this.$nextTick(() => {
+                            this.renderCanvas();
+                        });
+                        return;
+                    }
+
                     this.countdown = 3;
                     const timer = setInterval(() => {
                         this.countdown--;
                         if (this.countdown <= 0) {
                             clearInterval(timer);
-                            this.capturePhoto();
+                            this.captureFrame();
+                            
+                            // Visual flash effect on capture
+                            const flash = document.createElement('div');
+                            flash.className = 'absolute inset-0 bg-white z-50 transition-opacity duration-300';
+                            this.$refs.videoElement.parentElement.appendChild(flash);
+                            setTimeout(() => flash.style.opacity = '0', 50);
+                            setTimeout(() => flash.remove(), 350);
+
+                            // Wait 1.5 seconds before starting next countdown (or finishing)
+                            setTimeout(() => {
+                                this.takeNextPhoto();
+                            }, 1500);
                         }
                     }, 1000);
                 },
 
-                capturePhoto() {
-                    this.hasCaptured = true;
-                    this.$nextTick(() => {
-                        this.renderCanvas();
-                    });
+                captureFrame() {
+                    const video = this.$refs.videoElement;
+                    const tempCanvas = document.createElement('canvas');
+                    // Draw in 4:3 aspect ratio (e.g. 1000x750) for high quality
+                    tempCanvas.width = 1000;
+                    tempCanvas.height = 750;
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+                    this.photos.push(tempCanvas);
                 },
 
                 renderCanvas() {
-                    const video = this.$refs.videoElement;
                     const canvas = this.$refs.canvasElement;
                     const ctx = canvas.getContext('2d');
 
-                    const width = 1280;
-                    const height = 960;
+                    // Photo strip dimensions
+                    const width = 600;
+                    const height = 1600;
                     canvas.width = width;
                     canvas.height = height;
 
-                    // Draw camera video frame onto canvas
-                    ctx.drawImage(video, 0, 0, width, height);
-
+                    // Common photo sizes
+                    const photoWidth = 500;
+                    const photoHeight = 375;
+                    const photoX = (width - photoWidth) / 2;
+                    const photoSpacing = 30;
+                    
                     // Render Template Frames according to selection
                     if (this.selectedTemplate === 1) {
-                        // Template 1: Holiday Polaroid (Yellow & Pink Frame)
-                        const borderWidth = 30;
+                        // Template 1: Holiday Polaroid (Pink & Yellow Frame)
+                        const borderWidth = 15;
 
-                        // Outer Yellow Border
-                        ctx.fillStyle = '#FFE156';
-                        ctx.fillRect(0, 0, width, borderWidth);
-                        ctx.fillRect(0, height - borderWidth * 3, width, borderWidth * 3);
-                        ctx.fillRect(0, 0, borderWidth, height);
-                        ctx.fillRect(width - borderWidth, 0, borderWidth, height);
+                        // Outer Pink Background
+                        ctx.fillStyle = '#FF6B9D';
+                        ctx.fillRect(0, 0, width, height);
 
-                        // Black strokes
-                        ctx.lineWidth = 8;
+                        // Black borders
+                        ctx.lineWidth = 10;
                         ctx.strokeStyle = '#1A1A2E';
                         ctx.strokeRect(0, 0, width, height);
+                        ctx.strokeRect(borderWidth, borderWidth, width - borderWidth * 2, height - borderWidth * 2);
 
-                        // Inner photo border
-                        ctx.strokeRect(borderWidth, borderWidth, width - borderWidth * 2, height - borderWidth * 4);
-
-                        // Header Badge
-                        ctx.fillStyle = '#FF6B9D';
-                        ctx.fillRect(50, 40, 360, 60);
-                        ctx.strokeRect(50, 40, 360, 60);
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.font = 'bold 24px "Space Grotesk", sans-serif';
-                        ctx.fillText('✨ TwoGo Holiday Vibes', 75, 78);
-
-                        // Bottom Text Card
-                        const cardWidth = 600;
-                        const cardHeight = 110;
-                        const cardX = (width - cardWidth) / 2;
-                        const cardY = height - 140;
-
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillRect(cardX, cardY, cardWidth, cardHeight);
-                        ctx.strokeRect(cardX, cardY, cardWidth, cardHeight);
-
+                        // Header Graphic
+                        ctx.fillStyle = '#FFE156';
+                        ctx.fillRect(photoX, 40, photoWidth, 100);
+                        ctx.strokeRect(photoX, 40, photoWidth, 100);
                         ctx.fillStyle = '#1A1A2E';
-                        ctx.font = 'extrabold 32px "Space Grotesk", sans-serif';
+                        ctx.font = 'bold 36px "Space Grotesk", sans-serif';
                         ctx.textAlign = 'center';
-                        ctx.fillText('Rencana Seru, Bareng-Bareng! 🎒', width / 2, cardY + 50);
+                        ctx.fillText('✨ HOLIDAY VIBES', width / 2, 100);
 
+                        // Draw the 3 photos
+                        let currentY = 170;
+                        this.photos.forEach((photoCanvas) => {
+                            // Photo background (white border)
+                            ctx.fillStyle = '#FFFFFF';
+                            ctx.fillRect(photoX - 10, currentY - 10, photoWidth + 20, photoHeight + 20);
+                            ctx.strokeRect(photoX - 10, currentY - 10, photoWidth + 20, photoHeight + 20);
+                            
+                            // Photo itself
+                            ctx.drawImage(photoCanvas, photoX, currentY, photoWidth, photoHeight);
+                            ctx.strokeRect(photoX, currentY, photoWidth, photoHeight);
+                            
+                            currentY += photoHeight + photoSpacing + 20; // +20 for the padding
+                        });
+
+                        // Footer Graphic
+                        const footerY = currentY + 10;
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(photoX, footerY, photoWidth, 100);
+                        ctx.strokeRect(photoX, footerY, photoWidth, 100);
+                        
+                        ctx.fillStyle = '#1A1A2E';
+                        ctx.font = 'extrabold 28px "Space Grotesk", sans-serif';
+                        ctx.fillText('Rencana Seru, Bareng-Bareng! 🎒', width / 2, footerY + 45);
+                        
                         ctx.fillStyle = '#64748B';
-                        ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
-                        ctx.fillText('📍 TwoGo Digital Moment • ' + new Date().toLocaleDateString('id-ID'), width / 2, cardY + 85);
-                        ctx.textAlign = 'left';
+                        ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif';
+                        ctx.fillText('📍 TwoGo Digital Moment • ' + new Date().toLocaleDateString('id-ID'), width / 2, footerY + 80);
 
                     } else if (this.selectedTemplate === 2) {
-                        // Template 2: Passport Stamp (Mint & Blue Frame)
-                        const borderWidth = 35;
+                        // Template 2: Passport Stamp (Blue & Mint Frame)
+                        const borderWidth = 15;
 
-                        // Outer Mint Border
-                        ctx.fillStyle = '#00D4AA';
-                        ctx.fillRect(0, 0, width, borderWidth);
-                        ctx.fillRect(0, height - borderWidth * 3, width, borderWidth * 3);
-                        ctx.fillRect(0, 0, borderWidth, height);
-                        ctx.fillRect(width - borderWidth, 0, borderWidth, height);
+                        // Outer Blue Background
+                        ctx.fillStyle = '#4361EE';
+                        ctx.fillRect(0, 0, width, height);
 
-                        // Black strokes
-                        ctx.lineWidth = 8;
+                        // Black borders
+                        ctx.lineWidth = 10;
                         ctx.strokeStyle = '#1A1A2E';
                         ctx.strokeRect(0, 0, width, height);
+                        ctx.strokeRect(borderWidth, borderWidth, width - borderWidth * 2, height - borderWidth * 2);
 
-                        // Header Passport Badge
-                        ctx.fillStyle = '#4361EE';
-                        ctx.fillRect(50, 45, 480, 65);
-                        ctx.strokeRect(50, 45, 480, 65);
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.font = 'bold 24px "Space Grotesk", sans-serif';
-                        ctx.fillText('APPROVED ✈️ OFFICIAL PASSPORT', 75, 85);
-
-                        // Stamp Circle graphic
-                        ctx.fillStyle = '#FFE156';
-                        ctx.beginPath();
-                        ctx.arc(width - 120, 100, 55, 0, 2 * Math.PI);
-                        ctx.fill();
-                        ctx.stroke();
-
+                        // Header Graphic
+                        ctx.fillStyle = '#00D4AA';
+                        ctx.fillRect(photoX, 40, photoWidth, 100);
+                        ctx.strokeRect(photoX, 40, photoWidth, 100);
                         ctx.fillStyle = '#1A1A2E';
-                        ctx.font = 'bold 16px "Space Grotesk", sans-serif';
+                        ctx.font = 'bold 32px "Space Grotesk", sans-serif';
                         ctx.textAlign = 'center';
-                        ctx.fillText('PASSPORT', width - 120, 95);
-                        ctx.fillText('PASSED ✓', width - 120, 115);
+                        ctx.fillText('✈️ OFFICIAL PASSPORT', width / 2, 100);
 
-                        // Bottom Text Card
-                        const cardWidth = 700;
-                        const cardHeight = 110;
-                        const cardX = (width - cardWidth) / 2;
-                        const cardY = height - 145;
+                        // Draw the 3 photos
+                        let currentY = 170;
+                        this.photos.forEach((photoCanvas, index) => {
+                            // Photo wrapper
+                            ctx.fillStyle = '#1A1A2E';
+                            ctx.fillRect(photoX - 10, currentY - 10, photoWidth + 20, photoHeight + 20);
+                            
+                            // Photo itself
+                            ctx.drawImage(photoCanvas, photoX, currentY, photoWidth, photoHeight);
+                            ctx.strokeRect(photoX, currentY, photoWidth, photoHeight);
 
+                            // Stamp on the first photo
+                            if (index === 0) {
+                                ctx.fillStyle = '#FFE156';
+                                ctx.beginPath();
+                                ctx.arc(photoX + photoWidth - 40, currentY + 50, 45, 0, 2 * Math.PI);
+                                ctx.fill();
+                                ctx.stroke();
+                                ctx.fillStyle = '#1A1A2E';
+                                ctx.font = 'bold 16px "Space Grotesk", sans-serif';
+                                ctx.fillText('PASSED', photoX + photoWidth - 40, currentY + 55);
+                            }
+                            
+                            currentY += photoHeight + photoSpacing + 20;
+                        });
+
+                        // Footer Graphic
+                        const footerY = currentY + 10;
                         ctx.fillStyle = '#1A1A2E';
-                        ctx.fillRect(cardX, cardY, cardWidth, cardHeight);
+                        ctx.fillRect(photoX, footerY, photoWidth, 100);
                         ctx.strokeStyle = '#FFE156';
-                        ctx.lineWidth = 4;
-                        ctx.strokeRect(cardX, cardY, cardWidth, cardHeight);
-
+                        ctx.lineWidth = 6;
+                        ctx.strokeRect(photoX, footerY, photoWidth, 100);
+                        
                         ctx.fillStyle = '#FFE156';
-                        ctx.font = 'extrabold 30px "Space Grotesk", sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('BALI • JOGJA • LOMBOK • RAJA AMPAT', width / 2, cardY + 50);
-
+                        ctx.font = 'extrabold 26px "Space Grotesk", sans-serif';
+                        ctx.fillText('BALI • JOGJA • LOMBOK • RAJA AMPAT', width / 2, footerY + 45);
+                        
                         ctx.fillStyle = '#FFFFFF';
-                        ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
-                        ctx.fillText('EXPLORER BADGE 🌟 • TwoGo Official', width / 2, cardY + 85);
-                        ctx.textAlign = 'left';
+                        ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif';
+                        ctx.fillText('EXPLORER BADGE 🌟 • TwoGo', width / 2, footerY + 80);
                     }
                 },
 
                 resetPhoto() {
                     this.hasCaptured = false;
+                    this.photos = [];
                 },
 
                 downloadPhoto() {
                     const canvas = this.$refs.canvasElement;
                     const link = document.createElement('a');
-                    link.download = 'twogo-photobooth-' + Date.now() + '.png';
+                    link.download = 'twogo-photostrip-' + Date.now() + '.png';
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 }
