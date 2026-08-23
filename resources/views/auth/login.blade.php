@@ -2,34 +2,38 @@
 @section('title', 'Masuk')
 
 @section('content')
-<div class="relative max-w-sm mx-auto w-full mt-4 group">
+<div class="relative max-w-sm mx-auto w-full mt-2 group">
     <!-- Offset background block for neo-brutalism pop -->
     <div class="absolute inset-0 bg-[#FF6B9D] border-[3px] border-[#1A1A2E] rounded-2xl rotate-2 transition-transform duration-300"></div>
     
     <!-- Main form card -->
-    <div class="relative bg-[#FFFBEB] border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl p-6 md:p-8 z-10">
-        <h1 class="font-heading font-bold text-[#1A1A2E] tracking-tight text-center mb-2" style="font-size: 10px; letter-spacing: 0.05em;">TwoGo<span class="text-[#FF6B9D]">.</span></h1>
-        <h2 class="text-lg font-heading font-extrabold mb-6 text-center text-[#1A1A2E]">Selamat Datang Kembali 👋</h2>
+    <div class="relative bg-[#FFFBEB] border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl p-4 z-10">
+        <h1 class="font-heading font-bold text-[#1A1A2E] tracking-tight text-center mb-1" style="font-size: 10px; letter-spacing: 0.05em;">TwoGo<span class="text-[#FF6B9D]">.</span></h1>
+        <h2 class="text-lg font-heading font-extrabold mb-4 text-center text-[#1A1A2E]">Selamat Datang Kembali 👋</h2>
     
     <form action="{{ route('login') }}" method="POST">
         @csrf
-        <x-input 
-            type="email"
-            name="email" 
-            label="Email" 
-            placeholder="john@example.com" 
-            required="true"
-        />
+        <div class="mb-3">
+            <x-input 
+                type="email"
+                name="email" 
+                label="Email" 
+                placeholder="john@example.com" 
+                required="true"
+            />
+        </div>
         
-        <x-input 
-            type="password"
-            name="password" 
-            label="Password" 
-            placeholder="••••••••" 
-            required="true"
-        />
+        <div class="mb-3">
+            <x-input 
+                type="password"
+                name="password" 
+                label="Password" 
+                placeholder="••••••••" 
+                required="true"
+            />
+        </div>
         
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-4">
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="remember" class="w-4 h-4 border-[2px] border-[#1A1A2E] rounded-sm accent-[#FFE156]">
                 <span class="text-sm font-medium">Ingat Saya</span>
@@ -39,18 +43,18 @@
         </div>
         
         <div>
-            <x-button type="submit" variant="primary" class="w-full text-lg">Masuk</x-button>
+            <x-button type="submit" variant="primary" class="w-full">Masuk</x-button>
         </div>
         
-        <div class="mt-5 flex items-center justify-between">
+        <div class="mt-4 flex items-center justify-between">
             <span class="w-[30%] border-b-[2px] border-slate-300"></span>
             <span class="text-xs text-center text-slate-500 font-bold uppercase">atau</span>
             <span class="w-[30%] border-b-[2px] border-slate-300"></span>
         </div>
         
-        <div class="mt-5">
-            <a href="{{ route('auth.google') }}" class="w-full py-3 bg-white hover:bg-slate-50 border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-center gap-3 font-heading font-extrabold transition-all active:translate-y-[3px] active:shadow-none text-[#1A1A2E]">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="mt-4">
+            <a href="{{ route('auth.google') }}" class="w-full py-2.5 bg-white hover:bg-slate-50 border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-center gap-3 font-heading font-extrabold transition-all active:translate-y-[3px] active:shadow-none text-[#1A1A2E] text-sm">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -61,7 +65,7 @@
         </div>
     </form>
     
-    <p class="text-center mt-6 font-medium text-sm">
+    <p class="text-center mt-4 font-medium text-xs">
         Belum punya akun? 
         <a href="{{ route('register') }}" class="text-[#4361EE] hover:underline font-bold">Daftar sekarang</a>
     </p>
