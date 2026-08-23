@@ -28,6 +28,8 @@ class NewsController extends Controller
             ->take(3)
             ->get();
 
-        return view('news.show', compact('news', 'recentNews'));
+        $settings = \App\Models\LandingSetting::all()->pluck('value', 'key')->toArray();
+
+        return view('news.show', compact('news', 'recentNews', 'settings'));
     }
 }

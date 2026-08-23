@@ -27,6 +27,12 @@ class LandingContentSeeder extends Seeder
             'cta_btn'              => 'Buat Trip Sekarang 🚀',
             'footer_tagline'       => 'Rencana Seru, Bareng-Bareng! Aplikasi itinerary & budget tracker perjalanan #1 di Indonesia.',
             'footer_email'         => 'adventuretwogo@gmail.com',
+            'news_sidebar_ad_html' => '<div class="p-6 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rounded-2xl space-y-4">
+    <div class="inline-block px-2.5 py-0.5 bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] rounded font-heading font-extrabold text-[10px]">PROMO SPESIAL</div>
+    <h4 class="font-heading font-extrabold text-lg text-white">Rencana Trip Makin Asyik & Rapi! 🎒</h4>
+    <p class="text-xs font-bold text-white opacity-90 leading-relaxed">Susun rencana perjalanan bersama partner impianmu. Coba fitur Itinerary Builder & Auto Budgeting gratis di TwoGo sekarang!</p>
+    <a href="/register" class="inline-block w-full text-center py-2 bg-[#FFE156] hover:bg-[#ffd829] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-heading font-extrabold text-xs transition-all">Mulai Buat Rencana 🚀</a>
+</div>',
         ];
 
         foreach ($settings as $key => $value) {

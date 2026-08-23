@@ -127,6 +127,15 @@
                     </div>
                 </div>
 
+                <!-- Section Iklan Detail Berita -->
+                <div class="p-5 bg-[#FFFBEB] border-2 border-[#1A1A2E] rounded-xl space-y-3">
+                    <h3 class="font-heading font-bold text-base text-[#1A1A2E] border-b border-slate-300 pb-2">4. Widget Iklan / Promosi Detail Berita</h3>
+                    <div>
+                        <label class="block font-bold text-xs text-[#1A1A2E] mb-1">HTML/CSS Kode Iklan Promosi Sidebar (Mendukung Tailwind CSS & HTML Kustom)</label>
+                        <textarea name="settings[news_sidebar_ad_html]" rows="6" class="w-full px-3 py-2 bg-white border-2 border-[#1A1A2E] rounded-xl text-sm font-mono font-bold text-slate-800">{{ $settings['news_sidebar_ad_html'] ?? '' }}</textarea>
+                    </div>
+                </div>
+
                 <div class="flex justify-end">
                     <button type="submit" class="px-6 py-3 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rounded-xl font-heading font-extrabold text-sm text-[#1A1A2E] cursor-pointer">
                         💾 Simpan Pengaturan Landing Page
