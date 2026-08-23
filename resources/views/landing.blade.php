@@ -95,22 +95,29 @@
         .delay-200 { transition-delay: 200ms; }
         .delay-300 { transition-delay: 300ms; }
         .delay-400 { transition-delay: 400ms; }
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="bg-[#FFFBEB] text-[#1A1A2E] antialiased selection:bg-[#FFE156] selection:text-[#1A1A2E]">
 
     <!-- Navbar -->
     <nav class="sticky top-0 w-full bg-[#FFFBEB] border-b-[3px] border-[#1A1A2E] z-50">
-        <div class="max-w-6xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-            <a href="{{ route('landing') }}" class="font-heading font-extrabold text-2xl md:text-3xl tracking-tight flex items-center gap-1">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between">
+            <a href="{{ route('landing') }}" class="font-heading font-extrabold text-xl md:text-3xl tracking-tight flex items-center gap-1">
                 TwoGo<span class="text-[#FF6B9D] text-4xl leading-none">.</span>
             </a>
 
-            <div class="flex items-center gap-3">
-                <a href="{{ route('login') }}" class="px-4 py-2 bg-white hover:bg-slate-100 border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-xs md:text-sm text-[#1A1A2E] transition-all">
+            <div class="flex items-center gap-2 md:gap-3">
+                <a href="{{ route('login') }}" class="px-3 md:px-4 py-1.5 md:py-2 bg-white hover:bg-slate-100 border-2 md:border-[3px] border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] md:shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-lg md:rounded-xl font-heading font-extrabold text-[11px] md:text-sm text-[#1A1A2E] transition-all">
                     Masuk
                 </a>
-                <a href="{{ route('register') }}" class="px-5 py-2 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-xs md:text-sm text-[#1A1A2E] transition-all">
+                <a href="{{ route('register') }}" class="px-3 md:px-5 py-1.5 md:py-2 bg-[#FFE156] hover:bg-[#ffd829] border-2 md:border-[3px] border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] md:shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-lg md:rounded-xl font-heading font-extrabold text-[11px] md:text-sm text-[#1A1A2E] transition-all">
                     Daftar
                 </a>
             </div>
@@ -132,7 +139,7 @@
                         <span>{{ $settings['hero_badge'] ?? '✨ Aplikasi Itinerary #1 buat Berdua' }}</span>
                     </div>
 
-                    <h1 class="font-heading font-extrabold text-4xl sm:text-5xl lg:text-6xl text-[#1A1A2E] leading-[1.1] tracking-tight">
+                    <h1 class="font-heading font-extrabold text-3xl md:text-5xl lg:text-6xl text-[#1A1A2E] leading-[1.1] tracking-tight">
                         {{ $settings['hero_title'] ?? 'Rencana Seru, Bareng-Bareng! 🎒' }}
                     </h1>
 
