@@ -2,8 +2,13 @@
 @section('title', 'Daftar')
 
 @section('content')
-<div class="nb-card max-w-sm mx-auto w-full">
-    <h2 class="text-xl font-heading font-bold mb-6 text-center">Buat Akun Baru 🚀</h2>
+<div class="relative max-w-sm mx-auto w-full mt-4 group">
+    <!-- Offset background block for neo-brutalism pop -->
+    <div class="absolute inset-0 bg-[#00D4AA] border-[3px] border-[#1A1A2E] rounded-2xl rotate-2 transition-transform duration-300"></div>
+    
+    <!-- Main form card -->
+    <div class="relative bg-[#FFFBEB] border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl p-6 md:p-8 z-10">
+        <h2 class="text-2xl font-heading font-extrabold mb-6 text-center text-[#1A1A2E]">Buat Akun<br>Baru 🚀</h2>
     
     <form action="{{ route('register') }}" method="POST">
         @csrf
@@ -65,5 +70,6 @@
         Sudah punya akun? 
         <a href="{{ route('login') }}" class="text-[#4361EE] hover:underline font-bold">Masuk di sini</a>
     </p>
+    </div>
 </div>
 @endsection
