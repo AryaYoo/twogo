@@ -71,12 +71,17 @@
             document.addEventListener('DOMContentLoaded', function() {
                 var pending = {{ $pendingInvites }};
                 var unread = {{ $unreadNotifications }};
-                if (pending > 0 && unread > 0) {
-                    showToast('Kamu mempunyai ' + pending + ' undangan baru dan ' + unread + ' notifikasi baru.', 'info', 5000);
-                } else if (pending > 0) {
-                    showToast('Kamu mempunyai ' + pending + ' undangan baru.', 'info', 5000);
-                } else if (unread > 0) {
-                    showToast('Kamu mempunyai ' + unread + ' notifikasi baru.', 'info', 5000);
+                var toastKey = 'notif_toast_seen_{{ Auth::id() }}_' + pending + '_' + unread;
+
+                if ((pending > 0 || unread > 0) && !sessionStorage.getItem(toastKey)) {
+                    if (pending > 0 && unread > 0) {
+                        showToast('Kamu mempunyai ' + pending + ' undangan baru dan ' + unread + ' notifikasi baru.', 'info', 5000);
+                    } else if (pending > 0) {
+                        showToast('Kamu mempunyai ' + pending + ' undangan baru.', 'info', 5000);
+                    } else if (unread > 0) {
+                        showToast('Kamu mempunyai ' + unread + ' notifikasi baru.', 'info', 5000);
+                    }
+                    sessionStorage.setItem(toastKey, 'true');
                 }
             });
         </script>
