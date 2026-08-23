@@ -249,7 +249,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                     @if($index % 2 === 0)
                         <!-- Text Left, Card Right -->
-                        <div class="lg:col-span-6 space-y-4">
+                        <div class="lg:col-span-6 space-y-4 nb-reveal-left">
                             @if($sc->section_badge)
                                 <div class="inline-block px-3 py-1 text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase" style="background-color: {{ $sc->badge_color }};">
                                     {{ $sc->section_badge }}
@@ -274,7 +274,7 @@
                             @endif
                         </div>
 
-                        <div class="lg:col-span-6">
+                        <div class="lg:col-span-6 nb-reveal-right delay-100">
                             <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
                                 <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
                                     <div class="font-heading font-extrabold text-base text-[#1A1A2E]">📅 Hari 1 — Eksplor Seminyak</div>
@@ -306,7 +306,7 @@
                         </div>
                     @else
                         <!-- Card Left, Text Right -->
-                        <div class="lg:col-span-6 order-2 lg:order-1">
+                        <div class="lg:col-span-6 order-2 lg:order-1 nb-reveal-left">
                             <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
                                 <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
                                     <div>
@@ -336,7 +336,7 @@
                             </div>
                         </div>
 
-                        <div class="lg:col-span-6 space-y-4 order-1 lg:order-2">
+                        <div class="lg:col-span-6 space-y-4 order-1 lg:order-2 nb-reveal-right delay-100">
                             @if($sc->section_badge)
                                 <div class="inline-block px-3 py-1 text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase" style="background-color: {{ $sc->badge_color }};">
                                     {{ $sc->section_badge }}
@@ -372,7 +372,7 @@
     <section class="py-16 md:py-20 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB]">
         <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-10">
             
-            <div class="text-center max-w-2xl mx-auto space-y-2">
+            <div class="text-center max-w-2xl mx-auto space-y-2 nb-reveal">
                 <h2 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E]">
                     Pencapaian TwoGo Dalam Angka 🚀
                 </h2>
@@ -383,12 +383,12 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($stats as $st)
-                    <div class="p-6 border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2" style="background-color: {{ $st->bg_color }}; color: {{ $st->text_color }};">
+                    <div class="p-6 border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2 nb-reveal {{ 'delay-' . (min($loop->iteration, 4) * 100) }}" style="background-color: {{ $st->bg_color }}; color: {{ $st->text_color }};">
                         <div class="font-heading font-extrabold text-4xl md:text-5xl">{{ $st->number }}</div>
                         <div class="font-extrabold text-xs md:text-sm uppercase tracking-wider">{{ $st->label }}</div>
                     </div>
                 @empty
-                    <div class="p-6 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
+                    <div class="p-6 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2 nb-reveal delay-100">
                         <div class="font-heading font-extrabold text-4xl md:text-5xl text-[#1A1A2E]">15.000+</div>
                         <div class="font-extrabold text-xs md:text-sm text-[#1A1A2E] uppercase tracking-wider">Itinerary Dibuat</div>
                     </div>
@@ -402,7 +402,7 @@
     <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-white">
         <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-12">
             
-            <div class="text-center max-w-2xl mx-auto space-y-2">
+            <div class="text-center max-w-2xl mx-auto space-y-2 nb-reveal">
                 <h2 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E]">
                     Apa Kata Pengguna TwoGo? 💬
                 </h2>
@@ -413,7 +413,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 @forelse($testimonials as $t)
-                    <div class="p-6 md:p-8 border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl space-y-6 flex flex-col justify-between text-[#1A1A2E]" style="background-color: {{ $t->bg_color }};">
+                    <div class="p-6 md:p-8 border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl space-y-6 flex flex-col justify-between text-[#1A1A2E] nb-reveal {{ 'delay-' . (min($loop->iteration, 4) * 100) }}" style="background-color: {{ $t->bg_color }};">
                         <p class="font-bold text-base md:text-lg leading-relaxed italic">
                             "{{ $t->quote }}"
                         </p>
