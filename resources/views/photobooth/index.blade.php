@@ -300,7 +300,7 @@
                         ctx.strokeRect(photoX, footerY, photoWidth, 100);
                         
                         ctx.fillStyle = '#1A1A2E';
-                        ctx.font = 'extrabold 28px "Space Grotesk", sans-serif';
+                        ctx.font = 'extrabold 24px "Space Grotesk", sans-serif';
                         ctx.fillText('Rencana Seru, Bareng-Bareng! 🎒', width / 2, footerY + 45);
                         
                         ctx.fillStyle = '#64748B';
@@ -365,7 +365,7 @@
                         ctx.strokeRect(photoX, footerY, photoWidth, 100);
                         
                         ctx.fillStyle = '#FFE156';
-                        ctx.font = 'extrabold 26px "Space Grotesk", sans-serif';
+                        ctx.font = 'extrabold 22px "Space Grotesk", sans-serif';
                         ctx.fillText('BALI • JOGJA • LOMBOK • RAJA AMPAT', width / 2, footerY + 45);
                         
                         ctx.fillStyle = '#FFFFFF';
