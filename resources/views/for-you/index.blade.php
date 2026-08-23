@@ -108,7 +108,9 @@
                             <div class="flex items-center gap-1.5">
                                 <button 
                                     type="button"
-                                    onclick="toggleLike(this, '{{ route('trips.like', $trip) }}');"
+                                    onclick="event.stopPropagation(); toggleLike(this, '{{ route('trips.like', $trip) }}');"
+                                    onmousedown="event.stopPropagation();"
+                                    ontouchstart="event.stopPropagation();"
                                     class="like-btn-action px-2.5 py-1 {{ $item['is_liked'] ? 'bg-[#FF6B9D] text-white' : 'bg-white text-[#1A1A2E]' }} border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-extrabold text-xs flex items-center gap-1 hover:translate-y-[-1px] transition-all cursor-pointer"
                                 >
                                     <span class="like-icon">{{ $item['is_liked'] ? '❤️' : '🤍' }}</span>
@@ -321,6 +323,9 @@ function fypStackedCarousel(totalItems) {
         onTouchEnd(e) {
             if (!this.isDragging) return;
             this.isDragging = false;
+
+            // Skip carousel logic if touch ended on an interactive element
+            if (e.target.closest('a, button, input')) return;
             
             const absX = Math.abs(this.dragOffsetX);
             const absY = Math.abs(this.dragOffsetY);
