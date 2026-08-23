@@ -125,7 +125,7 @@
                                     type="button"
                                     @click="openCloneModal('{!! addslashes(e($trip->title)) !!}', '{{ route('trips.clone', $trip) }}')"
                                     class="px-2 py-1 bg-[#FFFBEB] hover:bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
-                                    title="Swipe Kanan/Kiri atau Klik untuk Salin Itinerary"
+                                    title="Swipe Kiri atau Klik untuk Salin Itinerary"
                                 >
                                     <span>📋</span>
                                     <span>{{ $trip->clones()->count() }}</span>
@@ -367,8 +367,8 @@ function fypStackedCarousel(totalItems) {
                 } else {
                     this.lastTapTime = now;
                 }
-            } else if (absX > absY && absX > 45) {
-                // Swipe left or right -> open clone modal
+            } else if (absX > absY && this.dragOffsetX < -45) {
+                // Swipe left -> open clone modal
                 this.triggerCloneActive();
             } else if (absY > absX) {
                 if (this.dragOffsetY < -this.touchThreshold) {
