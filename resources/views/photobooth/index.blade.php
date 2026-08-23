@@ -8,8 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="bg-[#FFFBEB] text-[#1A1A2E] antialiased selection:bg-[#FFE156] selection:text-[#1A1A2E] font-sans">
 
@@ -32,21 +37,6 @@
     <!-- Main Photobooth Application -->
     <main class="py-10 md:py-14" x-data="photoboothApp()">
         <div class="max-w-5xl mx-auto px-4 md:px-8 space-y-8">
-            
-            <!-- Page Title -->
-            <div class="bg-[#FF6B9D] text-white border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="space-y-2 text-center md:text-left">
-                    <div class="inline-block px-3.5 py-1 bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs">
-                        📸 Fitur Baru & Gratis
-                    </div>
-                    <h1 class="font-heading font-extrabold text-3xl md:text-4xl">
-                        Photobooth Digital TwoGo
-                    </h1>
-                    <p class="font-bold text-xs md:text-sm text-white opacity-95 max-w-lg">
-                        Ambil foto kenangan kebersamaan kamu, pilih bingkai estetik Neo-Brutalism, dan unduh secara langsung tanpa perlu login!
-                    </p>
-                </div>
-            </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
