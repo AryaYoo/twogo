@@ -103,28 +103,15 @@
                             @endif
                         </div>
 
-                        <!-- Card Footer Action Buttons -->
+                        <!-- Card Footer Stats & Detail -->
                         <div class="pt-1.5 border-t-2 border-[#1A1A2E] border-dashed flex items-center justify-between gap-1.5">
-                            <div class="flex items-center gap-1.5">
-                                <button 
-                                    type="button"
-                                    @click.stop="handleLike($event, '{{ route('trips.like', $trip) }}')"
-                                    class="like-btn-action px-2.5 py-1 {{ $item['is_liked'] ? 'bg-[#FF6B9D] text-white' : 'bg-white text-[#1A1A2E]' }} border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-extrabold text-xs flex items-center gap-1 hover:translate-y-[-1px] transition-all cursor-pointer"
-                                >
-                                    <span class="like-icon">{{ $item['is_liked'] ? '❤️' : '🤍' }}</span>
-                                    <span class="like-count">{{ $trip->likes->count() }}</span>
-                                </button>
-
-                                <button 
-                                    type="button"
-                                    @click="openCloneModal('{!! addslashes(e($trip->title)) !!}', '{{ route('trips.clone', $trip) }}')"
-                                    class="px-2 py-1 bg-[#FFFBEB] hover:bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
-                                    title="Swipe Kiri atau Klik untuk Salin Itinerary"
-                                >
-                                    <span>📋</span>
-                                    <span>{{ $trip->clones()->count() }}</span>
-                                    <span class="text-[10px] opacity-75 font-heading hidden xs:inline">← Salin</span>
-                                </button>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[10px] font-medium text-slate-400">
+                                    {{ $trip->likes->count() }} suka
+                                </span>
+                                <span class="text-[10px] font-medium text-slate-400">
+                                    {{ $trip->clones()->count() }} salin
+                                </span>
                             </div>
 
                             <a 
