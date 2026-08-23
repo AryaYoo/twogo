@@ -32,6 +32,7 @@
         x-on:mouseup="onMouseUp($event)"
         x-on:wheel.prevent="onWheel($event)"
         class="relative w-full flex-1 flex flex-col justify-between overflow-hidden select-none py-1 min-h-[calc(100vh-190px)]"
+        style="touch-action: pan-y;"
     >
         <!-- Stacked Cards Container -->
         <div class="relative w-full flex-1 min-h-[440px] sm:min-h-[500px] flex items-center justify-center mt-1">
@@ -124,7 +125,7 @@
                                     type="button"
                                     @click="openCloneModal('{!! addslashes(e($trip->title)) !!}', '{{ route('trips.clone', $trip) }}')"
                                     class="px-2 py-1 bg-[#FFFBEB] hover:bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
-                                    title="Swipe Kiri atau Klik untuk Salin Itinerary"
+                                    title="Swipe Kanan/Kiri atau Klik untuk Salin Itinerary"
                                 >
                                     <span>📋</span>
                                     <span>{{ $trip->clones()->count() }}</span>
@@ -358,16 +359,16 @@ function fypStackedCarousel(totalItems) {
             const absY = Math.abs(this.dragOffsetY);
 
             // Check for double-tap if minimal movement
-            if (absX < 10 && absY < 10) {
+            if (absX < 15 && absY < 15) {
                 const now = Date.now();
-                if (now - this.lastTapTime < 350) {
+                if (now - this.lastTapTime < 500) {
                     this.triggerLikeActive();
                     this.lastTapTime = 0;
                 } else {
                     this.lastTapTime = now;
                 }
-            } else if (absX > absY && this.dragOffsetX < -45) {
-                // Swipe left -> open clone modal
+            } else if (absX > absY && absX > 45) {
+                // Swipe left or right -> open clone modal
                 this.triggerCloneActive();
             } else if (absY > absX) {
                 if (this.dragOffsetY < -this.touchThreshold) {
