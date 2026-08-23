@@ -50,7 +50,6 @@
                     data-like-url="{{ route('trips.like', $trip) }}"
                     :style="getCardStyle({{ $index }})"
                     x-show="isCardVisible({{ $index }})"
-                    @dblclick="triggerLikeActive()"
                 >
                     <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-2.5 flex flex-col justify-between h-[430px] sm:h-[500px]">
                         
@@ -74,15 +73,10 @@
                             </div>
                         </div>
 
-                        <!-- Main Destination Image & Heart Pop -->
+                        <!-- Main Destination Image -->
                         <div class="relative w-full h-44 sm:h-60 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
                             <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="w-full h-full object-cover" />
                             
-                            <!-- Heart Pop Visual Feedback on Double-Tap -->
-                            <div class="heart-pop absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-all duration-300 transform scale-50 z-40">
-                                <span class="text-6xl filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">❤️</span>
-                            </div>
-
                             <!-- Badges Overlay on Image -->
                             <div class="absolute top-2 right-2 px-2 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
                                 🌍 Publik
@@ -243,8 +237,6 @@ function fypStackedCarousel(totalItems) {
         dragOffsetX: 0,
         dragOffsetY: 0,
         touchThreshold: 35,
-        lastTapTime: 0,
-        isLiking: false,
         showCloneModal: false,
         selectedTripTitle: '',
         selectedCloneUrl: '',
@@ -279,47 +271,6 @@ function fypStackedCarousel(totalItems) {
                 if (url) {
                     this.openCloneModal(title, url);
                 }
-            }
-        },
-
-        triggerLikeActive() {
-            // Debounce: prevent double-fire from simultaneous touch + dblclick events
-            if (this.isLiking) return;
-            this.isLiking = true;
-            setTimeout(() => { this.isLiking = false; }, 600);
-
-            const activeEl = document.querySelector(`.fyp-card-${this.currentIndex}`);
-            if (!activeEl) return;
-            
-            const likeBtn = activeEl.querySelector('.like-btn-action');
-            const likeUrl = activeEl.dataset.likeUrl;
-            const heartPop = activeEl.querySelector('.heart-pop');
-            
-            // Determine current liked state to show correct emoji
-            const isCurrentlyLiked = likeBtn && likeBtn.classList.contains('bg-[#FF6B9D]');
-            const heartEmoji = isCurrentlyLiked ? '💔' : '❤️';
-            
-            if (heartPop) {
-                // Update emoji to reflect toggle direction
-                const emojiSpan = heartPop.querySelector('span');
-                if (emojiSpan) emojiSpan.textContent = heartEmoji;
-
-                heartPop.classList.remove('scale-50', 'opacity-0');
-                heartPop.classList.add('scale-125', 'opacity-100');
-                setTimeout(() => {
-                    heartPop.classList.remove('scale-125', 'opacity-100');
-                    heartPop.classList.add('scale-150', 'opacity-0');
-                    setTimeout(() => {
-                        heartPop.classList.remove('scale-150');
-                        heartPop.classList.add('scale-50');
-                        // Reset back to heart for next double-tap
-                        if (emojiSpan) emojiSpan.textContent = '❤️';
-                    }, 250);
-                }, 400);
-            }
-            
-            if (likeBtn && likeUrl) {
-                toggleLike(likeBtn, likeUrl);
             }
         },
 
@@ -374,16 +325,7 @@ function fypStackedCarousel(totalItems) {
             const absX = Math.abs(this.dragOffsetX);
             const absY = Math.abs(this.dragOffsetY);
 
-            // Check for double-tap if minimal movement
-            if (absX < 15 && absY < 15) {
-                const now = Date.now();
-                if (now - this.lastTapTime < 500) {
-                    this.triggerLikeActive();
-                    this.lastTapTime = 0;
-                } else {
-                    this.lastTapTime = now;
-                }
-            } else if (absX > absY && this.dragOffsetX < -45) {
+            if (absX > absY && this.dragOffsetX < -45) {
                 // Swipe left -> open clone modal
                 this.triggerCloneActive();
             } else if (absY > absX) {
@@ -418,15 +360,7 @@ function fypStackedCarousel(totalItems) {
             const absX = Math.abs(this.dragOffsetX);
             const absY = Math.abs(this.dragOffsetY);
 
-            if (absX < 10 && absY < 10) {
-                const now = Date.now();
-                if (now - this.lastTapTime < 350) {
-                    this.triggerLikeActive();
-                    this.lastTapTime = 0;
-                } else {
-                    this.lastTapTime = now;
-                }
-            } else if (absX > absY && this.dragOffsetX < -45) {
+            if (absX > absY && this.dragOffsetX < -45) {
                 this.triggerCloneActive();
             } else if (absY > absX) {
                 if (this.dragOffsetY < -this.touchThreshold) {
