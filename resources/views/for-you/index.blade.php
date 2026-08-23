@@ -27,24 +27,14 @@
         x-on:touchstart="onTouchStart($event)"
         x-on:touchmove="onTouchMove($event)"
         x-on:touchend="onTouchEnd($event)"
+        x-on:mousedown="onMouseDown($event)"
+        x-on:mousemove="onMouseMove($event)"
+        x-on:mouseup="onMouseUp($event)"
         x-on:wheel.prevent="onWheel($event)"
-        class="relative w-full min-h-[calc(100vh-170px)] flex flex-col items-center justify-between overflow-hidden select-none py-1"
+        class="relative w-full min-h-[calc(100vh-160px)] flex flex-col items-center justify-between overflow-hidden select-none py-1"
     >
-        <!-- Top Control Bar: Feed Counter & Hint -->
-        <div class="w-full flex items-center justify-between px-1 mb-2 z-40">
-            <div class="flex items-center gap-1.5 bg-[#FFFBEB] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl px-3 py-1 font-heading font-extrabold text-xs text-[#1A1A2E]">
-                <span>🔥 Feed</span>
-                <span class="opacity-40">•</span>
-                <span x-text="(currentIndex + 1) + ' dari ' + total"></span>
-            </div>
-            
-            <div class="text-[11px] font-bold text-[#1A1A2E] bg-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl px-2.5 py-1 flex items-center gap-1">
-                <span>Swipe ↕️</span>
-            </div>
-        </div>
-
         <!-- Stacked Cards Container -->
-        <div class="relative w-full flex-1 min-h-[460px] max-h-[500px] flex items-center justify-center">
+        <div class="relative w-full flex-1 min-h-[470px] max-h-[510px] flex items-center justify-center mt-1">
             @foreach($feed as $index => $item)
                 @php
                     $trip = $item['trip'];
@@ -53,11 +43,13 @@
                     $imgUrl = $item['image_url'];
                 @endphp
                 <div 
-                    class="absolute inset-x-0 mx-auto w-full max-w-sm transition-all duration-300 ease-out origin-bottom"
+                    class="absolute inset-x-0 mx-auto w-full max-w-sm transition-all duration-300 ease-out origin-bottom fyp-card-{{ $index }}"
+                    data-title="{{ $trip->title }}"
+                    data-clone-url="{{ route('trips.clone', $trip) }}"
                     :style="getCardStyle({{ $index }})"
                     x-show="isCardVisible({{ $index }})"
                 >
-                    <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-3 flex flex-col justify-between h-[470px]">
+                    <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-3 flex flex-col justify-between h-[480px]">
                         
                         <!-- Header: User info & trip type -->
                         <div class="flex items-center justify-between gap-2 pb-2 border-b-2 border-[#1A1A2E] border-dashed">
@@ -121,17 +113,23 @@
                                     <span class="like-count">{{ $trip->likes->count() }}</span>
                                 </button>
 
-                                <span class="px-2.5 py-1.5 bg-[#FFFBEB] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-bold text-xs flex items-center gap-1">
+                                <button 
+                                    type="button"
+                                    @click="openCloneModal('{{ $trip->title }}', '{{ route('trips.clone', $trip) }}')"
+                                    class="px-2.5 py-1.5 bg-[#FFFBEB] hover:bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
+                                    title="Swipe Kiri atau Klik untuk Salin Itinerary"
+                                >
                                     <span>📋</span>
                                     <span>{{ $trip->clones()->count() }}</span>
-                                </span>
+                                    <span class="text-[10px] opacity-75 font-heading">← Salin</span>
+                                </button>
                             </div>
 
                             <a 
                                 href="{{ route('trips.public_show', $trip) }}" 
-                                class="px-4 py-1.5 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-[#1A1A2E] transition-all flex items-center gap-1"
+                                class="px-3.5 py-1.5 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-[#1A1A2E] transition-all flex items-center gap-1"
                             >
-                                <span>Lihat Detail</span>
+                                <span>Detail</span>
                                 <span>→</span>
                             </a>
                         </div>
@@ -175,6 +173,51 @@
                 </button>
             </div>
         </div>
+
+        <!-- Clone Confirmation Modal -->
+        <div 
+            x-show="showCloneModal" 
+            x-transition.opacity
+            class="fixed inset-0 z-50 bg-[#1A1A2E]/60 backdrop-blur-sm flex items-center justify-center p-4"
+            x-cloak
+        >
+            <div 
+                @click.away="showCloneModal = false"
+                class="bg-white border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-6 w-full max-w-sm space-y-4 text-center animate-fade-in-up"
+            >
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-3xl font-extrabold">
+                    📋
+                </div>
+
+                <div class="space-y-2">
+                    <h3 class="font-heading font-extrabold text-xl text-[#1A1A2E]">
+                        Salin Itinerary Ini?
+                    </h3>
+                    <p class="text-xs font-bold text-slate-600 leading-relaxed">
+                        Apakah kamu ingin menyalin itinerary <span class="text-[#4361EE] font-extrabold" x-text="'&ldquo;' + selectedTripTitle + '&rdquo;'"></span> ke daftar trip kamu?
+                    </p>
+                </div>
+
+                <div class="pt-2 flex items-center justify-center gap-3">
+                    <button 
+                        type="button"
+                        @click="showCloneModal = false"
+                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 border-2 border-[#1A1A2E] rounded-xl font-bold text-xs text-[#1A1A2E] cursor-pointer transition-all"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        type="button"
+                        @click="confirmClone()"
+                        :disabled="isCloning"
+                        class="px-5 py-2.5 bg-[#00D4AA] hover:bg-[#00c29a] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs cursor-pointer transition-all flex items-center gap-1.5"
+                    >
+                        <span x-show="!isCloning">Ya, Salin Sekarang ✨</span>
+                        <span x-show="isCloning" class="animate-pulse">Menyalin...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 @endif
 
@@ -186,10 +229,16 @@ function fypStackedCarousel(totalItems) {
     return {
         currentIndex: 0,
         total: totalItems,
+        startX: 0,
         startY: 0,
         isDragging: false,
-        dragOffset: 0,
+        dragOffsetX: 0,
+        dragOffsetY: 0,
         touchThreshold: 35,
+        showCloneModal: false,
+        selectedTripTitle: '',
+        selectedCloneUrl: '',
+        isCloning: false,
         
         next() {
             if (this.currentIndex < this.total - 1) {
@@ -206,25 +255,121 @@ function fypStackedCarousel(totalItems) {
             return index >= this.currentIndex - 1 && index <= this.currentIndex + 3;
         },
 
+        openCloneModal(title, url) {
+            this.selectedTripTitle = title;
+            this.selectedCloneUrl = url;
+            this.showCloneModal = true;
+        },
+
+        triggerCloneActive() {
+            const activeEl = document.querySelector(`.fyp-card-${this.currentIndex}`);
+            if (activeEl) {
+                const title = activeEl.dataset.title || 'Trip ini';
+                const url = activeEl.dataset.cloneUrl || '';
+                if (url) {
+                    this.openCloneModal(title, url);
+                }
+            }
+        },
+
+        confirmClone() {
+            if (!this.selectedCloneUrl || this.isCloning) return;
+            this.isCloning = true;
+
+            const csrf = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+            fetch(this.selectedCloneUrl, {
+                method: 'POST',
+                headers: { 
+                    'X-CSRF-TOKEN': csrf, 
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json' 
+                }
+            })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                this.isCloning = false;
+                this.showCloneModal = false;
+                if (typeof showToast === 'function') {
+                    showToast('Itinerary berhasil disalin ke akun kamu! 🎉', 'success');
+                }
+                setTimeout(() => {
+                    location.href = (data && data.redirect) ? data.redirect : '/trips';
+                }, 800);
+            })
+            .catch(() => {
+                this.isCloning = false;
+                this.showCloneModal = false;
+                location.href = '/trips';
+            });
+        },
+
         onTouchStart(e) {
             if (e.target.closest('a, button, input')) return;
+            this.startX = e.touches[0].clientX;
             this.startY = e.touches[0].clientY;
             this.isDragging = true;
-            this.dragOffset = 0;
+            this.dragOffsetX = 0;
+            this.dragOffsetY = 0;
         },
         onTouchMove(e) {
             if (!this.isDragging) return;
-            this.dragOffset = e.touches[0].clientY - this.startY;
+            this.dragOffsetX = e.touches[0].clientX - this.startX;
+            this.dragOffsetY = e.touches[0].clientY - this.startY;
         },
         onTouchEnd() {
             if (!this.isDragging) return;
             this.isDragging = false;
-            if (this.dragOffset < -this.touchThreshold) {
-                this.next();
-            } else if (this.dragOffset > this.touchThreshold) {
-                this.prev();
+            
+            const absX = Math.abs(this.dragOffsetX);
+            const absY = Math.abs(this.dragOffsetY);
+
+            if (absX > absY && this.dragOffsetX < -45) {
+                // Swipe left -> open clone modal
+                this.triggerCloneActive();
+            } else if (absY > absX) {
+                if (this.dragOffsetY < -this.touchThreshold) {
+                    this.next();
+                } else if (this.dragOffsetY > this.touchThreshold) {
+                    this.prev();
+                }
             }
-            this.dragOffset = 0;
+
+            this.dragOffsetX = 0;
+            this.dragOffsetY = 0;
+        },
+
+        onMouseDown(e) {
+            if (e.button !== 0 || e.target.closest('a, button, input')) return;
+            this.startX = e.clientX;
+            this.startY = e.clientY;
+            this.isDragging = true;
+            this.dragOffsetX = 0;
+            this.dragOffsetY = 0;
+        },
+        onMouseMove(e) {
+            if (!this.isDragging) return;
+            this.dragOffsetX = e.clientX - this.startX;
+            this.dragOffsetY = e.clientY - this.startY;
+        },
+        onMouseUp() {
+            if (!this.isDragging) return;
+            this.isDragging = false;
+
+            const absX = Math.abs(this.dragOffsetX);
+            const absY = Math.abs(this.dragOffsetY);
+
+            if (absX > absY && this.dragOffsetX < -45) {
+                this.triggerCloneActive();
+            } else if (absY > absX) {
+                if (this.dragOffsetY < -this.touchThreshold) {
+                    this.next();
+                } else if (this.dragOffsetY > this.touchThreshold) {
+                    this.prev();
+                }
+            }
+
+            this.dragOffsetX = 0;
+            this.dragOffsetY = 0;
         },
 
         onWheel(e) {
@@ -242,8 +387,9 @@ function fypStackedCarousel(totalItems) {
             if (diff < 0) {
                 return 'transform: translateY(-130%) scale(0.9); opacity: 0; z-index: 0; pointer-events: none;';
             } else if (diff === 0) {
-                let shift = this.isDragging ? Math.max(-50, Math.min(50, this.dragOffset * 0.35)) : 0;
-                return `transform: translateY(${shift}px) scale(1); opacity: 1; z-index: 30; pointer-events: auto;`;
+                let shiftY = this.isDragging ? Math.max(-50, Math.min(50, this.dragOffsetY * 0.35)) : 0;
+                let shiftX = (this.isDragging && Math.abs(this.dragOffsetX) > Math.abs(this.dragOffsetY)) ? Math.max(-60, Math.min(0, this.dragOffsetX * 0.5)) : 0;
+                return `transform: translate(${shiftX}px, ${shiftY}px) scale(1); opacity: 1; z-index: 30; pointer-events: auto;`;
             } else if (diff === 1) {
                 return 'transform: translateY(22px) scale(0.93); opacity: 0.8; z-index: 20; pointer-events: none;';
             } else if (diff === 2) {
