@@ -34,6 +34,10 @@ Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'store'
 
 Route::get('/photobooth', [\App\Http\Controllers\PhotoboothController::class, 'index'])->name('photobooth.index');
 
+// Google Auth Routes
+Route::get('/auth/google', [\App\Http\Controllers\GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [\App\Http\Controllers\GoogleAuthController::class, 'callback']);
+
 // Guest routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
