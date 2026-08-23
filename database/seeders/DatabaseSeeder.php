@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $this->call(KepanjenTripSeeder::class);
+        $this->call([
+            AdminSeeder::class,
+            KepanjenTripSeeder::class,
+        ]);
     }
 }
