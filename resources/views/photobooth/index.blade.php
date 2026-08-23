@@ -169,7 +169,14 @@
 
                 initCamera() {
                     const video = this.$refs.videoElement;
-                    navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 960 }, audio: false })
+                    navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'user',
+                            width: { ideal: 1280 },
+                            height: { ideal: 960 }
+                        }, 
+                        audio: false 
+                    })
                         .then((stream) => {
                             video.srcObject = stream;
                             this.isCameraActive = true;
@@ -230,11 +237,40 @@
                 captureFrame() {
                     const video = this.$refs.videoElement;
                     const tempCanvas = document.createElement('canvas');
-                    // Draw in 4:3 aspect ratio (e.g. 1000x750) for high quality
-                    tempCanvas.width = 1000;
-                    tempCanvas.height = 750;
+                    
+                    // Base canvas target size for photobooth frame (4:3 ratio)
+                    const targetWidth = 1000;
+                    const targetHeight = 750;
+                    tempCanvas.width = targetWidth;
+                    tempCanvas.height = targetHeight;
                     const tempCtx = tempCanvas.getContext('2d');
-                    tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+                    
+                    // Object-fit: cover logic to prevent stretching on mobile
+                    const videoRatio = video.videoWidth / video.videoHeight;
+                    const targetRatio = targetWidth / targetHeight;
+                    
+                    let drawWidth = video.videoWidth;
+                    let drawHeight = video.videoHeight;
+                    let offsetX = 0;
+                    let offsetY = 0;
+
+                    if (videoRatio > targetRatio) {
+                        // Video is wider (e.g. landscape)
+                        drawWidth = video.videoHeight * targetRatio;
+                        offsetX = (video.videoWidth - drawWidth) / 2;
+                    } else {
+                        // Video is taller (e.g. portrait mobile)
+                        drawHeight = video.videoWidth / targetRatio;
+                        offsetY = (video.videoHeight - drawHeight) / 2;
+                    }
+
+                    // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+                    tempCtx.drawImage(
+                        video, 
+                        offsetX, offsetY, drawWidth, drawHeight, 
+                        0, 0, targetWidth, targetHeight
+                    );
+                    
                     this.photos.push(tempCanvas);
                 },
 
