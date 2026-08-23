@@ -141,9 +141,9 @@
     </div>
 
     <!-- Itinerary Detail Viewer Modal -->
-    <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
+    <div x-show="showModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
         <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl w-full max-w-3xl p-6 relative max-h-[90vh] overflow-y-auto" @click.outside="showModal = false">
-            <button @click="showModal = false" class="absolute top-4 right-4 text-xl font-bold bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg w-8 h-8 flex items-center justify-center">✕</button>
+            <button @click="showModal = false" class="absolute top-4 right-4 text-xl font-bold bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg w-8 h-8 flex items-center justify-center cursor-pointer">✕</button>
 
             <template x-if="selectedTrip">
                 <div class="space-y-6">

@@ -15,6 +15,10 @@
     @stack('styles')
     
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
         body {
             background-color: #FFFBEB;
             color: #1A1A2E;

@@ -189,9 +189,9 @@
     </div>
 
     <!-- User Detail Modal -->
-    <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
+    <div x-show="showModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
         <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl w-full max-w-xl p-6 relative max-h-[90vh] overflow-y-auto" @click.outside="showModal = false">
-            <button @click="showModal = false" class="absolute top-4 right-4 text-xl font-bold bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg w-8 h-8 flex items-center justify-center">✕</button>
+            <button @click="showModal = false" class="absolute top-4 right-4 text-xl font-bold bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg w-8 h-8 flex items-center justify-center cursor-pointer">✕</button>
 
             <template x-if="selectedUser">
                 <div class="space-y-5">
@@ -236,9 +236,9 @@
     </div>
 
     <!-- Reset Password Modal -->
-    <div x-show="showResetModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
+    <div x-show="showResetModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
         <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl w-full max-w-md p-6 relative" @click.outside="showResetModal = false">
-            <button @click="showResetModal = false" class="absolute top-4 right-4 text-xl font-bold bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg w-8 h-8 flex items-center justify-center">✕</button>
+            <button @click="showResetModal = false" class="absolute top-4 right-4 text-xl font-bold bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg w-8 h-8 flex items-center justify-center cursor-pointer">✕</button>
 
             <h3 class="font-heading font-bold text-xl text-[#1A1A2E] mb-2">🔑 Reset Password User</h3>
             <p class="text-xs text-slate-600 font-bold mb-4" x-text="'Ubah password untuk akun: ' + (resetUser?.name || '')"></p>
@@ -247,12 +247,12 @@
                 @csrf
                 <div>
                     <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Password Baru</label>
-                    <input type="password" name="new_password" placeholder="Minimal 6 karakter" required class="w-full px-3 py-2 bg-[#FFFBEB] border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
+                    <input type="password" name="new_password" placeholder="Minimal 6 karakter" required class="w-full px-3.5 py-2.5 bg-[#FFFBEB] border-2 border-[#1A1A2E] rounded-xl text-sm font-bold text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#4361EE]">
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" @click="showResetModal = false" class="px-4 py-2 bg-slate-200 border-2 border-[#1A1A2E] rounded-xl font-bold text-xs">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-bold text-xs">Simpan Password</button>
+                    <button type="button" @click="showResetModal = false" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 border-2 border-[#1A1A2E] rounded-xl font-bold text-xs cursor-pointer">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-bold text-xs cursor-pointer">Simpan Password</button>
                 </div>
             </form>
         </div>
@@ -265,9 +265,9 @@
         fetch('/ctrl-twogo-admin/users/' + userId)
             .then(res => res.json())
             .then(data => {
-                Alpine.store('userModalData', data);
                 const el = document.querySelector('[x-data]');
                 if (el && el._x_dataStack) {
+                    el._x_dataStack[0].showResetModal = false;
                     el._x_dataStack[0].selectedUser = data;
                     el._x_dataStack[0].showModal = true;
                 }
@@ -277,6 +277,7 @@
     function openResetPasswordModal(user) {
         const el = document.querySelector('[x-data]');
         if (el && el._x_dataStack) {
+            el._x_dataStack[0].showModal = false;
             el._x_dataStack[0].resetUser = user;
             el._x_dataStack[0].showResetModal = true;
         }
