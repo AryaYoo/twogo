@@ -299,13 +299,22 @@
                         ctx.fillRect(photoX, footerY, photoWidth, 100);
                         ctx.strokeRect(photoX, footerY, photoWidth, 100);
                         
-                        ctx.fillStyle = '#1A1A2E';
-                        ctx.font = 'extrabold 24px "Space Grotesk", sans-serif';
-                        ctx.fillText('Rencana Seru, Bareng-Bareng! 🎒', width / 2, footerY + 45);
+                        ctx.font = 'extrabold 40px "Space Grotesk", sans-serif';
+                        const twogoWidth = ctx.measureText('TwoGo').width;
+                        const dotWidth = ctx.measureText('.').width;
+                        const totalWidth = twogoWidth + dotWidth;
+                        const startX = (width - totalWidth) / 2;
                         
+                        ctx.textAlign = 'left';
+                        ctx.fillStyle = '#1A1A2E';
+                        ctx.fillText('TwoGo', startX, footerY + 50);
+                        ctx.fillStyle = '#FF6B9D';
+                        ctx.fillText('.', startX + twogoWidth, footerY + 50);
+                        
+                        ctx.textAlign = 'center';
                         ctx.fillStyle = '#64748B';
                         ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif';
-                        ctx.fillText('📍 TwoGo Digital Moment • ' + new Date().toLocaleDateString('id-ID'), width / 2, footerY + 80);
+                        ctx.fillText('twogo.yohanux.my.id', width / 2, footerY + 80);
 
                     } else if (this.selectedTemplate === 2) {
                         // Template 2: Passport Stamp (Blue & Mint Frame)
@@ -364,13 +373,22 @@
                         ctx.lineWidth = 6;
                         ctx.strokeRect(photoX, footerY, photoWidth, 100);
                         
-                        ctx.fillStyle = '#FFE156';
-                        ctx.font = 'extrabold 22px "Space Grotesk", sans-serif';
-                        ctx.fillText('BALI • JOGJA • LOMBOK • RAJA AMPAT', width / 2, footerY + 45);
+                        ctx.font = 'extrabold 40px "Space Grotesk", sans-serif';
+                        const twogoWidth = ctx.measureText('TwoGo').width;
+                        const dotWidth = ctx.measureText('.').width;
+                        const totalWidth = twogoWidth + dotWidth;
+                        const startX = (width - totalWidth) / 2;
                         
+                        ctx.textAlign = 'left';
                         ctx.fillStyle = '#FFFFFF';
+                        ctx.fillText('TwoGo', startX, footerY + 50);
+                        ctx.fillStyle = '#FF6B9D';
+                        ctx.fillText('.', startX + twogoWidth, footerY + 50);
+                        
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#94A3B8';
                         ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif';
-                        ctx.fillText('EXPLORER BADGE 🌟 • TwoGo', width / 2, footerY + 80);
+                        ctx.fillText('twogo.yohanux.my.id', width / 2, footerY + 80);
                     }
                 },
 
