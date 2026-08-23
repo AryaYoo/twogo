@@ -522,5 +522,29 @@
             animElements.forEach(el => observer.observe(el));
         });
     </script>
+
+    <!-- Scroll to Top Button -->
+    <button
+        id="scrollToTopBtn"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        class="fixed bottom-6 right-5 z-50 w-12 h-12 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rounded-2xl font-heading font-extrabold text-xl text-[#1A1A2E] flex items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[4px_6px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-[2px_2px_0px_#1A1A2E] opacity-0 pointer-events-none"
+        aria-label="Scroll ke atas"
+        title="Scroll ke atas"
+    >
+        ↑
+    </button>
+
+    <script>
+        const scrollBtn = document.getElementById('scrollToTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollBtn.classList.remove('opacity-0', 'pointer-events-none');
+                scrollBtn.classList.add('opacity-100');
+            } else {
+                scrollBtn.classList.add('opacity-0', 'pointer-events-none');
+                scrollBtn.classList.remove('opacity-100');
+            }
+        });
+    </script>
 </body>
 </html>
