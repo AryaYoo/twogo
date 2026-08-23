@@ -15,7 +15,7 @@
             </a>
         </div>
 
-        <form action="{{ route('admin.news.update', $news) }}" method="POST" class="space-y-5">
+        <form action="{{ route('admin.news.update', $news) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
             @method('PUT')
 
@@ -36,6 +36,17 @@
                         <span>Publikasikan Artikel (Published)</span>
                     </label>
                 </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-2 border-[#1A1A2E] rounded-2xl space-y-3">
+                <label class="block font-bold text-xs text-[#1A1A2E]">Gambar Pendukung</label>
+                @if($news->image_url)
+                    <div class="w-40 aspect-[4/3] rounded-lg border border-slate-300 overflow-hidden bg-slate-100">
+                        <img src="{{ asset($news->image_url) }}" alt="Preview" class="w-full h-full object-cover">
+                    </div>
+                @endif
+                <input type="file" name="image" accept="image/*" class="w-full px-3 py-1.5 bg-white border border-[#1A1A2E] rounded-xl text-xs font-bold">
+                <span class="text-[10px] font-bold text-slate-500 block">Pilih file baru jika ingin mengganti gambar sebelumnya (Maks 2MB).</span>
             </div>
 
             <div>

@@ -15,7 +15,7 @@
             </a>
         </div>
 
-        <form action="{{ route('admin.news.store') }}" method="POST" class="space-y-5">
+        <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
 
             <div>
@@ -35,6 +35,11 @@
                         <span>Langsung Publikasikan (Publish)</span>
                     </label>
                 </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-xs text-[#1A1A2E] mb-1">Gambar Pendukung (Maks 2MB)</label>
+                <input type="file" name="image" accept="image/*" class="w-full px-4 py-2 bg-[#FFFBEB] border-2 border-[#1A1A2E] rounded-xl text-sm font-bold">
             </div>
 
             <div>

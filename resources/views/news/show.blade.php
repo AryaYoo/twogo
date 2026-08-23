@@ -50,6 +50,12 @@
                     </h1>
                 </div>
 
+                @if($news->image_url)
+                    <div class="w-full aspect-[21/9] border-[3px] border-[#1A1A2E] rounded-2xl overflow-hidden mb-6 bg-slate-100 shadow-[4px_4px_0px_#1A1A2E]">
+                        <img src="{{ asset($news->image_url) }}" alt="{{ $news->title }}" class="w-full h-full object-cover">
+                    </div>
+                @endif
+
                 <div class="prose prose-lg max-w-none font-bold text-slate-700 leading-relaxed space-y-4">
                     {!! nl2br(e($news->content)) !!}
                 </div>

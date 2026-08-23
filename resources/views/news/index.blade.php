@@ -51,6 +51,11 @@
                 @forelse($newsList as $news)
                     <article class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_#1A1A2E] transition-all rounded-2xl p-6 flex flex-col justify-between space-y-4">
                         <div class="space-y-3">
+                            @if($news->image_url)
+                                <div class="w-full aspect-[16/9] border-2 border-[#1A1A2E] rounded-xl overflow-hidden mb-3 bg-slate-100">
+                                    <img src="{{ asset($news->image_url) }}" alt="{{ $news->title }}" class="w-full h-full object-cover">
+                                </div>
+                            @endif
                             <div class="flex items-center justify-between text-xs font-bold text-slate-500">
                                 <span>📅 {{ $news->published_at ? $news->published_at->format('d M Y') : $news->created_at->format('d M Y') }}</span>
                                 <span class="px-2.5 py-0.5 bg-[#FFE156] text-[#1A1A2E] border border-[#1A1A2E] rounded-md font-extrabold">{{ $news->author }}</span>
