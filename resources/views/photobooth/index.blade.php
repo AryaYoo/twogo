@@ -58,7 +58,7 @@
                         <div class="relative w-full aspect-[4/3] bg-[#1A1A2E] border-[3px] border-[#1A1A2E] rounded-2xl overflow-hidden flex items-center justify-center">
                             
                             <!-- Video Stream -->
-                            <video x-ref="videoElement" autoplay playsinline class="w-full h-full object-cover" x-show="!hasCaptured"></video>
+                            <video x-ref="videoElement" autoplay playsinline class="w-full h-full object-cover scale-x-[-1]" x-show="!hasCaptured"></video>
                             
                             <!-- Sequence Status Overlay -->
                             <div x-show="isCapturing" class="absolute top-4 left-4 z-40 bg-[#FFE156] text-[#1A1A2E] px-4 py-2 rounded-xl font-heading font-extrabold text-sm border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]" style="display: none;">
@@ -238,9 +238,9 @@
                     const video = this.$refs.videoElement;
                     const tempCanvas = document.createElement('canvas');
                     
-                    // Base canvas target size for photobooth frame (4:3 ratio)
-                    const targetWidth = 1000;
-                    const targetHeight = 750;
+                    // Base canvas target size for photobooth frame (3:4 ratio for Portrait)
+                    const targetWidth = 750;
+                    const targetHeight = 1000;
                     tempCanvas.width = targetWidth;
                     tempCanvas.height = targetHeight;
                     const tempCtx = tempCanvas.getContext('2d');
@@ -280,13 +280,13 @@
 
                     // Photo strip dimensions
                     const width = 600;
-                    const height = 1600;
+                    const height = 2500;
                     canvas.width = width;
                     canvas.height = height;
 
-                    // Common photo sizes
+                    // Common photo sizes (Portrait 3:4)
                     const photoWidth = 500;
-                    const photoHeight = 375;
+                    const photoHeight = 667;
                     const photoX = (width - photoWidth) / 2;
                     const photoSpacing = 30;
                     
