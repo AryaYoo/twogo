@@ -33,9 +33,8 @@
             <div class="font-heading font-extrabold text-2xl tracking-tight flex items-center gap-1">
                 TwoGo<span class="text-[#FF6B9D] text-3xl leading-none">.</span>
             </div>
-            <div class="flex items-center gap-2 sm:gap-4">
-                <a href="/login" class="font-bold text-sm hover:text-[#4361EE] transition-colors hidden sm:block">Masuk</a>
-                <a href="/login" class="nb-btn nb-btn-secondary nb-btn-sm sm:hidden border-[2px] shadow-[2px_2px_0px_#1A1A2E]">Masuk</a>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="/login" class="nb-btn nb-btn-secondary nb-btn-sm border-[2px] shadow-[2px_2px_0px_#1A1A2E]">Masuk</a>
                 <a href="/register" class="nb-btn nb-btn-primary nb-btn-sm border-[2px] shadow-[2px_2px_0px_#1A1A2E]">Daftar</a>
             </div>
         </div>
