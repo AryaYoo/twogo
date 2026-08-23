@@ -14,11 +14,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
         body {
             background-color: #FFFBEB;
             color: #1A1A2E;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden;
         }
 
         h1, h2, h3, h4, .font-heading {
