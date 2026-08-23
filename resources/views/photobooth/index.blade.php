@@ -58,7 +58,7 @@
                         <div class="relative w-full aspect-[4/3] bg-[#1A1A2E] border-[3px] border-[#1A1A2E] rounded-2xl overflow-hidden flex items-center justify-center">
                             
                             <!-- Video Stream -->
-                            <video x-ref="videoElement" autoplay playsinline class="w-full h-full object-cover scale-x-[-1]" x-show="!hasCaptured"></video>
+                            <video x-ref="videoElement" autoplay playsinline class="w-full h-full object-contain scale-x-[-1]" x-show="!hasCaptured"></video>
                             
                             <!-- Sequence Status Overlay -->
                             <div x-show="isCapturing" class="absolute top-4 left-4 z-40 bg-[#FFE156] text-[#1A1A2E] px-4 py-2 rounded-xl font-heading font-extrabold text-sm border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]" style="display: none;">
