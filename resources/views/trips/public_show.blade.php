@@ -240,12 +240,13 @@
 
 {{-- Clone to Wishlist CTA --}}
 @auth
+@if(Auth::id() !== $trip->user_id)
 <div class="sticky bottom-20 left-0 right-0 pb-2 mt-4 z-30 bg-[#FEFCE8]">
     @if($alreadyCloned)
     <div class="nb-card bg-[#00D4AA] text-black p-3 text-center font-bold">
         ✅ Sudah tersalin ke Wishlist kamu!
     </div>
-    @elseif(Auth::id() !== $trip->user_id)
+    @else
     <form action="{{ route('trips.clone', $trip) }}" method="POST">
         @csrf
         <button type="submit" class="w-full nb-btn bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] font-bold text-lg shadow-[4px_4px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform py-3">
@@ -254,6 +255,7 @@
     </form>
     @endif
 </div>
+@endif
 @endauth
 
 @if($hasDocumentation)
