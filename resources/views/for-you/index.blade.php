@@ -20,9 +20,7 @@
             Buat trip atau wishlist dan atur sebagai publik — atau tambah teman yang juga membagikan perjalanan mereka!
         </p>
         <a href="{{ route('trips.create') }}" class="nb-btn nb-btn-primary">Buat Trip Baru</a>
-    </div>
-@else
-    <div 
+    </div>    <div 
         x-data="fypStackedCarousel({{ count($feed) }})"
         x-on:touchstart="onTouchStart($event)"
         x-on:touchmove="onTouchMove($event)"
@@ -31,10 +29,10 @@
         x-on:mousemove="onMouseMove($event)"
         x-on:mouseup="onMouseUp($event)"
         x-on:wheel.prevent="onWheel($event)"
-        class="relative w-full min-h-[calc(100vh-160px)] flex flex-col items-center justify-between overflow-hidden select-none py-1"
+        class="relative w-full flex flex-col items-center justify-between overflow-hidden select-none py-1 pb-16 sm:pb-2"
     >
         <!-- Stacked Cards Container -->
-        <div class="relative w-full flex-1 min-h-[470px] max-h-[510px] flex items-center justify-center mt-1">
+        <div class="relative w-full flex-1 min-h-[390px] sm:min-h-[470px] max-h-[480px] flex items-center justify-center mt-1">
             @foreach($feed as $index => $item)
                 @php
                     $trip = $item['trip'];
@@ -51,11 +49,11 @@
                     x-show="isCardVisible({{ $index }})"
                     @dblclick="triggerLikeActive()"
                 >
-                    <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-3 flex flex-col justify-between h-[480px]">
+                    <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3 sm:p-3.5 space-y-2.5 flex flex-col justify-between h-[400px] sm:h-[470px]">
                         
                         <!-- Header: User info & trip type -->
-                        <div class="flex items-center justify-between gap-2 pb-2 border-b-2 border-[#1A1A2E] border-dashed">
-                            <a href="{{ $item['is_own'] ? route('profile.show') : route('profile.user', $user) }}" class="flex items-center gap-2.5 min-w-0">
+                        <div class="flex items-center justify-between gap-2 pb-1.5 border-b-2 border-[#1A1A2E] border-dashed">
+                            <a href="{{ $item['is_own'] ? route('profile.show') : route('profile.user', $user) }}" class="flex items-center gap-2 min-w-0">
                                 <x-avatar :user="$user" size="sm" class="border-2 border-[#1A1A2E] shrink-0" />
                                 <div class="min-w-0">
                                     <p class="font-heading font-extrabold text-xs text-[#1A1A2E] truncate">
@@ -67,14 +65,14 @@
                                 </div>
                             </a>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <span class="px-2.5 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
+                                <span class="px-2 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
                                     {{ $isWishlist ? '💭 Wishlist' : '🌴 Trip' }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- Main Destination Image & Heart Pop -->
-                        <div class="relative w-full h-52 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
+                        <div class="relative w-full h-40 sm:h-52 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
                             <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="w-full h-full object-cover" />
                             
                             <!-- Heart Pop Visual Feedback on Double-Tap -->
@@ -83,38 +81,38 @@
                             </div>
 
                             <!-- Badges Overlay on Image -->
-                            <div class="absolute top-2.5 right-2.5 px-2.5 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
+                            <div class="absolute top-2 right-2 px-2 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
                                 🌍 Publik
                             </div>
 
-                            <div class="absolute bottom-2.5 left-2.5 px-2.5 py-1 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-bold text-xs text-[#1A1A2E] flex items-center gap-1 max-w-[85%] truncate">
+                            <div class="absolute bottom-2 left-2 px-2 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-bold text-[11px] text-[#1A1A2E] flex items-center gap-1 max-w-[85%] truncate">
                                 <span>📍 {{ $trip->destination }}</span>
                             </div>
                         </div>
 
                         <!-- Trip Title & Details -->
-                        <div class="space-y-1 flex-1 flex flex-col justify-center">
-                            <h3 class="font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] line-clamp-1 leading-tight">
+                        <div class="space-y-0.5 flex-1 flex flex-col justify-center">
+                            <h3 class="font-heading font-extrabold text-sm sm:text-base text-[#1A1A2E] line-clamp-1 leading-tight">
                                 {{ $trip->title }}
                             </h3>
                             @if(!$isWishlist && $trip->start_date)
-                                <p class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                                <p class="text-[11px] sm:text-xs font-bold text-slate-600 flex items-center gap-1">
                                     <span>📅 {{ $trip->start_date->format('d M Y') }} – {{ $trip->end_date->format('d M Y') }}</span>
                                 </p>
                             @else
-                                <p class="text-xs font-bold text-slate-500 italic line-clamp-2">
-                                    {{ $trip->description ? Str::limit($trip->description, 70) : 'Rencana destinasi liburan impian.' }}
+                                <p class="text-[11px] sm:text-xs font-bold text-slate-500 italic line-clamp-2">
+                                    {{ $trip->description ? Str::limit($trip->description, 60) : 'Rencana destinasi liburan impian.' }}
                                 </p>
                             @endif
                         </div>
 
                         <!-- Card Footer Action Buttons -->
-                        <div class="pt-2 border-t-2 border-[#1A1A2E] border-dashed flex items-center justify-between gap-2">
-                            <div class="flex items-center gap-2">
+                        <div class="pt-1.5 border-t-2 border-[#1A1A2E] border-dashed flex items-center justify-between gap-1.5">
+                            <div class="flex items-center gap-1.5">
                                 <button 
                                     type="button"
                                     onclick="toggleLike(this, '{{ route('trips.like', $trip) }}');"
-                                    class="like-btn-action px-3 py-1.5 bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-extrabold text-xs flex items-center gap-1 hover:translate-y-[-1px] transition-all cursor-pointer"
+                                    class="like-btn-action px-2.5 py-1 bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-extrabold text-xs flex items-center gap-1 hover:translate-y-[-1px] transition-all cursor-pointer"
                                 >
                                     <span>❤️</span>
                                     <span class="like-count">{{ $trip->likes->count() }}</span>
@@ -123,18 +121,18 @@
                                 <button 
                                     type="button"
                                     @click="openCloneModal('{{ $trip->title }}', '{{ route('trips.clone', $trip) }}')"
-                                    class="px-2.5 py-1.5 bg-[#FFFBEB] hover:bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
+                                    class="px-2 py-1 bg-[#FFFBEB] hover:bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
                                     title="Swipe Kiri atau Klik untuk Salin Itinerary"
                                 >
                                     <span>📋</span>
                                     <span>{{ $trip->clones()->count() }}</span>
-                                    <span class="text-[10px] opacity-75 font-heading">← Salin</span>
+                                    <span class="text-[10px] opacity-75 font-heading hidden xs:inline">← Salin</span>
                                 </button>
                             </div>
 
                             <a 
                                 href="{{ route('trips.public_show', $trip) }}" 
-                                class="px-3.5 py-1.5 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-[#1A1A2E] transition-all flex items-center gap-1"
+                                class="px-3 py-1 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-[#1A1A2E] transition-all flex items-center gap-1"
                             >
                                 <span>Detail</span>
                                 <span>→</span>
@@ -147,9 +145,9 @@
         </div>
 
         <!-- Bottom Controls & Navigation Buttons -->
-        <div class="w-full flex items-center justify-between px-1 pt-2 z-40">
+        <div class="w-full flex items-center justify-between px-1 pt-2 pb-1 z-40">
             <!-- Progress Bar Indicator -->
-            <div class="flex-1 mr-4 bg-slate-200 border-2 border-[#1A1A2E] rounded-full h-3 overflow-hidden shadow-[2px_2px_0px_#1A1A2E]">
+            <div class="flex-1 mr-3 bg-slate-200 border-2 border-[#1A1A2E] rounded-full h-2.5 sm:h-3 overflow-hidden shadow-[2px_2px_0px_#1A1A2E]">
                 <div 
                     class="bg-[#00D4AA] h-full transition-all duration-300"
                     :style="'width: ' + (((currentIndex + 1) / total) * 100) + '%'"
@@ -157,12 +155,12 @@
             </div>
 
             <!-- Up / Down Navigation Buttons -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
                 <button 
                     @click="prev()"
                     :disabled="currentIndex === 0"
                     :class="currentIndex === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:-translate-y-0.5 cursor-pointer'"
-                    class="w-10 h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[1px] rounded-xl font-heading font-extrabold text-base flex items-center justify-center text-[#1A1A2E] transition-all"
+                    class="w-9 h-9 sm:w-10 sm:h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] rounded-xl font-heading font-extrabold text-sm sm:text-base flex items-center justify-center text-[#1A1A2E] transition-all"
                     aria-label="Card Sebelumnya"
                     title="Card Sebelumnya"
                 >
@@ -172,7 +170,7 @@
                     @click="next()"
                     :disabled="currentIndex === total - 1"
                     :class="currentIndex === total - 1 ? 'opacity-40 cursor-not-allowed' : 'hover:-translate-y-0.5 cursor-pointer'"
-                    class="w-10 h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:translate-y-[1px] rounded-xl font-heading font-extrabold text-base flex items-center justify-center text-[#1A1A2E] transition-all"
+                    class="w-9 h-9 sm:w-10 sm:h-10 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] rounded-xl font-heading font-extrabold text-sm sm:text-base flex items-center justify-center text-[#1A1A2E] transition-all"
                     aria-label="Card Berikutnya"
                     title="Card Berikutnya"
                 >

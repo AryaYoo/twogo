@@ -312,16 +312,17 @@ class TripController extends Controller
 
         // Buat trip baru (Wishlist, tanpa tanggal)
         $clone = Trip::create([
-            'user_id'      => $user->id,
+            'user_id'        => $user->id,
             'cloned_from_id' => $trip->id,
-            'title'        => $trip->title . ' (Salin)',
-            'description'  => ($trip->description ?? '') . ' [Salin dari Trip #' . $trip->id . ']',
-            'destination'  => $trip->destination,
-            'start_date'   => null,
-            'end_date'     => null,
-            'total_budget' => $trip->total_budget,
-            'status'       => 'planning',
-            'is_public'    => false,
+            'title'          => $trip->title . ' (Salin)',
+            'description'    => ($trip->description ?? '') . ' [Salin dari Trip #' . $trip->id . ']',
+            'destination'    => $trip->destination,
+            'cover_image'    => $trip->cover_image,
+            'start_date'     => null,
+            'end_date'       => null,
+            'total_budget'   => $trip->total_budget,
+            'status'         => 'planning',
+            'is_public'      => false,
         ]);
 
         $clone->members()->attach($user->id, ['role' => 'owner', 'joined_at' => now()]);
@@ -371,7 +372,7 @@ class TripController extends Controller
             }
         }
 
-        if (request()->wantsJson()) {
+        if (request()->wantsJson() || request()->ajax()) {
             return response()->json([
                 'success'  => true,
                 'redirect' => route('trips.index'),
