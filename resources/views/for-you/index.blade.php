@@ -108,9 +108,7 @@
                             <div class="flex items-center gap-1.5">
                                 <button 
                                     type="button"
-                                    onclick="event.stopPropagation(); toggleLike(this, '{{ route('trips.like', $trip) }}');"
-                                    onmousedown="event.stopPropagation();"
-                                    ontouchstart="event.stopPropagation();"
+                                    @click.stop="handleLike($event, '{{ route('trips.like', $trip) }}')"
                                     class="like-btn-action px-2.5 py-1 {{ $item['is_liked'] ? 'bg-[#FF6B9D] text-white' : 'bg-white text-[#1A1A2E]' }} border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-extrabold text-xs flex items-center gap-1 hover:translate-y-[-1px] transition-all cursor-pointer"
                                 >
                                     <span class="like-icon">{{ $item['is_liked'] ? '❤️' : '🤍' }}</span>
@@ -274,6 +272,32 @@ function fypStackedCarousel(totalItems) {
                     this.openCloneModal(title, url);
                 }
             }
+        },
+
+        handleLike(event, url) {
+            const btn = event.currentTarget;
+            if (!btn || !url) return;
+            const csrf = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+            fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+            })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (!data || data.count === undefined) return;
+                const countEl = btn.querySelector('.like-count');
+                const iconEl  = btn.querySelector('.like-icon');
+                if (countEl) countEl.textContent = data.count;
+                if (iconEl)  iconEl.textContent  = data.liked ? '❤️' : '🤍';
+                if (data.liked) {
+                    btn.classList.remove('bg-white', 'text-[#1A1A2E]');
+                    btn.classList.add('bg-[#FF6B9D]', 'text-white');
+                } else {
+                    btn.classList.remove('bg-[#FF6B9D]', 'text-white');
+                    btn.classList.add('bg-white', 'text-[#1A1A2E]');
+                }
+            })
+            .catch(err => console.error('Like error:', err));
         },
 
         confirmClone() {
