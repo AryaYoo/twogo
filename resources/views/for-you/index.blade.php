@@ -46,8 +46,10 @@
                     class="absolute inset-x-0 mx-auto w-full max-w-sm transition-all duration-300 ease-out origin-bottom fyp-card-{{ $index }}"
                     data-title="{{ $trip->title }}"
                     data-clone-url="{{ route('trips.clone', $trip) }}"
+                    data-like-url="{{ route('trips.like', $trip) }}"
                     :style="getCardStyle({{ $index }})"
                     x-show="isCardVisible({{ $index }})"
+                    @dblclick="triggerLikeActive()"
                 >
                     <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-3 flex flex-col justify-between h-[480px]">
                         
@@ -71,10 +73,15 @@
                             </div>
                         </div>
 
-                        <!-- Main Destination Image -->
+                        <!-- Main Destination Image & Heart Pop -->
                         <div class="relative w-full h-52 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
                             <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="w-full h-full object-cover" />
                             
+                            <!-- Heart Pop Visual Feedback on Double-Tap -->
+                            <div class="heart-pop absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-all duration-300 transform scale-50 z-40">
+                                <span class="text-6xl filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">❤️</span>
+                            </div>
+
                             <!-- Badges Overlay on Image -->
                             <div class="absolute top-2.5 right-2.5 px-2.5 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
                                 🌍 Publik
@@ -107,7 +114,7 @@
                                 <button 
                                     type="button"
                                     onclick="toggleLike(this, '{{ route('trips.like', $trip) }}');"
-                                    class="px-3 py-1.5 bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-extrabold text-xs flex items-center gap-1 hover:translate-y-[-1px] transition-all cursor-pointer"
+                                    class="like-btn-action px-3 py-1.5 bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-xl font-extrabold text-xs flex items-center gap-1 hover:translate-y-[-1px] transition-all cursor-pointer"
                                 >
                                     <span>❤️</span>
                                     <span class="like-count">{{ $trip->likes->count() }}</span>
@@ -235,6 +242,7 @@ function fypStackedCarousel(totalItems) {
         dragOffsetX: 0,
         dragOffsetY: 0,
         touchThreshold: 35,
+        lastTapTime: 0,
         showCloneModal: false,
         selectedTripTitle: '',
         selectedCloneUrl: '',
@@ -269,6 +277,32 @@ function fypStackedCarousel(totalItems) {
                 if (url) {
                     this.openCloneModal(title, url);
                 }
+            }
+        },
+
+        triggerLikeActive() {
+            const activeEl = document.querySelector(`.fyp-card-${this.currentIndex}`);
+            if (!activeEl) return;
+            
+            const likeBtn = activeEl.querySelector('.like-btn-action');
+            const likeUrl = activeEl.dataset.likeUrl;
+            const heartPop = activeEl.querySelector('.heart-pop');
+            
+            if (heartPop) {
+                heartPop.classList.remove('scale-50', 'opacity-0');
+                heartPop.classList.add('scale-125', 'opacity-100');
+                setTimeout(() => {
+                    heartPop.classList.remove('scale-125', 'opacity-100');
+                    heartPop.classList.add('scale-150', 'opacity-0');
+                    setTimeout(() => {
+                        heartPop.classList.remove('scale-150');
+                        heartPop.classList.add('scale-50');
+                    }, 250);
+                }, 400);
+            }
+            
+            if (likeBtn && likeUrl) {
+                toggleLike(likeBtn, likeUrl);
             }
         },
 
@@ -316,14 +350,23 @@ function fypStackedCarousel(totalItems) {
             this.dragOffsetX = e.touches[0].clientX - this.startX;
             this.dragOffsetY = e.touches[0].clientY - this.startY;
         },
-        onTouchEnd() {
+        onTouchEnd(e) {
             if (!this.isDragging) return;
             this.isDragging = false;
             
             const absX = Math.abs(this.dragOffsetX);
             const absY = Math.abs(this.dragOffsetY);
 
-            if (absX > absY && this.dragOffsetX < -45) {
+            // Check for double-tap if minimal movement
+            if (absX < 10 && absY < 10) {
+                const now = Date.now();
+                if (now - this.lastTapTime < 350) {
+                    this.triggerLikeActive();
+                    this.lastTapTime = 0;
+                } else {
+                    this.lastTapTime = now;
+                }
+            } else if (absX > absY && this.dragOffsetX < -45) {
                 // Swipe left -> open clone modal
                 this.triggerCloneActive();
             } else if (absY > absX) {
@@ -351,14 +394,22 @@ function fypStackedCarousel(totalItems) {
             this.dragOffsetX = e.clientX - this.startX;
             this.dragOffsetY = e.clientY - this.startY;
         },
-        onMouseUp() {
+        onMouseUp(e) {
             if (!this.isDragging) return;
             this.isDragging = false;
 
             const absX = Math.abs(this.dragOffsetX);
             const absY = Math.abs(this.dragOffsetY);
 
-            if (absX > absY && this.dragOffsetX < -45) {
+            if (absX < 10 && absY < 10) {
+                const now = Date.now();
+                if (now - this.lastTapTime < 350) {
+                    this.triggerLikeActive();
+                    this.lastTapTime = 0;
+                } else {
+                    this.lastTapTime = now;
+                }
+            } else if (absX > absY && this.dragOffsetX < -45) {
                 this.triggerCloneActive();
             } else if (absY > absX) {
                 if (this.dragOffsetY < -this.touchThreshold) {
