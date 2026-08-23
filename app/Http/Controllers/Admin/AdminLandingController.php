@@ -34,28 +34,19 @@ class AdminLandingController extends Controller
                 }
             }
 
-            $targetDir = public_path('assets/images');
-            if (!file_exists($targetDir)) {
-                @mkdir($targetDir, 0755, true);
-            }
-
-            // Handle hero card image upload
+            // Handle hero card image upload — use Storage::disk('public') to respect server permissions
             if ($request->hasFile('hero_card_image') && $request->file('hero_card_image')->isValid()) {
-                $file = $request->file('hero_card_image');
-                $filename = 'hero_card_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move($targetDir, $filename);
-                LandingSetting::setValue('hero_card_image', 'assets/images/' . $filename);
+                $path = $request->file('hero_card_image')->store('landing', 'public');
+                LandingSetting::setValue('hero_card_image', 'storage/' . $path);
             }
 
             // Handle auth background image upload
             if ($request->hasFile('auth_bg_image') && $request->file('auth_bg_image')->isValid()) {
-                $file = $request->file('auth_bg_image');
-                $filename = 'auth_bg_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move($targetDir, $filename);
-                LandingSetting::setValue('auth_bg_image', 'assets/images/' . $filename);
+                $path = $request->file('auth_bg_image')->store('landing', 'public');
+                LandingSetting::setValue('auth_bg_image', 'storage/' . $path);
             }
 
-            return back()->with('success', 'Pengaturan teks Landing Page berhasil disimpan!');
+            return back()->with('success', 'Pengaturan Landing Page berhasil disimpan!');
         } catch (\Throwable $e) {
             return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
         }
