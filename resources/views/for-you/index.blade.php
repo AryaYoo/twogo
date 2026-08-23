@@ -31,10 +31,10 @@
         x-on:mousemove="onMouseMove($event)"
         x-on:mouseup="onMouseUp($event)"
         x-on:wheel.prevent="onWheel($event)"
-        class="relative w-full flex flex-col items-center justify-between overflow-hidden select-none py-1 pb-16 sm:pb-2"
+        class="relative w-full flex-1 flex flex-col justify-between overflow-hidden select-none py-1 min-h-[calc(100vh-190px)]"
     >
         <!-- Stacked Cards Container -->
-        <div class="relative w-full flex-1 min-h-[390px] sm:min-h-[470px] max-h-[480px] flex items-center justify-center mt-1">
+        <div class="relative w-full flex-1 min-h-[440px] sm:min-h-[500px] flex items-center justify-center mt-1">
             @foreach($feed as $index => $item)
                 @php
                     $trip = $item['trip'];
@@ -51,7 +51,7 @@
                     x-show="isCardVisible({{ $index }})"
                     @dblclick="triggerLikeActive()"
                 >
-                    <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3 sm:p-3.5 space-y-2.5 flex flex-col justify-between h-[400px] sm:h-[470px]">
+                    <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-2.5 flex flex-col justify-between h-[430px] sm:h-[500px]">
                         
                         <!-- Header: User info & trip type -->
                         <div class="flex items-center justify-between gap-2 pb-1.5 border-b-2 border-[#1A1A2E] border-dashed">
@@ -74,7 +74,7 @@
                         </div>
 
                         <!-- Main Destination Image & Heart Pop -->
-                        <div class="relative w-full h-40 sm:h-52 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
+                        <div class="relative w-full h-44 sm:h-60 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
                             <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="w-full h-full object-cover" />
                             
                             <!-- Heart Pop Visual Feedback on Double-Tap -->
@@ -147,7 +147,7 @@
         </div>
 
         <!-- Bottom Controls & Navigation Buttons -->
-        <div class="w-full flex items-center justify-between px-4 pt-6 pb-2 z-40 mt-12 sm:mt-16">
+        <div class="w-full flex items-center justify-between px-4 pt-4 pb-2 z-40 mt-auto">
             <!-- Progress Bar Indicator -->
             <div class="flex-1 mr-3 bg-slate-200 border-2 border-[#1A1A2E] rounded-full h-2.5 sm:h-3 overflow-hidden shadow-[2px_2px_0px_#1A1A2E]">
                 <div 
