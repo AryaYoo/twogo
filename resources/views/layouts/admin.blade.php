@@ -173,6 +173,11 @@
                     <span>Gamifikasi & XP</span>
                 </a>
 
+                <a href="{{ route('admin.landing.index') }}" class="admin-nav-item {{ request()->routeIs('admin.landing.*') ? 'active' : '' }}">
+                    <span class="text-xl">🖼️</span>
+                    <span>Landing Page CMS</span>
+                </a>
+
                 <div class="my-3 border-t-2 border-dashed border-[#E2E8F0]"></div>
 
                 <div class="text-xs font-extrabold uppercase tracking-wider text-[#94A3B8] px-3 mb-1">Aplikasi</div>

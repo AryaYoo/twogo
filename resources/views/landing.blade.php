@@ -80,26 +80,23 @@
                 <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-full font-bold text-xs md:text-sm">
                         <span>✨</span>
-                        <span>Aplikasi Itinerary #1 buat Berdua</span>
+                        <span>{{ $settings['hero_badge'] ?? '✨ Aplikasi Itinerary #1 buat Berdua' }}</span>
                     </div>
 
                     <h1 class="font-heading font-extrabold text-4xl sm:text-5xl lg:text-6xl text-[#1A1A2E] leading-[1.1] tracking-tight">
-                        Rencana Seru, <br class="hidden sm:block">
-                        <span class="inline-block bg-[#FFE156] px-4 py-1 border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] rounded-2xl rotate-[-1deg] mt-1">
-                            Bareng-Bareng! 🎒
-                        </span>
+                        {{ $settings['hero_title'] ?? 'Rencana Seru, Bareng-Bareng! 🎒' }}
                     </h1>
 
                     <p class="font-bold text-base md:text-lg text-slate-700 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                        Aplikasi perencanaan perjalanan yang bikin liburanmu makin asyik, rapi, dan terorganisir tanpa ribet adu argumen budget.
+                        {{ $settings['hero_subtitle'] ?? 'Aplikasi perencanaan perjalanan yang bikin liburanmu makin asyik, rapi, dan terorganisir tanpa ribet adu argumen budget.' }}
                     </p>
 
                     <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                         <a href="{{ route('register') }}" class="w-full sm:w-auto px-8 py-4 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] transition-all text-center">
-                            Mulai Sekarang 🔥
+                            {{ $settings['hero_btn_primary'] ?? 'Mulai Sekarang 🔥' }}
                         </a>
                         <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-100 border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] transition-all text-center">
-                            Sudah Punya Akun
+                            {{ $settings['hero_btn_secondary'] ?? 'Sudah Punya Akun' }}
                         </a>
                     </div>
                 </div>
@@ -150,13 +147,16 @@
     <!-- SECTION 2: MARQUEE / TICKER BAR -->
     <div class="border-b-[3px] border-[#1A1A2E] bg-[#FFE156] py-3.5 overflow-hidden">
         <div class="animate-marquee font-heading font-extrabold text-sm sm:text-base text-[#1A1A2E] tracking-widest uppercase">
-            <span class="mx-6">BALI • JOGJA • LOMBOK • RAJA AMPAT • BANDUNG • LABUAN BAJO • MALANG • SURABAYA • UBUD • FLORES •</span>
-            <span class="mx-6">BALI • JOGJA • LOMBOK • RAJA AMPAT • BANDUNG • LABUAN BAJO • MALANG • SURABAYA • UBUD • FLORES •</span>
-            <span class="mx-6">BALI • JOGJA • LOMBOK • RAJA AMPAT • BANDUNG • LABUAN BAJO • MALANG • SURABAYA • UBUD • FLORES •</span>
+            @php
+                $marqueeText = $settings['marquee_destinations'] ?? 'BALI • JOGJA • LOMBOK • RAJA AMPAT • BANDUNG • LABUAN BAJO • MALANG • SURABAYA • UBUD • FLORES';
+            @endphp
+            <span class="mx-6">{{ $marqueeText }} •</span>
+            <span class="mx-6">{{ $marqueeText }} •</span>
+            <span class="mx-6">{{ $marqueeText }} •</span>
         </div>
     </div>
 
-    <!-- SECTION 3: FITUR UTAMA (4 CARDS) -->
+    <!-- SECTION 3: FITUR UTAMA -->
     <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB]">
         <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-12">
             
@@ -170,193 +170,156 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <!-- Card 1: Timeline Fleksibel -->
-                <div class="p-6 bg-[#00D4AA] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
-                    <div class="w-12 h-12 bg-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
-                        📅
+                @forelse($features as $f)
+                    <div class="p-6 border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all" style="background-color: {{ $f->bg_color }}; color: {{ $f->text_color }};">
+                        <div class="w-12 h-12 bg-white text-[#1A1A2E] rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
+                            {{ $f->icon }}
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xl">{{ $f->title }}</h3>
+                        <p class="font-bold text-xs md:text-sm leading-relaxed opacity-95">
+                            {{ $f->description }}
+                        </p>
                     </div>
-                    <h3 class="font-heading font-extrabold text-xl text-[#1A1A2E]">Timeline Fleksibel</h3>
-                    <p class="font-bold text-xs md:text-sm text-[#1A1A2E] opacity-90 leading-relaxed">
-                        Atur jadwal per hari dengan santai. Pagi, Siang, Malam tanpa dikejar waktu karena liburan butuh kepastian tanpa stres.
-                    </p>
-                </div>
-
-                <!-- Card 2: Budget Tracker -->
-                <div class="p-6 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
-                    <div class="w-12 h-12 bg-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
-                        💰
+                @empty
+                    <!-- Fallback default features if database empty -->
+                    <div class="p-6 bg-[#00D4AA] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4">
+                        <div class="w-12 h-12 bg-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">📅</div>
+                        <h3 class="font-heading font-extrabold text-xl text-[#1A1A2E]">Timeline Fleksibel</h3>
+                        <p class="font-bold text-xs md:text-sm text-[#1A1A2E] opacity-90 leading-relaxed">Atur jadwal per hari dengan santai.</p>
                     </div>
-                    <h3 class="font-heading font-extrabold text-xl text-[#1A1A2E]">Budget Tracker</h3>
-                    <p class="font-bold text-xs md:text-sm text-[#1A1A2E] opacity-90 leading-relaxed">
-                        Catat pengeluaran bersama secara riil. Siapa bayar apa langsung tercatat rapi dan otomatis ngitung pembagian utang.
-                    </p>
-                </div>
-
-                <!-- Card 3: Wishlist Destinasi -->
-                <div class="p-6 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
-                    <div class="w-12 h-12 bg-white text-[#1A1A2E] rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
-                        📍
-                    </div>
-                    <h3 class="font-heading font-extrabold text-xl text-white">Wishlist Destinasi</h3>
-                    <p class="font-bold text-xs md:text-sm text-white opacity-95 leading-relaxed">
-                        Kumpulkan ide destinasi di bucket list bersama. Pilih dan vote tempat mana saja yang wajib dikunjungi.
-                    </p>
-                </div>
-
-                <!-- Card 4: Dokumentasi -->
-                <div class="p-6 bg-[#7B2FF7] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl space-y-4 hover:translate-y-[-3px] transition-all">
-                    <div class="w-12 h-12 bg-[#FF8C42] text-white rounded-xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-center text-2xl font-extrabold">
-                        📸
-                    </div>
-                    <h3 class="font-heading font-extrabold text-xl text-white">Dokumentasi</h3>
-                    <p class="font-bold text-xs md:text-sm text-white opacity-95 leading-relaxed">
-                        Abadikan momen dan berkas perjalanan. Foto serta catatan tiket tersimpan rapi per trip sebagai kenangan digital.
-                    </p>
-                </div>
-
+                @endforelse
             </div>
         </div>
     </section>
 
-    <!-- SECTION 4: SHOWCASE APLIKASI (2 BIG BLOCKS ALTERNATING) -->
+    <!-- SECTION 4: SHOWCASE APLIKASI -->
     <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-white">
         <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-20">
             
-            <!-- Block 1: Timeline & Itinerary (Text Left, Card Right) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                <!-- Text Left -->
-                <div class="lg:col-span-6 space-y-4">
-                    <div class="inline-block px-3 py-1 bg-[#4361EE] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase">
-                        Fitur #1 • Itinerary Builder
-                    </div>
-                    <h3 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E] leading-tight">
-                        Timeline & Itinerary Harian yang Terstruktur
-                    </h3>
-                    <p class="font-bold text-slate-600 text-sm md:text-base leading-relaxed">
-                        Menyusun kegiatan harian dari pagi hingga malam jadi lebih mudah. Setiap aktivitas dilengkapi lokasi, jam, dan status penyelesaian.
-                    </p>
-                    
-                    <ul class="space-y-2.5 text-xs md:text-sm font-bold text-slate-700 pt-2">
-                        <li class="flex items-center gap-2.5">
-                            <span class="w-6 h-6 rounded-lg bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
-                            <span>Pengelompokan jadwal per hari yang fleksibel</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="w-6 h-6 rounded-lg bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
-                            <span>Penanda aktivitas selesai (Checklist real-time)</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="w-6 h-6 rounded-lg bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
-                            <span>Sistem bonus XP setiap kegiatan dituntaskan</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Card Right (UI Mockup Preview) -->
-                <div class="lg:col-span-6">
-                    <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
-                        <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
-                            <div class="font-heading font-extrabold text-base text-[#1A1A2E]">📅 Hari 1 — Eksplor Seminyak</div>
-                            <span class="px-2.5 py-1 bg-[#FFE156] border border-[#1A1A2E] rounded-md font-extrabold text-xs">3 Kegiatan</span>
+            @forelse($showcases as $index => $sc)
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    @if($index % 2 === 0)
+                        <!-- Text Left, Card Right -->
+                        <div class="lg:col-span-6 space-y-4">
+                            @if($sc->section_badge)
+                                <div class="inline-block px-3 py-1 text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase" style="background-color: {{ $sc->badge_color }};">
+                                    {{ $sc->section_badge }}
+                                </div>
+                            @endif
+                            <h3 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E] leading-tight">
+                                {{ $sc->title }}
+                            </h3>
+                            <p class="font-bold text-slate-600 text-sm md:text-base leading-relaxed">
+                                {{ $sc->description }}
+                            </p>
+                            
+                            @if(is_array($sc->bullet_points))
+                                <ul class="space-y-2.5 text-xs md:text-sm font-bold text-slate-700 pt-2">
+                                    @foreach($sc->bullet_points as $point)
+                                        <li class="flex items-center gap-2.5">
+                                            <span class="w-6 h-6 rounded-lg bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                                            <span>{{ $point }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
 
-                        <!-- Activities list mockup -->
-                        <div class="space-y-3">
-                            <div class="p-3.5 bg-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <span class="w-6 h-6 rounded-md bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center text-xs">✓</span>
-                                    <div>
-                                        <div class="font-bold text-xs md:text-sm text-[#1A1A2E] line-through opacity-70">Sarapan Nasi Campur Bali</div>
-                                        <div class="text-[10px] font-bold text-slate-400">08:30 - 09:30</div>
+                        <div class="lg:col-span-6">
+                            <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
+                                <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
+                                    <div class="font-heading font-extrabold text-base text-[#1A1A2E]">📅 Hari 1 — Eksplor Seminyak</div>
+                                    <span class="px-2.5 py-1 bg-[#FFE156] border border-[#1A1A2E] rounded-md font-extrabold text-xs">3 Kegiatan</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="p-3.5 bg-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-6 h-6 rounded-md bg-[#00D4AA] border-2 border-[#1A1A2E] flex items-center justify-center text-xs">✓</span>
+                                            <div>
+                                                <div class="font-bold text-xs md:text-sm text-[#1A1A2E] line-through opacity-70">Sarapan Nasi Campur Bali</div>
+                                                <div class="text-[10px] font-bold text-slate-400">08:30 - 09:30</div>
+                                            </div>
+                                        </div>
+                                        <span class="font-extrabold text-xs text-emerald-600">+10 XP</span>
+                                    </div>
+                                    <div class="p-3.5 bg-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-6 h-6 rounded-md bg-slate-100 border-2 border-[#1A1A2E] flex items-center justify-center text-xs"></span>
+                                            <div>
+                                                <div class="font-bold text-xs md:text-sm text-[#1A1A2E]">Surfing di Pantai Batu Bolong</div>
+                                                <div class="text-[10px] font-bold text-slate-500">14:00 - 17:00</div>
+                                            </div>
+                                        </div>
+                                        <span class="font-extrabold text-xs text-[#7B2FF7]">Rp 150.000</span>
                                     </div>
                                 </div>
-                                <span class="font-extrabold text-xs text-emerald-600">+10 XP</span>
                             </div>
-
-                            <div class="p-3.5 bg-white border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <span class="w-6 h-6 rounded-md bg-slate-100 border-2 border-[#1A1A2E] flex items-center justify-center text-xs"></span>
+                        </div>
+                    @else
+                        <!-- Card Left, Text Right -->
+                        <div class="lg:col-span-6 order-2 lg:order-1">
+                            <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
+                                <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
                                     <div>
-                                        <div class="font-bold text-xs md:text-sm text-[#1A1A2E]">Surfing di Pantai Batu Bolong</div>
-                                        <div class="text-[10px] font-bold text-slate-500">14:00 - 17:00</div>
+                                        <div class="text-[10px] font-extrabold text-slate-500 uppercase">Total Pengeluaran</div>
+                                        <div class="font-heading font-extrabold text-2xl text-[#7B2FF7]">Rp 2.450.000</div>
+                                    </div>
+                                    <span class="px-3 py-1 bg-[#00D4AA] border-2 border-[#1A1A2E] rounded-lg font-extrabold text-xs">Auto Split</span>
+                                </div>
+
+                                <div class="p-4 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl space-y-1">
+                                    <div class="text-xs font-extrabold text-[#1A1A2E]">🤝 Ringkasan Utang-Piutang</div>
+                                    <div class="text-xs font-bold text-[#1A1A2E]">
+                                        <b>Yohanes</b> harus bayar ke <b>Arya</b> sebesar <span class="underline font-extrabold">Rp 350.000</span>
                                     </div>
                                 </div>
-                                <span class="font-extrabold text-xs text-[#7B2FF7]">Rp 150.000</span>
+
+                                <div class="space-y-2 text-xs font-bold">
+                                    <div class="p-3 bg-white border-2 border-[#1A1A2E] rounded-xl flex justify-between">
+                                        <span>🏨 Hotel Seminyak (Dibayar Arya)</span>
+                                        <span class="font-extrabold text-[#1A1A2E]">Rp 1.200.000</span>
+                                    </div>
+                                    <div class="p-3 bg-white border-2 border-[#1A1A2E] rounded-xl flex justify-between">
+                                        <span>🍽️ Makan Malam Seafood (Dibayar Yohanes)</span>
+                                        <span class="font-extrabold text-[#1A1A2E]">Rp 500.000</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="lg:col-span-6 space-y-4 order-1 lg:order-2">
+                            @if($sc->section_badge)
+                                <div class="inline-block px-3 py-1 text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase" style="background-color: {{ $sc->badge_color }};">
+                                    {{ $sc->section_badge }}
+                                </div>
+                            @endif
+                            <h3 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E] leading-tight">
+                                {{ $sc->title }}
+                            </h3>
+                            <p class="font-bold text-slate-600 text-sm md:text-base leading-relaxed">
+                                {{ $sc->description }}
+                            </p>
+                            
+                            @if(is_array($sc->bullet_points))
+                                <ul class="space-y-2.5 text-xs md:text-sm font-bold text-slate-700 pt-2">
+                                    @foreach($sc->bullet_points as $point)
+                                        <li class="flex items-center gap-2.5">
+                                            <span class="w-6 h-6 rounded-lg bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
+                                            <span>{{ $point }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
+                    @endif
                 </div>
-            </div>
-
-            <!-- Block 2: Budget Tracker & Split Bill (Card Left, Text Right) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                <!-- Card Left (UI Mockup Preview) -->
-                <div class="lg:col-span-6 order-2 lg:order-1">
-                    <div class="bg-[#FFFBEB] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl p-5 md:p-6 space-y-4">
-                        <div class="flex items-center justify-between border-b-2 border-[#1A1A2E] pb-3">
-                            <div>
-                                <div class="text-[10px] font-extrabold text-slate-500 uppercase">Total Pengeluaran</div>
-                                <div class="font-heading font-extrabold text-2xl text-[#7B2FF7]">Rp 2.450.000</div>
-                            </div>
-                            <span class="px-3 py-1 bg-[#00D4AA] border-2 border-[#1A1A2E] rounded-lg font-extrabold text-xs">Auto Split</span>
-                        </div>
-
-                        <!-- Split Bill Info Mockup -->
-                        <div class="p-4 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl space-y-1">
-                            <div class="text-xs font-extrabold text-[#1A1A2E]">🤝 Ringkasan Utang-Piutang</div>
-                            <div class="text-xs font-bold text-[#1A1A2E]">
-                                <b>Yohanes</b> harus bayar ke <b>Arya</b> sebesar <span class="underline font-extrabold">Rp 350.000</span>
-                            </div>
-                        </div>
-
-                        <!-- Expense item list mockup -->
-                        <div class="space-y-2 text-xs font-bold">
-                            <div class="p-3 bg-white border-2 border-[#1A1A2E] rounded-xl flex justify-between">
-                                <span>🏨 Hotel Seminyak (Dibayar Arya)</span>
-                                <span class="font-extrabold text-[#1A1A2E]">Rp 1.200.000</span>
-                            </div>
-                            <div class="p-3 bg-white border-2 border-[#1A1A2E] rounded-xl flex justify-between">
-                                <span>🍽️ Makan Malam Seafood (Dibayar Yohanes)</span>
-                                <span class="font-extrabold text-[#1A1A2E]">Rp 500.000</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Text Right -->
-                <div class="lg:col-span-6 space-y-4 order-1 lg:order-2">
-                    <div class="inline-block px-3 py-1 bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-xs uppercase">
-                        Fitur #2 • Budget & Split Bill
-                    </div>
-                    <h3 class="font-heading font-extrabold text-3xl md:text-4xl text-[#1A1A2E] leading-tight">
-                        Auto Hitung Budget & Transparan Berdua
-                    </h3>
-                    <p class="font-bold text-slate-600 text-sm md:text-base leading-relaxed">
-                        Tidak perlu lagi mencatat manual di kertas atau kalkulator HP. Setiap pengeluaran langsung dihitung secara otomatis siapa bayar apa.
-                    </p>
-                    
-                    <ul class="space-y-2.5 text-xs md:text-sm font-bold text-slate-700 pt-2">
-                        <li class="flex items-center gap-2.5">
-                            <span class="w-6 h-6 rounded-lg bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
-                            <span>Pencatatan pengeluaran riil per kategori</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="w-6 h-6 rounded-lg bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
-                            <span>Kalkulasi otomatis utang-piutang antar partner</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="w-6 h-6 rounded-lg bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-extrabold text-xs">✓</span>
-                            <span>Pantau sisa anggaran trip secara transparan</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            @empty
+            @endforelse
 
         </div>
     </section>
 
-    <!-- SECTION 5: ANGKA PENCAPAIAN (4 STATS CARDS) -->
+    <!-- SECTION 5: ANGKA PENCAPAIAN (STATS) -->
     <section class="py-16 md:py-20 border-b-[3px] border-[#1A1A2E] bg-[#FFFBEB]">
         <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-10">
             
@@ -370,35 +333,23 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Stat 1 -->
-                <div class="p-6 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
-                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-[#1A1A2E]">15.000+</div>
-                    <div class="font-extrabold text-xs md:text-sm text-[#1A1A2E] uppercase tracking-wider">Itinerary Dibuat</div>
-                </div>
-
-                <!-- Stat 2 -->
-                <div class="p-6 bg-[#00D4AA] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
-                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-[#1A1A2E]">500+</div>
-                    <div class="font-extrabold text-xs md:text-sm text-[#1A1A2E] uppercase tracking-wider">Destinasi Populer</div>
-                </div>
-
-                <!-- Stat 3 -->
-                <div class="p-6 bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
-                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-white">4.9 ★</div>
-                    <div class="font-extrabold text-xs md:text-sm text-white uppercase tracking-wider">Rating Kepuasan</div>
-                </div>
-
-                <!-- Stat 4 -->
-                <div class="p-6 bg-[#4361EE] text-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
-                    <div class="font-heading font-extrabold text-4xl md:text-5xl text-white">28.000+</div>
-                    <div class="font-extrabold text-xs md:text-sm text-white uppercase tracking-wider">Trip Selesai</div>
-                </div>
+                @forelse($stats as $st)
+                    <div class="p-6 border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2" style="background-color: {{ $st->bg_color }}; color: {{ $st->text_color }};">
+                        <div class="font-heading font-extrabold text-4xl md:text-5xl">{{ $st->number }}</div>
+                        <div class="font-extrabold text-xs md:text-sm uppercase tracking-wider">{{ $st->label }}</div>
+                    </div>
+                @empty
+                    <div class="p-6 bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl text-center space-y-2">
+                        <div class="font-heading font-extrabold text-4xl md:text-5xl text-[#1A1A2E]">15.000+</div>
+                        <div class="font-extrabold text-xs md:text-sm text-[#1A1A2E] uppercase tracking-wider">Itinerary Dibuat</div>
+                    </div>
+                @endforelse
             </div>
 
         </div>
     </section>
 
-    <!-- SECTION 6: TESTIMONIAL SECTION (2 CARDS SIDE BY SIDE) -->
+    <!-- SECTION 6: TESTIMONIAL SECTION -->
     <section class="py-16 md:py-24 border-b-[3px] border-[#1A1A2E] bg-white">
         <div class="max-w-6xl mx-auto px-4 md:px-8 space-y-12">
             
@@ -412,39 +363,23 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
-                <!-- Testimonial 1 -->
-                <div class="p-6 md:p-8 bg-[#FFF3C4] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl space-y-6 flex flex-col justify-between">
-                    <p class="font-bold text-base md:text-lg text-[#1A1A2E] leading-relaxed italic">
-                        "Liburan ke Bali minggu lalu rapi banget pakenya TwoGo! Gak pake adu argumen soal pengeluaran karena utang-piutang langsung auto dihitung. Recommended parah!"
-                    </p>
-                    <div class="flex items-center gap-3 pt-4 border-t-2 border-[#1A1A2E]">
-                        <div class="w-12 h-12 rounded-2xl bg-[#FF6B9D] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] flex items-center justify-center font-extrabold text-lg">
-                            🌟
-                        </div>
-                        <div>
-                            <div class="font-heading font-extrabold text-base text-[#1A1A2E]">Budi & Sarah</div>
-                            <div class="text-xs font-bold text-slate-600">Traveler Sejati 🌟</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonial 2 -->
-                <div class="p-6 md:p-8 bg-[#FFD1E3] border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl space-y-6 flex flex-col justify-between">
-                    <p class="font-bold text-base md:text-lg text-[#1A1A2E] leading-relaxed italic">
-                        "Buat itinerary berdua sama doi langsung gampang. Tinggal nyusun hari demi hari trus foto kenangannya tersimpan rapi per trip. Gak bingung nyari foto lama."
-                    </p>
-                    <div class="flex items-center gap-3 pt-4 border-t-2 border-[#1A1A2E]">
-                        <div class="w-12 h-12 rounded-2xl bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] flex items-center justify-center font-extrabold text-lg">
-                            👑
-                        </div>
-                        <div>
-                            <div class="font-heading font-extrabold text-base text-[#1A1A2E]">Reza & Amanda</div>
-                            <div class="text-xs font-bold text-slate-700">TwoGo-er Legend 👑</div>
+                @forelse($testimonials as $t)
+                    <div class="p-6 md:p-8 border-[4px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-3xl space-y-6 flex flex-col justify-between text-[#1A1A2E]" style="background-color: {{ $t->bg_color }};">
+                        <p class="font-bold text-base md:text-lg leading-relaxed italic">
+                            "{{ $t->quote }}"
+                        </p>
+                        <div class="flex items-center gap-3 pt-4 border-t-2 border-[#1A1A2E]">
+                            <div class="w-12 h-12 rounded-2xl bg-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] flex items-center justify-center font-extrabold text-lg">
+                                {{ $t->avatar_emoji }}
+                            </div>
+                            <div>
+                                <div class="font-heading font-extrabold text-base">{{ $t->user_name }}</div>
+                                <div class="text-xs font-bold text-slate-600">{{ $t->user_tier }}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
+                @empty
+                @endforelse
             </div>
 
         </div>
@@ -455,20 +390,20 @@
         <div class="max-w-5xl mx-auto px-4 md:px-8">
             <div class="bg-[#4361EE] border-[4px] border-[#1A1A2E] shadow-[12px_12px_0px_#1A1A2E] rounded-3xl p-8 md:p-14 text-center space-y-6 text-white">
                 <div class="inline-block px-4 py-1.5 bg-[#00D4AA] text-[#1A1A2E] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-full font-heading font-extrabold text-xs md:text-sm">
-                    Tunggu Apa Lagi? 🎒
+                    {{ $settings['cta_badge'] ?? 'Tunggu Apa Lagi? 🎒' }}
                 </div>
 
                 <h2 class="font-heading font-extrabold text-3xl md:text-5xl text-white leading-tight">
-                    Siap untuk Liburan Berikutnya?
+                    {{ $settings['cta_title'] ?? 'Siap untuk Liburan Berikutnya?' }}
                 </h2>
 
                 <p class="font-bold text-base md:text-lg text-white opacity-95 max-w-lg mx-auto">
-                    Yuk bikin itinerary pertamamu di TwoGo secara gratis!
+                    {{ $settings['cta_subtitle'] ?? 'Yuk bikin itinerary pertamamu di TwoGo secara gratis!' }}
                 </p>
 
                 <div class="pt-2">
-                    <a href="{{ route('register') }}" class="inline-block px-8 py-4 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-white transition-all">
-                        Buat Trip Sekarang 🚀
+                    <a href="{{ route('register') }}" class="inline-block px-8 py-4 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] transition-all">
+                        {{ $settings['cta_btn'] ?? 'Buat Trip Sekarang 🚀' }}
                     </a>
                 </div>
             </div>
@@ -485,7 +420,7 @@
                     TwoGo<span class="text-[#FF6B9D] text-4xl leading-none">.</span>
                 </div>
                 <p class="font-bold text-xs md:text-sm text-slate-600 max-w-sm">
-                    Rencana Seru, Bareng-Bareng! Aplikasi itinerary & budget tracker perjalanan #1 di Indonesia.
+                    {{ $settings['footer_tagline'] ?? 'Rencana Seru, Bareng-Bareng! Aplikasi itinerary & budget tracker perjalanan #1 di Indonesia.' }}
                 </p>
             </div>
 
@@ -503,7 +438,7 @@
             <!-- Col 3: Contact & Copyright -->
             <div class="md:col-span-3 space-y-2 text-xs font-bold text-slate-600 md:text-right">
                 <div class="font-heading font-extrabold text-sm text-[#1A1A2E] uppercase tracking-wider mb-2">Hubungi Kami</div>
-                <div>📧 <a href="mailto:adventuretwogo@gmail.com" class="underline hover:text-[#4361EE]">adventuretwogo@gmail.com</a></div>
+                <div>📧 <a href="mailto:{{ $settings['footer_email'] ?? 'adventuretwogo@gmail.com' }}" class="underline hover:text-[#4361EE]">{{ $settings['footer_email'] ?? 'adventuretwogo@gmail.com' }}</a></div>
                 <div class="pt-2 text-slate-500">&copy; 2026 TwoGo. All rights reserved.</div>
             </div>
 

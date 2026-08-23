@@ -8,7 +8,13 @@ use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripActivityController;
 
 Route::get('/', function () {
-    return view('landing');
+    $settings = \App\Models\LandingSetting::all()->pluck('value', 'key')->toArray();
+    $features = \App\Models\LandingFeature::where('is_active', true)->orderBy('order')->get();
+    $showcases = \App\Models\LandingShowcase::where('is_active', true)->orderBy('order')->get();
+    $stats = \App\Models\LandingStat::where('is_active', true)->orderBy('order')->get();
+    $testimonials = \App\Models\LandingTestimonial::where('is_active', true)->orderBy('order')->get();
+
+    return view('landing', compact('settings', 'features', 'showcases', 'stats', 'testimonials'));
 })->name('landing');
 
 // Guest routes
@@ -129,6 +135,25 @@ Route::prefix('ctrl-twogo-admin')->name('admin.')->group(function () {
         // Gamification & XP System
         Route::get('/gamification', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'index'])->name('gamification.index');
         Route::post('/gamification/rules', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'updateRules'])->name('gamification.rules');
+
+        // Landing Page CMS
+        Route::get('/landing', [\App\Http\Controllers\Admin\AdminLandingController::class, 'index'])->name('landing.index');
+        Route::post('/landing/settings', [\App\Http\Controllers\Admin\AdminLandingController::class, 'updateSettings'])->name('landing.settings');
+
+        // Features CRUD
+        Route::post('/landing/features', [\App\Http\Controllers\Admin\AdminLandingController::class, 'storeFeature'])->name('landing.features.store');
+        Route::put('/landing/features/{feature}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'updateFeature'])->name('landing.features.update');
+        Route::delete('/landing/features/{feature}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'destroyFeature'])->name('landing.features.destroy');
+
+        // Stats CRUD
+        Route::post('/landing/stats', [\App\Http\Controllers\Admin\AdminLandingController::class, 'storeStat'])->name('landing.stats.store');
+        Route::put('/landing/stats/{stat}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'updateStat'])->name('landing.stats.update');
+        Route::delete('/landing/stats/{stat}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'destroyStat'])->name('landing.stats.destroy');
+
+        // Testimonials CRUD
+        Route::post('/landing/testimonials', [\App\Http\Controllers\Admin\AdminLandingController::class, 'storeTestimonial'])->name('landing.testimonials.store');
+        Route::put('/landing/testimonials/{testimonial}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'updateTestimonial'])->name('landing.testimonials.update');
+        Route::delete('/landing/testimonials/{testimonial}', [\App\Http\Controllers\Admin\AdminLandingController::class, 'destroyTestimonial'])->name('landing.testimonials.destroy');
     });
 });
 
