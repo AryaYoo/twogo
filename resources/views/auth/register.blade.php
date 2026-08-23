@@ -9,7 +9,7 @@
     <!-- Main form card -->
     <div class="relative bg-[#FFFBEB] border-[3px] border-[#1A1A2E] shadow-[8px_8px_0px_#1A1A2E] rounded-2xl p-6 md:p-8 z-10">
         <h1 class="font-heading font-bold text-[#1A1A2E] tracking-tight text-center mb-2" style="font-size: 10px; letter-spacing: 0.05em;">TwoGo<span class="text-[#FF6B9D]">.</span></h1>
-        <h2 class="text-2xl font-heading font-extrabold mb-6 text-center text-[#1A1A2E]">Buat Akun<br>Baru 🚀</h2>
+        <h2 class="text-lg font-heading font-extrabold mb-6 text-center text-[#1A1A2E]">Buat Akun Baru 🚀</h2>
     
     <form action="{{ route('register') }}" method="POST">
         @csrf
