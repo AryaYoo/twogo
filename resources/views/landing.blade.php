@@ -405,7 +405,7 @@
                 </p>
 
                 <div class="pt-2">
-                    <a href="{{ route('register') }}" class="inline-block px-8 py-4 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-black transition-all">
+                    <a href="{{ route('register') }}" class="inline-block px-8 py-4 bg-[#FFE156] hover:bg-[#ffd829] border-[3px] border-[#1A1A2E] shadow-[5px_5px_0px_#1A1A2E] active:translate-y-[2px] active:shadow-none rounded-xl font-heading font-extrabold text-base md:text-lg text-[#1A1A2E] transition-all">
                         {{ $settings['cta_btn'] ?? 'Buat Trip Sekarang 🚀' }}
                     </a>
                 </div>
