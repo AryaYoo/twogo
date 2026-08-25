@@ -78,7 +78,7 @@
 
                         {{-- Foto aktivitas --}}
                         <div class="relative w-full h-44 sm:h-60 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
-                            <img src="{{ $imgUrl }}" alt="{{ $activity->title }}" class="w-full h-full object-cover" />
+                            <img src="{{ $imgUrl }}" alt="{{ $activity->title }}" class="absolute inset-0 w-full h-full object-cover" />
 
                             {{-- Badge kategori --}}
                             <div class="absolute top-2 right-2 px-2 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
@@ -161,7 +161,7 @@
 
                         {{-- Foto destinasi --}}
                         <div class="relative w-full h-44 sm:h-60 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
-                            <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="w-full h-full object-cover" />
+                            <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="absolute inset-0 w-full h-full object-cover" />
 
                             <div class="absolute top-2 right-2 px-2 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
                                 🌍 Publik

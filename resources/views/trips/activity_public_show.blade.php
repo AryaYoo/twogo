@@ -135,7 +135,7 @@
 @endif
 
 {{-- ===== LINK KE TRIP ===== --}}
-<div class="nb-card bg-[#1A1A2E] text-white p-4 border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#FF6B9D] rounded-2xl flex items-center justify-between gap-3">
+<div class="nb-card bg-white text-[#1A1A2E] p-4 border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#FF6B9D] rounded-2xl flex items-center justify-between gap-3">
     <div class="min-w-0">
         <p class="text-[10px] font-bold opacity-50 uppercase tracking-wide mb-0.5">Bagian dari Trip</p>
         <p class="font-heading font-bold text-sm truncate">{{ $trip->title }}</p>
