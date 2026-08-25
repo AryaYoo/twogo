@@ -154,11 +154,55 @@ class TripController extends Controller
             'title'        => 'required|string|max:255',
             'destination'  => 'required|string|max:255',
             'total_budget' => 'nullable|numeric|min:0',
+            'start_date'   => 'nullable|date',
+            'end_date'     => 'nullable|date|after_or_equal:start_date',
         ]);
 
         $trip->update($request->only('title', 'description', 'destination', 'total_budget'));
 
-        return redirect()->route('trips.show', $trip)->with('success', 'Trip berhasil diupdate!');
+        // Edit tanggal hanya untuk trip berstatus 'planning'
+        if (
+            $trip->status === 'planning' &&
+            $request->filled('start_date') && $request->filled('end_date')
+        ) {
+            $newStart = Carbon::parse($request->start_date);
+            $newEnd   = Carbon::parse($request->end_date);
+
+            $oldStart = Carbon::parse($trip->start_date);
+            $oldEnd   = Carbon::parse($trip->end_date);
+
+            // Hanya proses ulang kalau tanggal benar-benar berubah
+            if (!$newStart->isSameDay($oldStart) || !$newEnd->isSameDay($oldEnd)) {
+                $newDaysCount = $newStart->diffInDays($newEnd) + 1;
+
+                // Hapus hari-hari yang melewati jumlah hari baru
+                $trip->days()->where('day_number', '>', $newDaysCount)->delete();
+
+                // Update atau buat hari-hari sesuai tanggal baru
+                for ($i = 0; $i < $newDaysCount; $i++) {
+                    $dayDate = $newStart->copy()->addDays($i)->format('Y-m-d');
+                    $dayNum  = $i + 1;
+
+                    $existingDay = $trip->days()->where('day_number', $dayNum)->first();
+                    if ($existingDay) {
+                        $existingDay->update(['date' => $dayDate]);
+                    } else {
+                        TripDay::create([
+                            'trip_id'    => $trip->id,
+                            'day_number' => $dayNum,
+                            'date'       => $dayDate,
+                        ]);
+                    }
+                }
+
+                $trip->update([
+                    'start_date' => $request->start_date,
+                    'end_date'   => $request->end_date,
+                ]);
+            }
+        }
+
+        return redirect()->route('trips.show', $trip)->with('success', 'Trip berhasil diupdate! ✏️');
     }
 
     public function destroy(Trip $trip)

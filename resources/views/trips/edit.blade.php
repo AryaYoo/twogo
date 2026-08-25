@@ -108,6 +108,74 @@
             label="Deskripsi / Catatan" 
             value="{{ $trip->description }}" 
         />
+
+        {{-- Edit Tanggal: hanya untuk trip berstatus 'planning' --}}
+        @if($trip->status === 'planning')
+        <div class="mt-6 border-t-[2px] border-dashed border-[#1A1A2E] pt-5">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-lg">📅</span>
+                <h3 class="font-heading font-bold text-base text-[#1A1A2E]">Ubah Tanggal Perjalanan</h3>
+            </div>
+
+            {{-- Info banner --}}
+            <div class="nb-card bg-[#FFFBEB] border-[#FFE156] p-3 flex gap-3 items-start mb-4">
+                <div class="text-xl shrink-0">⚠️</div>
+                <p class="text-xs font-medium text-gray-700 leading-relaxed">
+                    Mengubah tanggal akan <strong>menggeser jadwal semua hari</strong> sesuai tanggal baru.
+                    Aktivitas yang sudah ada tetap tersimpan, namun hari yang melebihi durasi baru akan dihapus.
+                </p>
+            </div>
+
+            {{-- Konfirmasi lock --}}
+            <div class="nb-form-group mb-4">
+                <label class="nb-label" for="konfirmasi_input">
+                    🔒 Ketik <span class="font-mono font-bold bg-gray-100 px-1.5 py-0.5 rounded border border-gray-300 text-[#1A1A2E]">KONFIRMASI</span> untuk membuka field tanggal
+                </label>
+                <input
+                    id="konfirmasi_input"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Ketik KONFIRMASI di sini..."
+                    class="nb-input transition-all duration-200"
+                />
+                <p id="konfirmasi_hint" class="text-xs mt-1.5 font-medium text-gray-400">Belum terkonfirmasi</p>
+            </div>
+
+            {{-- Date fields — terkunci sampai KONFIRMASI diketik --}}
+            <div id="date-fields-wrapper" class="relative">
+                {{-- Overlay kunci --}}
+                <div id="date-lock-overlay" class="absolute inset-0 z-10 rounded-lg bg-gray-100/80 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1 border-[2px] border-dashed border-gray-300 cursor-not-allowed select-none">
+                    <span class="text-2xl">🔒</span>
+                    <span class="text-xs font-bold text-gray-500">Ketik KONFIRMASI dulu</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="nb-form-group">
+                        <label class="nb-label">✈️ Berangkat</label>
+                        <input
+                            id="input_start_date"
+                            type="date"
+                            name="start_date"
+                            value="{{ $trip->start_date->format('Y-m-d') }}"
+                            disabled
+                            class="nb-input opacity-50 cursor-not-allowed"
+                        />
+                    </div>
+                    <div class="nb-form-group">
+                        <label class="nb-label">🏠 Pulang</label>
+                        <input
+                            id="input_end_date"
+                            type="date"
+                            name="end_date"
+                            value="{{ $trip->end_date->format('Y-m-d') }}"
+                            disabled
+                            class="nb-input opacity-50 cursor-not-allowed"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
         
         <div class="mt-6 flex gap-4">
             <x-button type="submit" variant="mint" class="flex-1">Simpan Perubahan</x-button>
@@ -148,3 +216,58 @@
     </div>
 </x-modal>
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        var input    = document.getElementById('konfirmasi_input');
+        var overlay  = document.getElementById('date-lock-overlay');
+        var startEl  = document.getElementById('input_start_date');
+        var endEl    = document.getElementById('input_end_date');
+        var hint     = document.getElementById('konfirmasi_hint');
+
+        if (!input) return; // halaman tanpa seksi ini (completed trip)
+
+        function setUnlocked(unlocked) {
+            if (unlocked) {
+                overlay.classList.add('hidden');
+                startEl.disabled = false;
+                endEl.disabled   = false;
+                startEl.classList.remove('opacity-50', 'cursor-not-allowed');
+                endEl.classList.remove('opacity-50', 'cursor-not-allowed');
+                hint.textContent  = '✅ Terkonfirmasi — field tanggal sudah terbuka.';
+                hint.classList.remove('text-gray-400', 'text-red-500');
+                hint.classList.add('text-green-600');
+                input.classList.remove('border-red-400');
+                input.classList.add('border-green-500');
+            } else {
+                overlay.classList.remove('hidden');
+                startEl.disabled = true;
+                endEl.disabled   = true;
+                startEl.classList.add('opacity-50', 'cursor-not-allowed');
+                endEl.classList.add('opacity-50', 'cursor-not-allowed');
+                input.classList.remove('border-green-500');
+
+                var val = input.value.trim();
+                if (val.length > 0) {
+                    hint.textContent = '❌ Tulisan tidak sesuai. Ketik persis: KONFIRMASI';
+                    hint.classList.remove('text-gray-400', 'text-green-600');
+                    hint.classList.add('text-red-500');
+                    input.classList.add('border-red-400');
+                } else {
+                    hint.textContent = 'Belum terkonfirmasi';
+                    hint.classList.remove('text-red-500', 'text-green-600');
+                    hint.classList.add('text-gray-400');
+                    input.classList.remove('border-red-400');
+                }
+            }
+        }
+
+        input.addEventListener('input', function () {
+            setUnlocked(input.value.trim() === 'KONFIRMASI');
+        });
+
+        setUnlocked(false);
+    })();
+</script>
+@endpush
