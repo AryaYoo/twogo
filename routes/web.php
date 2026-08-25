@@ -68,7 +68,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/for-you', [\App\Http\Controllers\ForYouController::class, 'index'])->name('for-you');
 
     // Search
-    Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+    Route::get('/search',          [\App\Http\Controllers\SearchController::class, 'index'])  ->name('search');
+    Route::get('/search/cari',     [\App\Http\Controllers\SearchController::class, 'cari'])   ->name('search.cari');
+    Route::get('/search/kode',     [\App\Http\Controllers\SearchController::class, 'kode'])   ->name('search.kode');
+    Route::get('/search/partner',  [\App\Http\Controllers\SearchController::class, 'partner'])->name('search.partner');
+    Route::get('/search/populer',  [\App\Http\Controllers\SearchController::class, 'populer'])->name('search.populer');
     
     // Trips
     Route::resource('trips', TripController::class);

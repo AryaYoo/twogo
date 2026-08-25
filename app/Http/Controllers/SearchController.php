@@ -9,14 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class SearchController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Mega menu — halaman utama search.
+     */
+    public function index()
+    {
+        return view('search.index');
+    }
+
+    /**
+     * Halaman cari trip & pengguna.
+     */
+    public function cari(Request $request)
     {
         $query = trim($request->get('q', ''));
-        $tab   = $request->get('tab', 'search');
         $trips = collect();
         $users = collect();
 
-        if ($tab === 'search' && $query && mb_strlen($query) >= 2) {
+        if ($query && mb_strlen($query) >= 2) {
             $userId = Auth::id();
 
             $trips = Trip::with(['creator', 'likes', 'members'])
@@ -42,6 +52,30 @@ class SearchController extends Controller
                 ->get();
         }
 
-        return view('search.index', compact('query', 'trips', 'users'));
+        return view('search.cari', compact('query', 'trips', 'users'));
+    }
+
+    /**
+     * Halaman bergabung via kode perjalanan.
+     */
+    public function kode()
+    {
+        return view('search.kode');
+    }
+
+    /**
+     * Halaman Open Partner (coming soon).
+     */
+    public function partner()
+    {
+        return view('search.partner');
+    }
+
+    /**
+     * Halaman Trip Populer (coming soon).
+     */
+    public function populer()
+    {
+        return view('search.populer');
     }
 }

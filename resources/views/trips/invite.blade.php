@@ -38,24 +38,6 @@
         </div>
     </x-card>
 
-    <!-- Join with Code Form (For others) -->
-    <h3 class="font-heading font-bold text-lg mb-3">Atau Punya Kode Invite?</h3>
-    <x-card>
-        <form action="{{ route('invitations.join_code') }}" method="POST" class="flex gap-2 min-w-0">
-            @csrf
-            <input
-                type="text"
-                name="invite_code"
-                placeholder="Masukkan 6 digit kode..."
-                class="flex-1 min-w-0 border-[3px] border-[#1A1A2E] rounded-sm px-3 py-2 text-[#1A1A2E] font-bold uppercase"
-                required minlength="6" maxlength="6"
-            >
-            <x-button type="submit" variant="mint" class="shrink-0">Gabung</x-button>
-        </form>
-        @error('invite_code')
-            <p class="text-red-500 text-xs font-bold mt-2">{{ $message }}</p>
-        @enderror
-    </x-card>
 
     <!-- Invite a friend directly -->
     <h3 class="font-heading font-bold text-lg mt-6 mb-3">Undang Teman</h3>
