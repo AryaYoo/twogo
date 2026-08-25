@@ -118,10 +118,10 @@
                                 @endif
                             </span>
                             <a
-                                href="{{ route('trips.show', $trip) }}"
+                                href="{{ route('activities.public_show', $activity) }}"
                                 class="px-3 py-1 bg-[#FF6B9D] hover:bg-[#ff5089] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-white transition-all flex items-center gap-1"
                             >
-                                <span>Lihat Trip</span>
+                                <span>Lihat Detail</span>
                                 <span>→</span>
                             </a>
                         </div>

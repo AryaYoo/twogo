@@ -128,6 +128,7 @@ Route::middleware('auth')->group(function () {
     
     // Trip public features
     Route::get('/trips/{trip}/public', [\App\Http\Controllers\TripController::class, 'publicShow'])->name('trips.public_show');
+    Route::get('/activities/{activity}/public', [\App\Http\Controllers\TripActivityController::class, 'publicShow'])->name('activities.public_show');
     Route::post('/trips/{trip}/like', [\App\Http\Controllers\TripController::class, 'toggleLike'])->name('trips.like');
     Route::post('/trips/{trip}/clone', [\App\Http\Controllers\TripController::class, 'cloneToWishlist'])->name('trips.clone');
     Route::patch('/trips/{trip}/visibility', [\App\Http\Controllers\TripController::class, 'toggleVisibility'])->name('trips.visibility');

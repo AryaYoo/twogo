@@ -48,6 +48,25 @@ class TripActivityController extends Controller
         return $time;
     }
 
+    /**
+     * Halaman detail publik aktivitas — tanpa autentikasi.
+     */
+    public function publicShow(TripActivity $activity)
+    {
+        // Hanya tampilkan jika aktivitas & tripnya publik, sudah selesai, dan punya foto
+        $trip = $activity->day->trip;
+
+        if (!$activity->is_public || !$activity->is_completed || !$activity->photo) {
+            abort(404);
+        }
+
+        if (!$trip || !$trip->is_public) {
+            abort(404);
+        }
+
+        return view('trips.activity_public_show', compact('activity', 'trip'));
+    }
+
     public function show(TripActivity $activity)
     {
         $trip = $activity->day->trip;
