@@ -77,17 +77,18 @@ class TripActivityController extends Controller
         $maxSort = $day->activities()->where('session', $request->session)->max('sort_order') ?? 0;
 
         TripActivity::create([
-            'trip_day_id' => $day->id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'session' => $request->session,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'location_name' => $request->location_name,
-            'location_url' => $request->location_url,
-            'category' => $request->category,
+            'trip_day_id'    => $day->id,
+            'title'          => $request->title,
+            'description'    => $request->description,
+            'session'        => $request->session,
+            'start_time'     => $request->start_time,
+            'end_time'       => $request->end_time,
+            'location_name'  => $request->location_name,
+            'location_url'   => $request->location_url,
+            'category'       => $request->category,
             'estimated_cost' => $request->estimated_cost ?? 0,
-            'sort_order' => $maxSort + 1,
+            'sort_order'     => $maxSort + 1,
+            'is_public'      => true, // default publik
         ]);
 
         return back()->with('success', 'Kegiatan ditambahkan!');

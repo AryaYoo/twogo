@@ -5,7 +5,7 @@
 <div class="flex items-center justify-between w-full">
     <div class="flex-1 overflow-hidden">
         <h1 class="text-xl font-heading font-bold">For You ✨</h1>
-        <p class="text-xs font-medium opacity-80">Update trip & wishlist publik</p>
+        <p class="text-xs font-medium opacity-80">Update trip, wishlist & aktivitas publik</p>
     </div>
 </div>
 @endsection
@@ -38,22 +38,27 @@
         <div class="relative w-full flex-1 min-h-[440px] sm:min-h-[500px] flex items-center justify-center mt-1">
             @foreach($feed as $index => $item)
                 @php
-                    $trip = $item['trip'];
-                    $user = $item['user'];
+                    $trip      = $item['trip'];
+                    $user      = $item['user'];
                     $isWishlist = $item['type'] === 'wishlist';
-                    $imgUrl = $item['image_url'];
+                    $isActivity = $item['type'] === 'activity';
+                    $activity  = $item['activity'];
+                    $imgUrl    = $item['image_url'];
                 @endphp
-                <div 
+
+                @if($isActivity)
+                {{-- ===== CARD: AKTIVITAS / DOKUMENTASI ===== --}}
+                <div
                     class="absolute inset-x-0 mx-auto w-full max-w-sm transition-all duration-300 ease-out origin-bottom fyp-card-{{ $index }}"
                     data-title="{{ e($trip->title) }}"
-                    data-clone-url="{{ route('trips.clone', $trip) }}"
-                    data-like-url="{{ route('trips.like', $trip) }}"
+                    data-clone-url=""
+                    data-like-url=""
                     :style="getCardStyle({{ $index }})"
                     x-show="isCardVisible({{ $index }})"
                 >
                     <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-2.5 flex flex-col justify-between h-[430px] sm:h-[500px]">
-                        
-                        <!-- Header: User info & trip type -->
+
+                        {{-- Header: user info & badge aktivitas --}}
                         <div class="flex items-center justify-between gap-2 pb-1.5 border-b-2 border-[#1A1A2E] border-dashed">
                             <a href="{{ $item['is_own'] ? route('profile.show') : route('profile.user', $user) }}" class="flex items-center gap-2 min-w-0">
                                 <x-avatar :user="$user" size="sm" class="border-2 border-[#1A1A2E] shrink-0" />
@@ -66,18 +71,98 @@
                                     </p>
                                 </div>
                             </a>
-                            <div class="flex items-center gap-1.5 shrink-0">
-                                <span class="px-2 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
-                                    {{ $isWishlist ? '💭 Wishlist' : '🌴 Trip' }}
-                                </span>
-                            </div>
+                            <span class="px-2 py-0.5 bg-[#FF6B9D] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-white shrink-0">
+                                📸 Aktivitas
+                            </span>
                         </div>
 
-                        <!-- Main Destination Image -->
+                        {{-- Foto aktivitas --}}
+                        <div class="relative w-full h-44 sm:h-60 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
+                            <img src="{{ $imgUrl }}" alt="{{ $activity->title }}" class="w-full h-full object-cover" />
+
+                            {{-- Badge kategori --}}
+                            <div class="absolute top-2 right-2 px-2 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
+                                {{ $activity->category_icon }} {{ ucfirst($activity->category) }}
+                            </div>
+
+                            {{-- Badge lokasi --}}
+                            @if($activity->location_name)
+                            <div class="absolute bottom-2 left-2 px-2 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-bold text-[11px] text-[#1A1A2E] flex items-center gap-1 max-w-[85%] truncate">
+                                <span>📍 {{ $activity->location_name }}</span>
+                            </div>
+                            @endif
+                        </div>
+
+                        {{-- Judul aktivitas & info trip --}}
+                        <div class="space-y-0.5 flex-1 flex flex-col justify-center">
+                            <h3 class="font-heading font-extrabold text-sm sm:text-base text-[#1A1A2E] line-clamp-1 leading-tight">
+                                {{ $activity->title }}
+                            </h3>
+                            <p class="text-[11px] sm:text-xs font-bold text-slate-500 flex items-center gap-1">
+                                {{ $activity->session_icon }} {{ ucfirst($activity->session) }}
+                                <span class="opacity-40 mx-0.5">·</span>
+                                🗓️ {{ $activity->day->date->translatedFormat('d M Y') }}
+                            </p>
+                            <p class="text-[11px] font-bold text-[#4361EE] truncate mt-0.5">
+                                📍 {{ $trip->title }}
+                            </p>
+                        </div>
+
+                        {{-- Footer --}}
+                        <div class="pt-1.5 border-t-2 border-[#1A1A2E] border-dashed flex items-center justify-between gap-1.5">
+                            <span class="text-[10px] font-medium text-slate-400">
+                                @if($activity->actual_cost > 0)
+                                    💸 Rp{{ number_format($activity->actual_cost, 0, ',', '.') }}
+                                @else
+                                    ✅ Selesai
+                                @endif
+                            </span>
+                            <a
+                                href="{{ route('trips.show', $trip) }}"
+                                class="px-3 py-1 bg-[#FF6B9D] hover:bg-[#ff5089] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-white transition-all flex items-center gap-1"
+                            >
+                                <span>Lihat Trip</span>
+                                <span>→</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                @else
+                {{-- ===== CARD: TRIP / WISHLIST ===== --}}
+                <div
+                    class="absolute inset-x-0 mx-auto w-full max-w-sm transition-all duration-300 ease-out origin-bottom fyp-card-{{ $index }}"
+                    data-title="{{ e($trip->title) }}"
+                    data-clone-url="{{ route('trips.clone', $trip) }}"
+                    data-like-url="{{ route('trips.like', $trip) }}"
+                    :style="getCardStyle({{ $index }})"
+                    x-show="isCardVisible({{ $index }})"
+                >
+                    <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-2.5 flex flex-col justify-between h-[430px] sm:h-[500px]">
+
+                        {{-- Header: User info & trip type --}}
+                        <div class="flex items-center justify-between gap-2 pb-1.5 border-b-2 border-[#1A1A2E] border-dashed">
+                            <a href="{{ $item['is_own'] ? route('profile.show') : route('profile.user', $user) }}" class="flex items-center gap-2 min-w-0">
+                                <x-avatar :user="$user" size="sm" class="border-2 border-[#1A1A2E] shrink-0" />
+                                <div class="min-w-0">
+                                    <p class="font-heading font-extrabold text-xs text-[#1A1A2E] truncate">
+                                        {{ $item['is_own'] ? 'Kamu' : $user->name }}
+                                    </p>
+                                    <p class="text-[10px] font-bold text-slate-500">
+                                        {{ $item['created_at']->diffForHumans() }}
+                                    </p>
+                                </div>
+                            </a>
+                            <span class="px-2 py-0.5 bg-[#FFE156] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E] shrink-0">
+                                {{ $isWishlist ? '💭 Wishlist' : '🌴 Trip' }}
+                            </span>
+                        </div>
+
+                        {{-- Foto destinasi --}}
                         <div class="relative w-full h-44 sm:h-60 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-[#FFFBEB] shrink-0">
                             <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="w-full h-full object-cover" />
-                            
-                            <!-- Badges Overlay on Image -->
+
                             <div class="absolute top-2 right-2 px-2 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
                                 🌍 Publik
                             </div>
@@ -87,7 +172,7 @@
                             </div>
                         </div>
 
-                        <!-- Trip Title & Details -->
+                        {{-- Judul trip & detail --}}
                         <div class="space-y-0.5 flex-1 flex flex-col justify-center">
                             <h3 class="font-heading font-extrabold text-sm sm:text-base text-[#1A1A2E] line-clamp-1 leading-tight">
                                 {{ $trip->title }}
@@ -103,7 +188,7 @@
                             @endif
                         </div>
 
-                        <!-- Card Footer Stats & Detail -->
+                        {{-- Footer --}}
                         <div class="pt-1.5 border-t-2 border-[#1A1A2E] border-dashed flex items-center justify-between gap-1.5">
                             <div class="flex items-center gap-3">
                                 <span class="text-[10px] font-medium text-slate-400">
@@ -114,8 +199,8 @@
                                 </span>
                             </div>
 
-                            <a 
-                                href="{{ route('trips.public_show', $trip) }}" 
+                            <a
+                                href="{{ route('trips.public_show', $trip) }}"
                                 class="px-3 py-1 bg-[#FFE156] hover:bg-[#ffd829] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-[#1A1A2E] transition-all flex items-center gap-1"
                             >
                                 <span>Detail</span>
@@ -125,6 +210,7 @@
 
                     </div>
                 </div>
+                @endif
             @endforeach
         </div>
 

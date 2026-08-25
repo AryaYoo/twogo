@@ -45,6 +45,7 @@ class TripActivity extends Model
         'category',
         'sort_order',
         'is_completed',
+        'is_public',
     ];
 
     /**
@@ -57,6 +58,7 @@ class TripActivity extends Model
         return [
             'estimated_cost' => 'decimal:2',
             'is_completed'   => 'boolean',
+            'is_public'      => 'boolean',
             'notified_start' => 'boolean',
             'notified_end'   => 'boolean',
         ];
@@ -72,6 +74,21 @@ class TripActivity extends Model
     public function day(): BelongsTo
     {
         return $this->belongsTo(TripDay::class, 'trip_day_id');
+    }
+
+    /**
+     * Trip yang memiliki aktivitas ini (via TripDay).
+     */
+    public function trip()
+    {
+        return $this->hasOneThrough(
+            \App\Models\Trip::class,
+            TripDay::class,
+            'id',       // FK di trip_days
+            'id',       // FK di trips
+            'trip_day_id', // local key di trip_activities
+            'trip_id'   // local key di trip_days
+        );
     }
 
     /* ------------------------------------------------------------------ */
