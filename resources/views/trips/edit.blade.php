@@ -108,79 +108,34 @@
             label="Deskripsi / Catatan" 
             value="{{ $trip->description }}" 
         />
-
-        {{-- Edit Tanggal: hanya untuk trip berstatus 'planning' --}}
-        @if($trip->status === 'planning')
-        <div class="mt-6 border-t-[2px] border-dashed border-[#1A1A2E] pt-5">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="text-lg">📅</span>
-                <h3 class="font-heading font-bold text-base text-[#1A1A2E]">Ubah Tanggal Perjalanan</h3>
-            </div>
-
-            {{-- Info banner --}}
-            <div class="nb-card bg-[#FFFBEB] border-[#FFE156] p-3 flex gap-3 items-start mb-4">
-                <div class="text-xl shrink-0">⚠️</div>
-                <p class="text-xs font-medium text-gray-700 leading-relaxed">
-                    Mengubah tanggal akan <strong>menggeser jadwal semua hari</strong> sesuai tanggal baru.
-                    Aktivitas yang sudah ada tetap tersimpan, namun hari yang melebihi durasi baru akan dihapus.
-                </p>
-            </div>
-
-            {{-- Konfirmasi lock --}}
-            <div class="nb-form-group mb-4">
-                <label class="nb-label" for="konfirmasi_input">
-                    🔒 Ketik <span class="font-mono font-bold bg-gray-100 px-1.5 py-0.5 rounded border border-gray-300 text-[#1A1A2E]">KONFIRMASI</span> untuk membuka field tanggal
-                </label>
-                <input
-                    id="konfirmasi_input"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="Ketik KONFIRMASI di sini..."
-                    class="nb-input transition-all duration-200"
-                />
-                <p id="konfirmasi_hint" class="text-xs mt-1.5 font-medium text-gray-400">Belum terkonfirmasi</p>
-            </div>
-
-            {{-- Date fields — terkunci sampai KONFIRMASI diketik --}}
-            <div id="date-fields-wrapper" class="relative">
-                {{-- Overlay kunci --}}
-                <div id="date-lock-overlay" class="absolute inset-0 z-10 rounded-lg bg-gray-100/80 backdrop-blur-[2px] flex flex-col items-center justify-center gap-1 border-[2px] border-dashed border-gray-300 cursor-not-allowed select-none">
-                    <span class="text-2xl">🔒</span>
-                    <span class="text-xs font-bold text-gray-500">Ketik KONFIRMASI dulu</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="nb-form-group">
-                        <label class="nb-label">✈️ Berangkat</label>
-                        <input
-                            id="input_start_date"
-                            type="date"
-                            name="start_date"
-                            value="{{ $trip->start_date->format('Y-m-d') }}"
-                            disabled
-                            class="nb-input opacity-50 cursor-not-allowed"
-                        />
-                    </div>
-                    <div class="nb-form-group">
-                        <label class="nb-label">🏠 Pulang</label>
-                        <input
-                            id="input_end_date"
-                            type="date"
-                            name="end_date"
-                            value="{{ $trip->end_date->format('Y-m-d') }}"
-                            disabled
-                            class="nb-input opacity-50 cursor-not-allowed"
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
         
         <div class="mt-6 flex gap-4">
             <x-button type="submit" variant="mint" class="flex-1">Simpan Perubahan</x-button>
         </div>
     </form>
+
+    {{-- Tombol Ubah Tanggal — hanya untuk trip planning --}}
+    @if($trip->status === 'planning')
+    <div class="mt-6 border-t-[2px] border-dashed border-[#1A1A2E] pt-5">
+        <div class="flex items-center justify-between mb-2">
+            <div>
+                <p class="font-heading font-bold text-sm text-[#1A1A2E]">📅 Tanggal Perjalanan</p>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    {{ $trip->start_date->translatedFormat('d M Y') }} — {{ $trip->end_date->translatedFormat('d M Y') }}
+                    <span class="ml-1 font-bold text-[#4361EE]">({{ $trip->start_date->diffInDays($trip->end_date) + 1 }} hari)</span>
+                </p>
+            </div>
+            <button
+                type="button"
+                id="btn-ubah-tanggal"
+                onclick="openModal('konfirmasiTanggalModal')"
+                class="nb-btn bg-[#FFE156] text-[#1A1A2E] border-[2px] border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-sm font-bold px-3 py-2 rounded-lg"
+            >
+                ✏️ Ubah Tanggal
+            </button>
+        </div>
+    </div>
+    @endif
     
     <div class="mt-8 border-t-[3px] border-[#1A1A2E] pt-6">
         <h3 class="font-heading font-bold text-lg mb-2 text-red-500">Danger Zone</h3>
@@ -197,6 +152,55 @@
 </x-card>
 @endif
 
+{{-- ===== MODAL: Konfirmasi Ubah Tanggal ===== --}}
+@if($trip->start_date && $trip->status === 'planning')
+<x-modal id="konfirmasiTanggalModal" title="Konfirmasi Ubah Tanggal">
+    <div class="p-1">
+        <div class="text-center mb-5">
+            <div class="text-5xl mb-3">📅</div>
+            <h3 class="font-heading font-bold text-lg text-[#1A1A2E] mb-1">Ubah Tanggal Perjalanan?</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                Mengubah tanggal akan <strong>menggeser semua jadwal hari</strong>.
+                Hari yang melebihi durasi baru akan <strong class="text-red-500">dihapus permanen</strong>.
+            </p>
+        </div>
+
+        <div class="nb-form-group mb-2">
+            <label class="nb-label text-center block" for="konfirmasi_modal_input">
+                Ketik <span class="font-mono font-bold bg-[#1A1A2E] text-[#FFE156] px-1.5 py-0.5 rounded text-sm">KONFIRMASI</span> untuk lanjut
+            </label>
+            <input
+                id="konfirmasi_modal_input"
+                type="text"
+                autocomplete="off"
+                placeholder="Ketik KONFIRMASI..."
+                class="nb-input text-center tracking-widest font-bold mt-2 transition-all duration-200"
+            />
+            <p id="konfirmasi_modal_hint" class="text-xs text-center mt-1.5 font-medium text-gray-400 min-h-[1rem]"></p>
+        </div>
+
+        <div class="flex gap-3 mt-5">
+            <button
+                type="button"
+                onclick="closeModal('konfirmasiTanggalModal')"
+                class="flex-1 nb-btn bg-white text-[#1A1A2E] border-2 border-[#1A1A2E] hover:bg-gray-100 font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2"
+            >
+                Batal
+            </button>
+            <a
+                id="btn-lanjut-tanggal"
+                href="{{ route('trips.edit-dates', $trip) }}"
+                class="flex-1 nb-btn bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] font-bold rounded-md py-2 text-center shadow-[2px_2px_0px_#1A1A2E] opacity-40 pointer-events-none transition-all duration-200"
+                aria-disabled="true"
+            >
+                Lanjut →
+            </a>
+        </div>
+    </div>
+</x-modal>
+@endif
+
+{{-- ===== MODAL: Hapus Trip ===== --}}
 <x-modal id="deleteTripModal" title="Hapus Trip?">
     <div class="text-center p-2">
         <div class="text-5xl mb-4">🚨</div>
@@ -215,50 +219,49 @@
         </div>
     </div>
 </x-modal>
+
 @endsection
 
 @push('scripts')
 <script>
     (function () {
-        var input    = document.getElementById('konfirmasi_input');
-        var overlay  = document.getElementById('date-lock-overlay');
-        var startEl  = document.getElementById('input_start_date');
-        var endEl    = document.getElementById('input_end_date');
-        var hint     = document.getElementById('konfirmasi_hint');
+        var input   = document.getElementById('konfirmasi_modal_input');
+        var btnNext = document.getElementById('btn-lanjut-tanggal');
+        var hint    = document.getElementById('konfirmasi_modal_hint');
 
-        if (!input) return; // halaman tanpa seksi ini (completed trip)
+        if (!input) return;
 
-        function setUnlocked(unlocked) {
-            if (unlocked) {
-                overlay.classList.add('hidden');
-                startEl.disabled = false;
-                endEl.disabled   = false;
-                startEl.classList.remove('opacity-50', 'cursor-not-allowed');
-                endEl.classList.remove('opacity-50', 'cursor-not-allowed');
-                hint.textContent  = '✅ Terkonfirmasi — field tanggal sudah terbuka.';
-                hint.classList.remove('text-gray-400', 'text-red-500');
-                hint.classList.add('text-green-600');
-                input.classList.remove('border-red-400');
-                input.classList.add('border-green-500');
+        // Reset saat modal dibuka ulang
+        var modalEl = document.getElementById('konfirmasiTanggalModal');
+        if (modalEl) {
+            var observer = new MutationObserver(function () {
+                if (!modalEl.classList.contains('hidden')) return;
+                // Modal ditutup: reset
+                input.value = '';
+                setUnlocked(false);
+            });
+            observer.observe(modalEl, { attributes: true, attributeFilter: ['class'] });
+        }
+
+        function setUnlocked(ok) {
+            if (ok) {
+                btnNext.classList.remove('opacity-40', 'pointer-events-none');
+                btnNext.removeAttribute('aria-disabled');
+                hint.textContent = '✅ Terkonfirmasi! Klik Lanjut untuk mengubah tanggal.';
+                hint.className   = 'text-xs text-center mt-1.5 font-medium text-green-600 min-h-[1rem]';
+                input.style.borderColor = '#00D4AA';
             } else {
-                overlay.classList.remove('hidden');
-                startEl.disabled = true;
-                endEl.disabled   = true;
-                startEl.classList.add('opacity-50', 'cursor-not-allowed');
-                endEl.classList.add('opacity-50', 'cursor-not-allowed');
-                input.classList.remove('border-green-500');
-
+                btnNext.classList.add('opacity-40', 'pointer-events-none');
+                btnNext.setAttribute('aria-disabled', 'true');
                 var val = input.value.trim();
                 if (val.length > 0) {
-                    hint.textContent = '❌ Tulisan tidak sesuai. Ketik persis: KONFIRMASI';
-                    hint.classList.remove('text-gray-400', 'text-green-600');
-                    hint.classList.add('text-red-500');
-                    input.classList.add('border-red-400');
+                    hint.textContent = '❌ Harus persis: KONFIRMASI (huruf kapital semua)';
+                    hint.className   = 'text-xs text-center mt-1.5 font-medium text-red-500 min-h-[1rem]';
+                    input.style.borderColor = '#EF4444';
                 } else {
-                    hint.textContent = 'Belum terkonfirmasi';
-                    hint.classList.remove('text-red-500', 'text-green-600');
-                    hint.classList.add('text-gray-400');
-                    input.classList.remove('border-red-400');
+                    hint.textContent = '';
+                    hint.className   = 'text-xs text-center mt-1.5 font-medium text-gray-400 min-h-[1rem]';
+                    input.style.borderColor = '';
                 }
             }
         }

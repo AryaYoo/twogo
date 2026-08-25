@@ -12,10 +12,11 @@ class SearchController extends Controller
     public function index(Request $request)
     {
         $query = trim($request->get('q', ''));
+        $tab   = $request->get('tab', 'search');
         $trips = collect();
         $users = collect();
 
-        if ($query && mb_strlen($query) >= 2) {
+        if ($tab === 'search' && $query && mb_strlen($query) >= 2) {
             $userId = Auth::id();
 
             $trips = Trip::with(['creator', 'likes', 'members'])

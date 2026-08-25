@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
     // Trips
     Route::resource('trips', TripController::class);
     Route::get('/trips/{trip}/summary', [TripController::class, 'summary'])->name('trips.summary');
+    Route::get('/trips/{trip}/edit-dates', [TripController::class, 'editDates'])->name('trips.edit-dates');
     
     // Trip Activities
     Route::post('/trips/days/{day}/activities', [TripActivityController::class, 'store'])->name('activities.store');

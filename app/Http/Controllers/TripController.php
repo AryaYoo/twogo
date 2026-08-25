@@ -117,6 +117,13 @@ class TripController extends Controller
         return view('trips.edit', compact('trip'));
     }
 
+    public function editDates(Trip $trip)
+    {
+        if ($trip->user_id !== Auth::id()) abort(403);
+        if (!$trip->start_date || $trip->status !== 'planning') abort(403);
+        return view('trips.edit_dates', compact('trip'));
+    }
+
     public function update(Request $request, Trip $trip)
     {
         if ($trip->user_id !== Auth::id()) abort(403);
