@@ -52,7 +52,7 @@
 @endpush
 
 @section('content')
-<div class="fixed top-[53px] md:top-[61px] bottom-[57px] left-1/2 -translate-x-1/2 w-full max-w-[480px] flex flex-col bg-[#FFFBEB] z-30">
+<div id="chat-wrapper" class="fixed top-0 bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] flex flex-col bg-[#FFFBEB] z-30">
     {{-- Notice Banner --}}
     <div class="px-4 py-1.5 bg-[#FFE156] border-b-[3px] border-[#1A1A2E] flex items-center justify-between text-xs font-bold shrink-0">
         <div class="flex items-center gap-1.5 truncate">
@@ -156,6 +156,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUserId = {{ Auth::id() }};
     const storeUrl = "{{ route('trips.chat.store', $trip, false) }}";
     const fetchUrl = "{{ route('trips.chat.messages', $trip, false) }}";
+
+    // Ukur tinggi header dan bottom-nav secara dinamis agar tidak ada celah
+    const fitChatWrapper = () => {
+        const wrapper = document.getElementById('chat-wrapper');
+        const header = document.querySelector('.page-header');
+        const bottomNav = document.querySelector('.bottom-nav');
+        if (wrapper) {
+            const topOffset = header ? header.getBoundingClientRect().bottom : 0;
+            const bottomOffset = bottomNav ? (window.innerHeight - bottomNav.getBoundingClientRect().top) : 0;
+            wrapper.style.top = topOffset + 'px';
+            wrapper.style.bottom = bottomOffset + 'px';
+        }
+    };
+    fitChatWrapper();
+    window.addEventListener('resize', fitChatWrapper);
+
 
     // Auto-resize textarea as user types
     const autoResizeTextarea = () => {
