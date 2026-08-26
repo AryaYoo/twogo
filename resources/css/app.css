@@ -903,6 +903,13 @@ img {
     object-fit: cover;
 }
 
+.nb-avatar-xs {
+    width: 24px;
+    height: 24px;
+    font-size: 0.65rem;
+    border-width: 2px;
+}
+
 .nb-avatar-sm {
     width: 32px;
     height: 32px;

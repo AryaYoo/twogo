@@ -11,9 +11,9 @@
     }
 @endphp
 
-<div {{ $attributes->merge(['class' => 'nb-avatar nb-avatar-' . $size]) }}>
+<div {{ $attributes->merge(['class' => 'nb-avatar nb-avatar-' . $size . ' shrink-0 aspect-square']) }}>
     @if($user && $user->avatar)
-        <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}">
+        <img src="{{ str_starts_with($user->avatar, 'http') ? $user->avatar : Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
     @else
         <span class="opacity-70">{{ $initials }}</span>
     @endif

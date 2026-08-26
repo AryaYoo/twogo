@@ -39,3 +39,32 @@
     </form>
 </x-card>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const uploadInput = document.getElementById('avatarUpload');
+    const avatarPreviewContainer = document.getElementById('avatarPreview');
+
+    if (uploadInput && avatarPreviewContainer) {
+        uploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    let img = avatarPreviewContainer.querySelector('img');
+                    if (!img) {
+                        avatarPreviewContainer.innerHTML = '';
+                        img = document.createElement('img');
+                        img.className = 'w-full h-full object-cover';
+                        avatarPreviewContainer.appendChild(img);
+                    }
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+@endpush

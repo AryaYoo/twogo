@@ -82,7 +82,7 @@
                         <x-avatar :user="$msg->user" size="xs" class="border-2 border-[#1A1A2E] shrink-0 mb-1" />
                     @endif
 
-                    <div class="flex flex-col {{ $isMine ? 'items-end' : 'items-start' }} max-w-full">
+                    <div class="flex flex-col {{ $isMine ? 'items-end' : 'items-start' }} max-w-full min-w-0">
                         @if(!$isMine)
                             <p class="text-[10px] font-bold text-slate-500 mb-0.5 ml-1">
                                 {{ $msg->user->name }}
@@ -226,8 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
         itemDiv.setAttribute('data-id', data.id);
 
         const avatarHtml = !isMine ? `
-            <div class="w-6 h-6 rounded-full bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-bold text-[10px] shrink-0 mb-1 overflow-hidden">
-                ${data.user_avatar ? `<img src="${data.user_avatar}" class="w-full h-full object-cover">` : (data.user_name ? data.user_name.charAt(0).toUpperCase() : '?')}
+            <div class="w-6 h-6 rounded-full bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-bold text-[10px] shrink-0 mb-1 overflow-hidden aspect-square">
+                ${data.user_avatar ? `<img src="${data.user_avatar}" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='${data.user_name ? data.user_name.charAt(0).toUpperCase() : '?'}';">` : (data.user_name ? data.user_name.charAt(0).toUpperCase() : '?')}
             </div>
         ` : '';
 
@@ -241,13 +241,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Safe text encoding preserving newlines
         const msgDiv = document.createElement('div');
-        msgDiv.className = `inline-block w-fit px-3.5 py-2 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed ${isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none'}`;
+        msgDiv.className = `inline-block w-fit max-w-full px-3.5 py-2 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] [overflow-wrap:anywhere] whitespace-pre-wrap text-sm font-medium leading-relaxed ${isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none'}`;
         msgDiv.textContent = data.message;
 
         itemDiv.innerHTML = `
             <div class="flex items-end gap-2 max-w-[85%] ${isMine ? 'flex-row-reverse' : 'flex-row'}">
                 ${avatarHtml}
-                <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'} max-w-full">
+                <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'} max-w-full min-w-0">
                     ${nameHtml}
                     ${msgDiv.outerHTML}
                     <div class="flex items-center gap-1 mt-0.5 px-1 ${isMine ? 'justify-end' : 'justify-start'}">
