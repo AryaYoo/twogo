@@ -38,12 +38,13 @@
         <div class="relative w-full flex-1 min-h-[440px] sm:min-h-[500px] flex items-center justify-center mt-1">
             @foreach($feed as $index => $item)
                 @php
-                    $trip      = $item['trip'];
-                    $user      = $item['user'];
-                    $isWishlist = $item['type'] === 'wishlist';
-                    $isActivity = $item['type'] === 'activity';
-                    $activity  = $item['activity'];
-                    $imgUrl    = $item['image_url'];
+                    $trip          = $item['trip'];
+                    $user          = $item['user'];
+                    $isWishlist    = $item['type'] === 'wishlist';
+                    $isActivity    = $item['type'] === 'activity';
+                    $isOpenPartner = $item['type'] === 'open_partner';
+                    $activity      = $item['activity'];
+                    $imgUrl        = $item['image_url'];
                 @endphp
 
                 @if($isActivity)
@@ -122,6 +123,94 @@
                                 class="px-3 py-1 bg-[#FF6B9D] hover:bg-[#ff5089] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-white transition-all flex items-center gap-1"
                             >
                                 <span>Lihat Detail</span>
+                                <span>→</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                @elseif($isOpenPartner)
+                {{-- ===== CARD: OPEN PARTNER (WARNA KUNING) ===== --}}
+                <div
+                    class="absolute inset-x-0 mx-auto w-full max-w-sm transition-all duration-300 ease-out origin-bottom fyp-card-{{ $index }}"
+                    data-title="{{ e($trip->title) }}"
+                    data-clone-url="{{ route('trips.clone', $trip) }}"
+                    data-like-url="{{ route('trips.like', $trip) }}"
+                    :style="getCardStyle({{ $index }})"
+                    x-show="isCardVisible({{ $index }})"
+                >
+                    <div class="bg-[#FFE156] border-[3px] border-[#1A1A2E] shadow-[6px_6px_0px_#1A1A2E] rounded-2xl p-3.5 space-y-2 flex flex-col justify-between h-[430px] sm:h-[500px]">
+
+                        {{-- Header: User info & Open Partner Badge --}}
+                        <div class="flex items-center justify-between gap-2 pb-1.5 border-b-2 border-[#1A1A2E] border-dashed">
+                            <a href="{{ $item['is_own'] ? route('profile.show') : route('profile.user', $user) }}" class="flex items-center gap-2 min-w-0">
+                                <x-avatar :user="$user" size="sm" class="border-2 border-[#1A1A2E] shrink-0" />
+                                <div class="min-w-0">
+                                    <p class="font-heading font-extrabold text-xs text-[#1A1A2E] truncate">
+                                        {{ $item['is_own'] ? 'Kamu' : $user->name }}
+                                    </p>
+                                    <p class="text-[10px] font-bold text-slate-700">
+                                        {{ $item['created_at']->diffForHumans() }}
+                                    </p>
+                                </div>
+                            </a>
+                            <span class="px-2 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E] shrink-0">
+                                🤝 Open Partner
+                            </span>
+                        </div>
+
+                        {{-- Foto destinasi --}}
+                        <div class="relative w-full h-40 sm:h-52 rounded-xl border-[3px] border-[#1A1A2E] overflow-hidden bg-white shrink-0">
+                            <img src="{{ $imgUrl }}" alt="{{ $trip->title }}" class="absolute inset-0 object-cover" style="width: 100%; height: 100%;" />
+
+                            <div class="absolute top-2 right-2 px-2 py-0.5 bg-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-extrabold text-[10px] text-[#1A1A2E]">
+                                Rp {{ number_format($trip->total_budget, 0, ',', '.') }}
+                            </div>
+
+                            <div class="absolute bottom-2 left-2 px-2 py-0.5 bg-[#00D4AA] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] rounded-lg font-heading font-bold text-[11px] text-[#1A1A2E] flex items-center gap-1 max-w-[85%] truncate">
+                                <span>📍 {{ $trip->destination }}</span>
+                            </div>
+                        </div>
+
+                        {{-- Judul trip & detail --}}
+                        <div class="space-y-1 flex-1 flex flex-col justify-center">
+                            <h3 class="font-heading font-extrabold text-sm sm:text-base text-[#1A1A2E] line-clamp-1 leading-tight">
+                                {{ $trip->title }}
+                            </h3>
+                            @if($trip->start_date)
+                                <p class="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1">
+                                    <span>📅 {{ $trip->start_date->format('d M Y') }} – {{ $trip->end_date->format('d M Y') }}</span>
+                                </p>
+                            @else
+                                <p class="text-[11px] sm:text-xs font-bold text-[#FF6B9D] italic">
+                                    💖 Jadwal Fleksibel
+                                </p>
+                            @endif
+
+                            @if($trip->open_partner_note)
+                                <div class="p-1.5 bg-white border-2 border-[#1A1A2E] rounded-lg text-[11px] font-medium text-slate-800 line-clamp-2">
+                                    💬 "{{ $trip->open_partner_note }}"
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Footer --}}
+                        <div class="pt-1.5 border-t-2 border-[#1A1A2E] border-dashed flex items-center justify-between gap-1.5">
+                            <div class="flex items-center gap-3">
+                                <span class="text-[10px] font-bold text-slate-700">
+                                    {{ $trip->likes->count() }} suka
+                                </span>
+                                <span class="text-[10px] font-bold text-slate-700">
+                                    {{ $trip->clones()->count() }} salin
+                                </span>
+                            </div>
+
+                            <a
+                                href="{{ route('trips.public_show', $trip) }}"
+                                class="px-3 py-1 bg-[#00D4AA] hover:bg-[#00b894] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] active:translate-y-[1px] active:shadow-none rounded-xl font-heading font-extrabold text-xs text-[#1A1A2E] transition-all flex items-center gap-1"
+                            >
+                                <span>{{ $item['is_own'] ? 'Trip Kamu' : '🤝 Gabung Partner' }}</span>
                                 <span>→</span>
                             </a>
                         </div>
