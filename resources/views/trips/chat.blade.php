@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Chat Partner · ' . $trip->title)
 @section('hide_notification', true)
-@section('hide_bottom_nav', true)
 
 @section('header')
 <div class="flex items-center gap-2 md:gap-3 w-full">
@@ -40,7 +39,7 @@
 @endsection
 
 @section('content')
-<div class="flex flex-col h-[calc(100dvh-65px)] md:h-[calc(100vh-75px)] -mt-4 -mx-4">
+<div class="flex flex-col h-[calc(100dvh-130px)] md:h-[calc(100vh-140px)] -mt-4 -mx-4">
     {{-- Notice Banner --}}
     <div class="px-4 py-1.5 bg-[#FFE156] border-b-[3px] border-[#1A1A2E] flex items-center justify-between text-xs font-bold shrink-0">
         <div class="flex items-center gap-1.5 truncate">
@@ -115,7 +114,7 @@
                     id="chat-input"
                     name="message"
                     rows="1"
-                    placeholder="Ketik pesan untuk partnermu... (Shift+Enter untuk baris baru)"
+                    placeholder="Ketik pesan..."
                     maxlength="1000"
                     required
                     class="w-full px-3.5 py-2.5 bg-[#FFFBEB] border-[3px] border-[#1A1A2E] rounded-xl font-medium text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:bg-white focus:shadow-[2px_2px_0px_#1A1A2E] transition-all resize-none max-h-32 min-h-[44px] leading-snug"
