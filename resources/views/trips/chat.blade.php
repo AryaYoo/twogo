@@ -53,16 +53,7 @@
 
 @section('content')
 <div id="chat-wrapper" class="fixed top-0 bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] flex flex-col bg-[#FFFBEB] z-30">
-    {{-- Notice Banner --}}
-    <div class="px-4 py-1.5 bg-[#FFE156] border-b-[3px] border-[#1A1A2E] flex items-center justify-between text-xs font-bold shrink-0">
-        <div class="flex items-center gap-1.5 truncate">
-            <span>🔒</span>
-            <span class="truncate">Ruang chat privat khusus trip ini</span>
-        </div>
-        <span class="text-[10px] bg-white px-2 py-0.5 rounded-md border border-[#1A1A2E] shrink-0 font-extrabold shadow-[1px_1px_0px_#1A1A2E]">
-            TwoGo Room
-        </span>
-    </div>
+
 
     {{-- Chat Messages Stream Area (Satu-satunya area yang bisa di-scroll) --}}
     <div id="chat-messages-container" class="flex-1 overflow-y-auto min-h-0 p-4 space-y-3 bg-[#FFFBEB]">
