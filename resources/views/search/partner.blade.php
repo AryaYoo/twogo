@@ -35,28 +35,28 @@
     <form action="{{ route('search.partner') }}" method="GET" class="space-y-3">
         {{-- Main search input --}}
         <div>
-            <label class="block font-heading font-bold text-xs text-[#1A1A2E] mb-1">Cari Trip / Kata Kunci</label>
+            <label class="block font-heading font-bold text-xs text-[#1A1A2E] mb-1">Cari Trip</label>
             <input 
                 type="search" 
                 name="q" 
                 value="{{ request('q') }}"
-                placeholder="Cari nama trip atau deskripsi..."
+                placeholder="Nama trip / aktivitas..."
                 class="nb-input w-full text-xs font-medium"
             >
         </div>
 
         {{-- Filter Grid: Lokasi, Bulan, Tahun --}}
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div class="grid grid-cols-3 gap-2">
             {{-- Lokasi / Destinasi --}}
             <div>
-                <label class="block font-heading font-bold text-xs text-[#1A1A2E] mb-1">📍 Lokasi / Kota</label>
+                <label class="block font-heading font-bold text-[11px] text-[#1A1A2E] mb-1 truncate">📍 Lokasi</label>
                 <input 
                     type="text" 
                     name="location" 
                     list="destinationList"
                     value="{{ request('location') }}"
-                    placeholder="Semua Lokasi..."
-                    class="nb-input w-full text-xs font-medium"
+                    placeholder="Semua"
+                    class="nb-input w-full text-xs font-medium px-2 py-2 truncate"
                 >
                 <datalist id="destinationList">
                     @foreach($availableDestinations as $dest)
@@ -67,9 +67,9 @@
 
             {{-- Bulan --}}
             <div>
-                <label class="block font-heading font-bold text-xs text-[#1A1A2E] mb-1">📅 Bulan</label>
-                <select name="month" class="nb-input w-full text-xs font-medium bg-white">
-                    <option value="">Semua Bulan</option>
+                <label class="block font-heading font-bold text-[11px] text-[#1A1A2E] mb-1 truncate">📅 Bulan</label>
+                <select name="month" class="nb-input w-full text-xs font-medium bg-white px-2 py-2 truncate">
+                    <option value="">Semua</option>
                     @php
                         $months = [
                             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -87,9 +87,9 @@
 
             {{-- Tahun --}}
             <div>
-                <label class="block font-heading font-bold text-xs text-[#1A1A2E] mb-1">🗓️ Tahun</label>
-                <select name="year" class="nb-input w-full text-xs font-medium bg-white">
-                    <option value="">Semua Tahun</option>
+                <label class="block font-heading font-bold text-[11px] text-[#1A1A2E] mb-1 truncate">🗓️ Tahun</label>
+                <select name="year" class="nb-input w-full text-xs font-medium bg-white px-2 py-2 truncate">
+                    <option value="">Semua</option>
                     @php
                         $currentYear = (int) date('Y');
                         $years = [$currentYear - 1, $currentYear, $currentYear + 1, $currentYear + 2];

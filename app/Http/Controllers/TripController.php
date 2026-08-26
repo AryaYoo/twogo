@@ -314,7 +314,10 @@ class TripController extends Controller
 
     public function publicShow(Trip $trip)
     {
-        if (!$trip->is_public) abort(404);
+        $isMember = Auth::check() && $trip->isMember(Auth::user());
+        if (!$trip->is_public && !$trip->is_open_partner && !$isMember) {
+            abort(404);
+        }
 
         $trip->load([
             'days.activities' => fn ($q) => $q->orderBy('sort_order'),
@@ -328,6 +331,9 @@ class TripController extends Controller
         $isLiked = Auth::check() ? $trip->isLikedBy(Auth::user()) : false;
         $alreadyCloned = Auth::check()
             ? Auth::user()->trips()->where('description', 'LIKE', '%[Salin dari Trip #' . $trip->id . ']%')->exists()
+            : false;
+        $hasPendingRequest = Auth::check()
+            ? $trip->openPartnerRequests()->where('requester_id', Auth::id())->where('status', 'pending')->exists()
             : false;
 
         $documentationItems = collect();
@@ -359,13 +365,13 @@ class TripController extends Controller
 
         return view('trips.public_show', compact(
             'trip', 'totalEstimatedBudget', 'likeCount', 'isLiked', 'alreadyCloned',
-            'documentationItems', 'hasDocumentation'
+            'hasPendingRequest', 'documentationItems', 'hasDocumentation'
         ));
     }
 
     public function cloneToWishlist(Trip $trip)
     {
-        if (!$trip->is_public) abort(403);
+        if (!$trip->is_public && !$trip->is_open_partner) abort(403);
 
         $user = Auth::user();
 

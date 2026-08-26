@@ -37,8 +37,26 @@
             <h2 class="text-xl font-heading font-bold leading-tight">{{ $trip->title }}</h2>
             <p class="text-sm font-medium opacity-80 mt-1">📍 {{ $trip->destination }}</p>
         </div>
-        <span class="text-xs font-bold bg-[#1A1A2E] text-[#FFE156] px-2 py-1 rounded-full">🌍 Publik</span>
+        <div class="flex items-center gap-1.5 flex-wrap shrink-0">
+            @if($trip->is_open_partner)
+                <span class="text-xs font-bold bg-[#00D4AA] text-[#1A1A2E] px-2.5 py-1 rounded-full border-2 border-[#1A1A2E] shadow-[1px_1px_0px_#1A1A2E]">
+                    🤝 Open Partner
+                </span>
+            @endif
+            @if($trip->is_public)
+                <span class="text-xs font-bold bg-[#1A1A2E] text-[#FFE156] px-2.5 py-1 rounded-full border-2 border-[#1A1A2E]">
+                    🌍 Publik
+                </span>
+            @endif
+        </div>
     </div>
+
+    @if($trip->open_partner_note)
+    <div class="p-2.5 bg-white border-2 border-[#1A1A2E] rounded-lg text-xs text-slate-800 mb-3">
+        <span class="font-bold text-[#1A1A2E] block mb-0.5">💬 Catatan Host (Open Partner):</span>
+        <p class="italic font-medium leading-relaxed">"{{ $trip->open_partner_note }}"</p>
+    </div>
+    @endif
 
     @if($trip->description)
     <p class="text-sm font-medium mb-3 opacity-90">{{ Str::before($trip->description, ' [Salin dari') }}</p>
@@ -239,23 +257,94 @@
 </div>
 @endif
 
-{{-- Clone to Wishlist CTA --}}
+{{-- Action Buttons CTA --}}
 @auth
 @if(Auth::id() !== $trip->user_id)
-<div class="sticky bottom-20 left-0 right-0 pb-2 mt-4 z-30 bg-[#FEFCE8]">
+<div class="sticky bottom-20 left-0 right-0 pb-2 mt-4 z-30 bg-[#FEFCE8] space-y-2">
+    {{-- Open Partner Apply CTA --}}
+    @if($trip->is_open_partner && !$trip->members->contains('id', Auth::id()))
+        @if($hasPendingRequest)
+            <div class="nb-card bg-[#FFE156] text-[#1A1A2E] p-3 text-center font-heading font-extrabold text-sm border-[3px] border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]">
+                ⏳ Permohonan Gabung Partner Sedang Ditinjau Host
+            </div>
+        @else
+            <button
+                type="button"
+                onclick="openModal('openPartnerApplyModal')"
+                class="w-full nb-btn bg-[#00D4AA] hover:bg-[#00B894] active:translate-y-[1px] text-[#1A1A2E] border-[3px] border-[#1A1A2E] font-heading font-extrabold text-base shadow-[4px_4px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform py-3 flex items-center justify-center gap-2"
+            >
+                <span>🤝</span>
+                <span>Kirim Permintaan Gabung Partner</span>
+            </button>
+        @endif
+    @endif
+
+    {{-- Clone to Wishlist CTA --}}
     @if($alreadyCloned)
-    <div class="nb-card bg-[#00D4AA] text-black p-3 text-center font-bold">
-        ✅ Sudah tersalin ke Wishlist kamu!
-    </div>
+        <div class="nb-card bg-[#00D4AA] text-black p-3 text-center font-bold">
+            ✅ Sudah tersalin ke Wishlist kamu!
+        </div>
     @else
-    <form action="{{ route('trips.clone', $trip) }}" method="POST">
-        @csrf
-        <button type="submit" class="w-full nb-btn bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] font-bold text-lg shadow-[4px_4px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform py-3">
-            📋 Salin ke Wishlist Saya
-        </button>
-    </form>
+        <form action="{{ route('trips.clone', $trip) }}" method="POST">
+            @csrf
+            <button type="submit" class="w-full nb-btn bg-[#FF6B9D] text-white border-[3px] border-[#1A1A2E] font-bold text-base shadow-[4px_4px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform py-2.5">
+                📋 Salin ke Wishlist Saya
+            </button>
+        </form>
     @endif
 </div>
+
+{{-- Modal Ajukan Jadi Partner --}}
+@if($trip->is_open_partner && !$trip->members->contains('id', Auth::id()) && !$hasPendingRequest)
+<x-modal id="openPartnerApplyModal" title="Ajukan Jadi Partner 🤝">
+    <form action="{{ route('partner-requests.send', $trip) }}" method="POST" class="space-y-4">
+        @csrf
+
+        {{-- Info Singkat Trip --}}
+        <div class="p-3 bg-[#FFFBEB] border-2 border-[#1A1A2E] rounded-xl flex items-center gap-3">
+            <x-avatar :user="$trip->creator" size="md" class="border-2 border-[#1A1A2E] shrink-0" />
+            <div class="min-w-0">
+                <h4 class="font-heading font-bold text-sm text-[#1A1A2E] truncate">{{ $trip->title }}</h4>
+                <p class="text-xs text-slate-600">Host: <span class="font-bold">{{ $trip->creator->name }}</span> · 📍 {{ $trip->destination }}</p>
+            </div>
+        </div>
+
+        {{-- Textarea Pesan Permohonan --}}
+        <div>
+            <label for="apply_message" class="block font-heading font-bold text-xs text-[#1A1A2E] mb-1">
+                Pesan Permohonan ke Host:
+            </label>
+            <textarea
+                name="message"
+                id="apply_message"
+                rows="3"
+                maxlength="600"
+                placeholder="Hai! Saya tertarik ikut trip ini karena suka wisata kuliner dan fotografi. Budget dan tanggal saya sangat cocok..."
+                class="nb-input w-full text-xs font-medium"
+                required
+            ></textarea>
+            <p class="text-[10px] text-slate-500 mt-1">Sampaikan perkenalan singkat & alasan kamu cocok menjadi partner perjalanan ini.</p>
+        </div>
+
+        {{-- Tombol Aksi --}}
+        <div class="flex gap-3 pt-2">
+            <button
+                type="button"
+                onclick="closeModal('openPartnerApplyModal')"
+                class="flex-1 py-2.5 bg-white hover:bg-gray-100 border-2 border-[#1A1A2E] rounded-xl font-heading font-bold text-sm text-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E] transition-all cursor-pointer"
+            >
+                Batal
+            </button>
+            <button
+                type="submit"
+                class="flex-1 py-2.5 bg-[#00D4AA] hover:bg-[#00B894] active:translate-y-[1px] text-[#1A1A2E] border-2 border-[#1A1A2E] rounded-xl font-heading font-extrabold text-sm shadow-[2px_2px_0px_#1A1A2E] transition-all cursor-pointer"
+            >
+                Kirim Permintaan
+            </button>
+        </div>
+    </form>
+</x-modal>
+@endif
 @endif
 @endauth
 
