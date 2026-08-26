@@ -17,7 +17,7 @@
             <x-input 
                 name="name" 
                 label="Nama Akun" 
-                placeholder="Yohanes" 
+                placeholder="Budi Santoso" 
                 required="true"
             />
         </div>
@@ -27,7 +27,7 @@
                 type="email"
                 name="email" 
                 label="Email" 
-                placeholder="yohanes@example.com" 
+                placeholder="budi@example.com" 
                 required="true"
             />
         </div>

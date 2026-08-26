@@ -20,7 +20,7 @@
             type="email"
             name="email" 
             label="Email" 
-            placeholder="john@example.com" 
+            placeholder="budi@example.com" 
             required="true"
         />
         
