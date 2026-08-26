@@ -90,6 +90,14 @@ class User extends Authenticatable
         return $this->status === 'banned';
     }
 
+    /**
+     * URL Avatar pengguna.
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar ? \Illuminate\Support\Facades\Storage::url($this->avatar) : null;
+    }
+
     /* ------------------------------------------------------------------ */
     /*  Relationships                                                      */
     /* ------------------------------------------------------------------ */

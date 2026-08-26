@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Chat Partner · ' . $trip->title)
 @section('hide_notification', true)
+@section('hide_bottom_nav', true)
 
 @section('header')
 <div class="flex items-center gap-2 md:gap-3 w-full">
@@ -39,14 +40,14 @@
 @endsection
 
 @section('content')
-<div class="flex flex-col h-[calc(100vh-145px)] -mt-2 -mx-4">
+<div class="flex flex-col h-[calc(100dvh-65px)] md:h-[calc(100vh-75px)] -mt-4 -mx-4">
     {{-- Notice Banner --}}
     <div class="px-4 py-1.5 bg-[#FFE156] border-b-[3px] border-[#1A1A2E] flex items-center justify-between text-xs font-bold shrink-0">
         <div class="flex items-center gap-1.5 truncate">
             <span>🔒</span>
             <span class="truncate">Ruang chat privat khusus trip ini</span>
         </div>
-        <span class="text-[10px] bg-white px-2 py-0.5 rounded-md border border-[#1A1A2E] shrink-0 font-extrabold">
+        <span class="text-[10px] bg-white px-2 py-0.5 rounded-md border border-[#1A1A2E] shrink-0 font-extrabold shadow-[1px_1px_0px_#1A1A2E]">
             TwoGo Room
         </span>
     </div>
@@ -85,7 +86,7 @@
                             </p>
                         @endif
 
-                        <div class="p-3 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words text-sm font-medium leading-relaxed {{ $isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none' }}">
+                        <div class="p-3 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed {{ $isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none' }}">
                             {{ $msg->message }}
                         </div>
 
@@ -107,24 +108,24 @@
 
     {{-- Chat Input Bar (Pinned Bottom) --}}
     <div class="p-3 bg-white border-t-[3px] border-[#1A1A2E] shadow-[0px_-4px_0px_rgba(26,26,46,0.05)] shrink-0">
-        <form id="chat-form" class="flex items-center gap-2" autocomplete="off">
+        <form id="chat-form" method="POST" action="{{ route('trips.chat.store', $trip) }}" class="flex items-end gap-2" autocomplete="off">
             @csrf
             <div class="flex-1 relative">
-                <input
-                    type="text"
+                <textarea
                     id="chat-input"
                     name="message"
-                    placeholder="Ketik pesan untuk partnermu..."
+                    rows="1"
+                    placeholder="Ketik pesan untuk partnermu... (Shift+Enter untuk baris baru)"
                     maxlength="1000"
                     required
-                    class="w-full px-3.5 py-2.5 bg-[#FFFBEB] border-[3px] border-[#1A1A2E] rounded-xl font-medium text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:bg-white focus:shadow-[2px_2px_0px_#1A1A2E] transition-all"
-                >
+                    class="w-full px-3.5 py-2.5 bg-[#FFFBEB] border-[3px] border-[#1A1A2E] rounded-xl font-medium text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:bg-white focus:shadow-[2px_2px_0px_#1A1A2E] transition-all resize-none max-h-32 min-h-[44px] leading-snug"
+                ></textarea>
             </div>
 
             <button
                 type="submit"
                 id="chat-send-btn"
-                class="px-4 py-2.5 bg-[#FFE156] hover:bg-[#ffd829] active:translate-y-[1px] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:shadow-none rounded-xl font-heading font-extrabold text-sm text-[#1A1A2E] transition-all flex items-center justify-center gap-1 shrink-0"
+                class="px-4 py-2.5 bg-[#FFE156] hover:bg-[#ffd829] active:translate-y-[1px] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:shadow-none rounded-xl font-heading font-extrabold text-sm text-[#1A1A2E] transition-all flex items-center justify-center gap-1 shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed h-[44px]"
             >
                 <span>Kirim</span>
                 <span class="text-base">🚀</span>
@@ -140,11 +141,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('chat-messages-container');
     const form = document.getElementById('chat-form');
     const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send-btn');
     const emptyState = document.getElementById('chat-empty-state');
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const currentUserId = {{ Auth::id() }};
-    const storeUrl = "{{ route('trips.chat.store', $trip) }}";
-    const fetchUrl = "{{ route('trips.chat.messages', $trip) }}";
+    const storeUrl = "{{ route('trips.chat.store', $trip, false) }}";
+    const fetchUrl = "{{ route('trips.chat.messages', $trip, false) }}";
+
+    // Auto-resize textarea as user types
+    const autoResizeTextarea = () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    };
+
+    input.addEventListener('input', autoResizeTextarea);
+
+    // Enter to submit (Shift+Enter for newline)
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    const getCsrfToken = () => {
+        return document.querySelector('meta[name="csrf-token"]')?.content ||
+               document.querySelector('input[name="_token"]')?.value ||
+               window.csrfToken || '';
+    };
 
     // Track highest message ID
     let lastMessageId = 0;
@@ -182,26 +205,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const avatarHtml = !isMine ? `
             <div class="w-6 h-6 rounded-full bg-[#FFE156] border-2 border-[#1A1A2E] flex items-center justify-center font-bold text-[10px] shrink-0 mb-1 overflow-hidden">
-                ${data.user_avatar ? `<img src="${data.user_avatar}" class="w-full h-full object-cover">` : data.user_name.charAt(0).toUpperCase()}
+                ${data.user_avatar ? `<img src="${data.user_avatar}" class="w-full h-full object-cover">` : (data.user_name ? data.user_name.charAt(0).toUpperCase() : '?')}
             </div>
         ` : '';
 
         const nameHtml = !isMine ? `
-            <p class="text-[10px] font-bold text-slate-500 mb-0.5 ml-1">${data.user_name}</p>
+            <p class="text-[10px] font-bold text-slate-500 mb-0.5 ml-1">${data.user_name || 'Partner'}</p>
         ` : '';
 
         const statusHtml = isMine ? `
             <span class="text-[10px] text-slate-400">✓</span>
         ` : '';
 
+        // Safe text encoding preserving newlines
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `p-3 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed ${isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none'}`;
+        msgDiv.textContent = data.message;
+
         itemDiv.innerHTML = `
             <div class="flex items-end gap-2 max-w-[85%] ${isMine ? 'flex-row-reverse' : 'flex-row'}">
                 ${avatarHtml}
                 <div>
                     ${nameHtml}
-                    <div class="p-3 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words text-sm font-medium leading-relaxed ${isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none'}">
-                        ${data.message}
-                    </div>
+                    ${msgDiv.outerHTML}
                     <div class="flex items-center gap-1 mt-0.5 px-1 ${isMine ? 'justify-end' : 'justify-start'}">
                         <span class="text-[9px] font-bold text-slate-500">${data.created_at}</span>
                         ${statusHtml}
@@ -217,14 +243,14 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom(true);
     };
 
-    // Form Submission (Optimistic UI Send)
+    // Form Submission (Send)
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const text = input.value.trim();
         if (!text) return;
 
-        input.value = '';
-        input.focus();
+        // Disable button during submit
+        sendBtn.disabled = true;
 
         try {
             const response = await fetch(storeUrl, {
@@ -232,22 +258,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': getCsrfToken()
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify({ message: text })
             });
 
             if (response.ok) {
                 const result = await response.json();
                 if (result.status === 'success' && result.data) {
+                    input.value = '';
+                    input.style.height = 'auto';
                     appendMessage(result.data);
+                } else {
+                    showToast('Pesan tidak dapat terkirim.', 'error');
                 }
             } else {
-                showToast('Gagal mengirim pesan. Silakan coba lagi.', 'error');
+                const errData = await response.json().catch(() => ({}));
+                const errMsg = errData.message || (errData.errors?.message ? errData.errors.message[0] : 'Gagal mengirim pesan.');
+                showToast(errMsg, 'error');
             }
         } catch (err) {
             console.error('Send error:', err);
-            showToast('Koneksi terganggu.', 'error');
+            showToast('Koneksi terganggu. Silakan periksa jaringan.', 'error');
+        } finally {
+            sendBtn.disabled = false;
+            input.focus();
         }
     });
 
@@ -261,7 +298,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
-                }
+                },
+                credentials: 'same-origin'
             });
 
             if (response.ok) {

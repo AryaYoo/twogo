@@ -46,14 +46,16 @@
         </header>
         @endif
 
-        <main class="page-content animate-fade-in-up">
+        <main class="{{ View::hasSection('hide_bottom_nav') ? 'page-content-no-nav' : 'page-content' }} animate-fade-in-up">
             @yield('content')
         </main>
 
         @stack('floating-bottom')
 
         @auth
+        @unless(View::hasSection('hide_bottom_nav'))
         <x-bottom-nav />
+        @endunless
         @endauth
 
         <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full max-w-sm px-3 pointer-events-none"></div>
