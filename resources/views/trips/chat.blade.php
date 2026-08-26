@@ -107,7 +107,7 @@
 
     {{-- Chat Input Bar (Pinned Bottom) --}}
     <div class="p-3 bg-white border-t-[3px] border-[#1A1A2E] shadow-[0px_-4px_0px_rgba(26,26,46,0.05)] shrink-0">
-        <form id="chat-form" method="POST" action="{{ route('trips.chat.store', $trip) }}" class="flex items-end gap-2" autocomplete="off">
+        <form id="chat-form" method="POST" action="{{ route('trips.chat.store', $trip) }}" class="flex items-end gap-2.5" autocomplete="off">
             @csrf
             <div class="flex-1 relative">
                 <textarea
@@ -117,17 +117,17 @@
                     placeholder="Ketik pesan..."
                     maxlength="1000"
                     required
-                    class="w-full px-3.5 py-2.5 bg-[#FFFBEB] border-[3px] border-[#1A1A2E] rounded-xl font-medium text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:bg-white focus:shadow-[2px_2px_0px_#1A1A2E] transition-all resize-none max-h-32 min-h-[44px] leading-snug"
+                    class="w-full px-3.5 py-2.5 bg-[#FFFBEB] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] rounded-xl font-medium text-sm text-[#1A1A2E] placeholder:text-slate-400 focus:outline-none focus:bg-white transition-all resize-none max-h-32 min-h-[44px] leading-snug block box-border"
                 ></textarea>
             </div>
 
             <button
                 type="submit"
                 id="chat-send-btn"
-                class="px-4 py-2.5 bg-[#FFE156] hover:bg-[#ffd829] active:translate-y-[1px] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:shadow-none rounded-xl font-heading font-extrabold text-sm text-[#1A1A2E] transition-all flex items-center justify-center gap-1 shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed h-[44px]"
+                class="px-4 py-2.5 bg-[#FFE156] hover:bg-[#ffd829] active:translate-y-[1px] border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] active:shadow-none rounded-xl font-heading font-extrabold text-sm text-[#1A1A2E] transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed h-[44px] box-border"
             >
                 <span>Kirim</span>
-                <span class="text-base">🚀</span>
+                <span class="text-base leading-none">🚀</span>
             </button>
         </form>
     </div>
@@ -149,10 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-resize textarea as user types
     const autoResizeTextarea = () => {
         input.style.height = 'auto';
-        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+        input.style.height = Math.max(44, Math.min(input.scrollHeight, 120)) + 'px';
     };
 
     input.addEventListener('input', autoResizeTextarea);
+    autoResizeTextarea();
 
     // Enter to submit (Shift+Enter for newline)
     input.addEventListener('keydown', (e) => {
@@ -268,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (result.status === 'success' && result.data) {
                     input.value = '';
-                    input.style.height = 'auto';
+                    autoResizeTextarea();
                     appendMessage(result.data);
                 } else {
                     showToast('Pesan tidak dapat terkirim.', 'error');
