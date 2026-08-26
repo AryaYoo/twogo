@@ -49,6 +49,8 @@ class Trip extends Model
         'invite_code',
         'status',
         'is_public',
+        'is_open_partner',
+        'open_partner_note',
         'is_flagged',
     ];
 
@@ -60,10 +62,11 @@ class Trip extends Model
     protected function casts(): array
     {
         return [
-            'start_date'   => 'date',
-            'end_date'     => 'date',
-            'total_budget' => 'decimal:2',
-            'is_flagged'   => 'boolean',
+            'start_date'      => 'date',
+            'end_date'        => 'date',
+            'total_budget'    => 'decimal:2',
+            'is_open_partner' => 'boolean',
+            'is_flagged'      => 'boolean',
         ];
     }
 
@@ -176,6 +179,22 @@ class Trip extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(TripMessage::class);
+    }
+
+    /**
+     * Permohonan gabung partner (Open Partner Requests).
+     */
+    public function openPartnerRequests(): HasMany
+    {
+        return $this->hasMany(OpenPartnerRequest::class);
+    }
+
+    /**
+     * Jumlah permohonan gabung yang masih berstatus pending.
+     */
+    public function pendingPartnerRequestsCount(): int
+    {
+        return $this->openPartnerRequests()->where('status', 'pending')->count();
     }
 
     /**

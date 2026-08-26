@@ -25,7 +25,10 @@ class InvitationController extends Controller
             return !in_array($friend->id, $memberIds);
         });
         
-        return view('trips.invite', compact('trip', 'availableFriends'));
+        $remainingQuota = \App\Models\OpenPartnerQuota::getRemainingQuota(Auth::id());
+        $usedQuota = \App\Models\OpenPartnerQuota::getUsedQuota(Auth::id());
+        
+        return view('trips.invite', compact('trip', 'availableFriends', 'remainingQuota', 'usedQuota'));
     }
 
     public function inviteViaCode(Request $request)
@@ -118,6 +121,32 @@ class InvitationController extends Controller
         $inv->update(['status' => 'accepted']);
 
         return redirect()->route('trips.show', $trip)->with('success', 'Kamu berhasil bergabung ke trip!');
+    }
+
+    /**
+     * Keluarkan / Hapus partner dari trip oleh Host.
+     */
+    public function removeMember(Trip $trip, User $user)
+    {
+        // Hanya pemilik / host trip yang berhak menghapus partner
+        if ($trip->user_id !== Auth::id()) {
+            abort(403, 'Hanya pembuat perjalanan (Host) yang dapat mengeluarkan partner.');
+        }
+
+        // Host tidak bisa menghapus dirinya sendiri
+        if ($user->id === $trip->user_id) {
+            return back()->with('error', 'Host tidak dapat dihapus dari perjalanan.');
+        }
+
+        // Pastikan user tersebut memang anggota dari trip
+        if (!$trip->members()->where('user_id', $user->id)->exists()) {
+            return back()->with('error', 'Pengguna bukan anggota dari trip ini.');
+        }
+
+        // Hapus dari tabel pivot trip_members
+        $trip->members()->detach($user->id);
+
+        return redirect()->route('invitations.show', $trip)->with('success', 'Partner (' . $user->name . ') berhasil dikeluarkan dari trip.');
     }
 
     /**

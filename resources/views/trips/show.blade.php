@@ -41,6 +41,21 @@
         </a>
         @endif
 
+        {{-- Tombol Permohonan Partner Masuk (sebelah kiri hamburger jika trip open partner & host) --}}
+        @if($trip->is_open_partner && $trip->user_id === Auth::id())
+        <a href="{{ route('partner-requests.index', $trip) }}" class="w-9 h-9 md:w-10 md:h-10 bg-[#00D4AA] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-base md:text-lg shrink-0 relative" title="Lihat Permohonan Partner Masuk">
+            <span>🤝</span>
+            @php
+                $pendingRequestsCount = $trip->pendingPartnerRequestsCount();
+            @endphp
+            @if($pendingRequestsCount > 0)
+                <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] rounded-full text-[10px] font-extrabold flex items-center justify-center px-1 shadow-[1px_1px_0px_#1A1A2E]">
+                    {{ $pendingRequestsCount > 9 ? '9+' : $pendingRequestsCount }}
+                </span>
+            @endif
+        </a>
+        @endif
+
         @if($trip->user_id === Auth::id())
         <div class="relative shrink-0">
             <button id="trip-actions-btn" type="button" aria-haspopup="true" aria-expanded="false" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-sm md:text-base">
@@ -52,6 +67,9 @@
             <div id="trip-actions-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border-[3px] border-[#1A1A2E] rounded-lg shadow-[2px_2px_0px_#1A1A2E] z-50 overflow-hidden">
                 <a href="{{ route('trips.edit', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">✏️ Edit Perjalanan</a>
                 <a href="{{ route('invitations.show', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">🤝 Kelola Undangan</a>
+                @if($trip->is_open_partner)
+                    <a href="{{ route('partner-requests.index', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">📬 Permohonan Partner</a>
+                @endif
                 <a href="{{ route('trips.summary', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">📋 Ringkasan Perjalanan</a>
                 <form action="{{ route('trips.visibility', $trip) }}" method="POST" class="border-t border-gray-200">
                     @csrf @method('PATCH')

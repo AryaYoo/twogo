@@ -44,9 +44,16 @@
             
             <div class="flex justify-between items-start mb-2 relative z-10">
                 <h3 class="font-heading font-bold text-xl leading-tight w-3/4">{{ $trip->title }}</h3>
-                <x-badge color="{{ $trip->status === 'planning' ? 'pink' : ($trip->status === 'ongoing' ? 'mint' : 'gray') }}">
-                    {{ ucfirst($trip->status) }}
-                </x-badge>
+                <div class="flex flex-col items-end gap-1 shrink-0">
+                    <x-badge color="{{ $trip->status === 'planning' ? 'pink' : ($trip->status === 'ongoing' ? 'mint' : 'gray') }}">
+                        {{ ucfirst($trip->status) }}
+                    </x-badge>
+                    @if($trip->is_open_partner)
+                        <span class="px-2 py-0.5 bg-[#00D4AA] text-[#1A1A2E] border-2 border-[#1A1A2E] rounded-full text-[10px] font-extrabold shadow-[1px_1px_0px_#1A1A2E]">
+                            🤝 Open Partner
+                        </span>
+                    @endif
+                </div>
             </div>
             
             <div class="flex items-center gap-2 text-sm font-medium opacity-90 mb-4 relative z-10 flex-wrap">
@@ -72,6 +79,18 @@
                             <span>💬</span>
                             <span>{{ $trip->unread_messages_count }} pesan baru</span>
                         </span>
+                    @endif
+
+                    @if($trip->is_open_partner && $trip->user_id === Auth::id())
+                        @php
+                            $pendingReqCount = $trip->pendingPartnerRequestsCount();
+                        @endphp
+                        @if($pendingReqCount > 0)
+                            <span class="inline-flex items-center gap-1 text-[11px] font-heading font-extrabold bg-[#00D4AA] text-[#1A1A2E] px-2.5 py-1 rounded-full border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]">
+                                <span>🤝</span>
+                                <span>{{ $pendingReqCount }} permohonan baru</span>
+                            </span>
+                        @endif
                     @endif
                 </div>
                 

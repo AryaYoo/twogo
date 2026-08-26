@@ -71,9 +71,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/search',          [\App\Http\Controllers\SearchController::class, 'index'])  ->name('search');
     Route::get('/search/cari',     [\App\Http\Controllers\SearchController::class, 'cari'])   ->name('search.cari');
     Route::get('/search/kode',     [\App\Http\Controllers\SearchController::class, 'kode'])   ->name('search.kode');
-    Route::get('/search/partner',  [\App\Http\Controllers\SearchController::class, 'partner'])->name('search.partner');
+    Route::get('/search/partner',  [\App\Http\Controllers\OpenPartnerController::class, 'index'])->name('search.partner');
     Route::get('/search/populer',  [\App\Http\Controllers\SearchController::class, 'populer'])->name('search.populer');
     
+    // Open Partner System
+    Route::post('/trips/{trip}/open-partner', [\App\Http\Controllers\OpenPartnerController::class, 'activate'])->name('trips.open_partner.activate');
+    Route::delete('/trips/{trip}/open-partner', [\App\Http\Controllers\OpenPartnerController::class, 'deactivate'])->name('trips.open_partner.deactivate');
+    Route::post('/trips/{trip}/partner-requests', [\App\Http\Controllers\OpenPartnerController::class, 'sendRequest'])->name('partner-requests.send');
+    Route::get('/trips/{trip}/partner-requests', [\App\Http\Controllers\OpenPartnerController::class, 'requests'])->name('partner-requests.index');
+    Route::get('/trips/{trip}/partner-requests/{partnerRequest}', [\App\Http\Controllers\OpenPartnerController::class, 'requestDetail'])->name('partner-requests.show');
+    Route::post('/trips/{trip}/partner-requests/{partnerRequest}/accept', [\App\Http\Controllers\OpenPartnerController::class, 'accept'])->name('partner-requests.accept');
+    Route::post('/trips/{trip}/partner-requests/{partnerRequest}/reject', [\App\Http\Controllers\OpenPartnerController::class, 'reject'])->name('partner-requests.reject');
+
     // Trips
     Route::resource('trips', TripController::class);
     Route::get('/trips/{trip}/summary', [TripController::class, 'summary'])->name('trips.summary');
@@ -97,15 +106,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/friends/request/{friendship}/decline', [\App\Http\Controllers\FriendController::class, 'declineRequest'])->name('friends.decline');
     Route::delete('/friends/{friend}', [\App\Http\Controllers\FriendController::class, 'remove'])->name('friends.remove');
 
-    // Invitations
+    // Invitations & Members
     Route::get('/trips/{trip}/invite', [\App\Http\Controllers\InvitationController::class, 'showInviteForm'])->name('invitations.show');
     Route::post('/join-trip', [\App\Http\Controllers\InvitationController::class, 'inviteViaCode'])->name('invitations.join_code');
     Route::post('/trips/{trip}/invite', [\App\Http\Controllers\InvitationController::class, 'sendInvite'])->name('invitations.send');
+    Route::delete('/trips/{trip}/members/{user}', [\App\Http\Controllers\InvitationController::class, 'removeMember'])->name('trips.members.remove');
     Route::get('/trips/invitations/accept/{token}', [\App\Http\Controllers\InvitationController::class, 'acceptInvite'])->name('invitations.accept');
     // In-app invitations
     Route::get('/invitations', [\App\Http\Controllers\InvitationController::class, 'index'])->name('invitations.index');
-    Route::post('/invitations/{invitation}/accept', [\App\Http\Controllers\InvitationController::class, 'accept'])->name('invitations.accept_inapp');
-    Route::post('/invitations/{invitation}/decline', [\App\Http\Controllers\InvitationController::class, 'decline'])->name('invitations.decline_inapp');
+    Route::post('/invitations/{invitation}/accept', [\App\Http\Controllers\InvitationController::class, 'accept_inapp'])->name('invitations.accept_inapp');
+    Route::post('/invitations/{invitation}/decline', [\App\Http\Controllers\InvitationController::class, 'decline_inapp'])->name('invitations.decline_inapp');
 
     // Split budget / complete
     Route::post('/trips/{trip}/complete', [\App\Http\Controllers\TripController::class, 'complete'])->name('trips.complete');

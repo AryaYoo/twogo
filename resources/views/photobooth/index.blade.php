@@ -57,8 +57,8 @@
                         <!-- Video / Captured Preview Area -->
                         <div class="relative w-full aspect-[4/3] bg-[#1A1A2E] border-[3px] border-[#1A1A2E] rounded-2xl overflow-hidden flex items-center justify-center">
                             
-                            <!-- Video Stream -->
-                            <video x-ref="videoElement" autoplay playsinline class="w-full h-full object-contain scale-x-[-1]" x-show="!hasCaptured"></video>
+                            <!-- Video Stream (Live 4:3 Viewfinder Fill Mode) -->
+                            <video x-ref="videoElement" autoplay playsinline class="w-full h-full object-cover scale-x-[-1]" x-show="!hasCaptured"></video>
                             
                             <!-- Sequence Status Overlay -->
                             <div x-show="isCapturing" class="absolute top-4 left-4 z-40 bg-[#FFE156] text-[#1A1A2E] px-4 py-2 rounded-xl font-heading font-extrabold text-sm border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]" style="display: none;">
@@ -238,16 +238,16 @@
                     const video = this.$refs.videoElement;
                     const tempCanvas = document.createElement('canvas');
                     
-                    // Base canvas target size for photobooth frame (3:4 ratio for Portrait)
-                    const targetWidth = 750;
-                    const targetHeight = 1000;
+                    // Base canvas target size for photobooth frame: 4:3 Ratio (1000x750)
+                    const targetWidth = 1000;
+                    const targetHeight = 750;
                     tempCanvas.width = targetWidth;
                     tempCanvas.height = targetHeight;
                     const tempCtx = tempCanvas.getContext('2d');
                     
-                    // Object-fit: cover logic to prevent stretching on mobile
+                    // Object-fit: cover (Mode Fill) logic to fill 4:3 without distortion/stretching
                     const videoRatio = video.videoWidth / video.videoHeight;
-                    const targetRatio = targetWidth / targetHeight;
+                    const targetRatio = targetWidth / targetHeight; // 4/3 = 1.3333
                     
                     let drawWidth = video.videoWidth;
                     let drawHeight = video.videoHeight;
@@ -255,16 +255,20 @@
                     let offsetY = 0;
 
                     if (videoRatio > targetRatio) {
-                        // Video is wider (e.g. landscape)
+                        // Video is wider than 4:3 (e.g. 16:9 widescreen) -> crop left & right sides
                         drawWidth = video.videoHeight * targetRatio;
                         offsetX = (video.videoWidth - drawWidth) / 2;
                     } else {
-                        // Video is taller (e.g. portrait mobile)
+                        // Video is taller than 4:3 (e.g. 9:16 portrait or 1:1) -> crop top & bottom sides
                         drawHeight = video.videoWidth / targetRatio;
                         offsetY = (video.videoHeight - drawHeight) / 2;
                     }
 
-                    // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+                    // Mirror horizontal capture for natural selfie preview match
+                    tempCtx.translate(targetWidth, 0);
+                    tempCtx.scale(-1, 1);
+
+                    // Draw image center-cropped to 4:3
                     tempCtx.drawImage(
                         video, 
                         offsetX, offsetY, drawWidth, drawHeight, 
@@ -278,17 +282,17 @@
                     const canvas = this.$refs.canvasElement;
                     const ctx = canvas.getContext('2d');
 
-                    // Photo strip dimensions
+                    // Photo strip dimensions (Optimized for 3x 4:3 photos)
                     const width = 600;
-                    const height = 2500;
+                    const height = 1580;
                     canvas.width = width;
                     canvas.height = height;
 
-                    // Common photo sizes (Portrait 3:4)
+                    // Common photo sizes (Exact 4:3 Ratio per Photo)
                     const photoWidth = 500;
-                    const photoHeight = 667;
+                    const photoHeight = 375; // 500 * (3 / 4) = 375px (4:3)
                     const photoX = (width - photoWidth) / 2;
-                    const photoSpacing = 30;
+                    const photoSpacing = 24;
                     
                     // Render Template Frames according to selection
                     if (this.selectedTemplate === 1) {
@@ -307,15 +311,15 @@
 
                         // Header Graphic
                         ctx.fillStyle = '#FFE156';
-                        ctx.fillRect(photoX, 40, photoWidth, 100);
-                        ctx.strokeRect(photoX, 40, photoWidth, 100);
+                        ctx.fillRect(photoX, 40, photoWidth, 85);
+                        ctx.strokeRect(photoX, 40, photoWidth, 85);
                         ctx.fillStyle = '#1A1A2E';
-                        ctx.font = 'bold 36px "Space Grotesk", sans-serif';
+                        ctx.font = 'bold 34px "Space Grotesk", sans-serif';
                         ctx.textAlign = 'center';
-                        ctx.fillText('✨ HOLIDAY VIBES', width / 2, 100);
+                        ctx.fillText('✨ HOLIDAY VIBES', width / 2, 95);
 
-                        // Draw the 3 photos
-                        let currentY = 170;
+                        // Draw the 3 photos (4:3)
+                        let currentY = 155;
                         this.photos.forEach((photoCanvas) => {
                             // Photo background (white border)
                             ctx.fillStyle = '#FFFFFF';
@@ -326,7 +330,7 @@
                             ctx.drawImage(photoCanvas, photoX, currentY, photoWidth, photoHeight);
                             ctx.strokeRect(photoX, currentY, photoWidth, photoHeight);
                             
-                            currentY += photoHeight + photoSpacing + 20; // +20 for the padding
+                            currentY += photoHeight + photoSpacing + 20; // +20 for padding
                         });
 
                         // Footer Graphic
@@ -368,15 +372,15 @@
 
                         // Header Graphic
                         ctx.fillStyle = '#00D4AA';
-                        ctx.fillRect(photoX, 40, photoWidth, 100);
-                        ctx.strokeRect(photoX, 40, photoWidth, 100);
+                        ctx.fillRect(photoX, 40, photoWidth, 85);
+                        ctx.strokeRect(photoX, 40, photoWidth, 85);
                         ctx.fillStyle = '#1A1A2E';
-                        ctx.font = 'bold 32px "Space Grotesk", sans-serif';
+                        ctx.font = 'bold 30px "Space Grotesk", sans-serif';
                         ctx.textAlign = 'center';
-                        ctx.fillText('✈️ OFFICIAL PASSPORT', width / 2, 100);
+                        ctx.fillText('✈️ OFFICIAL PASSPORT', width / 2, 95);
 
-                        // Draw the 3 photos
-                        let currentY = 170;
+                        // Draw the 3 photos (4:3)
+                        let currentY = 155;
                         this.photos.forEach((photoCanvas, index) => {
                             // Photo wrapper
                             ctx.fillStyle = '#1A1A2E';
@@ -390,12 +394,12 @@
                             if (index === 0) {
                                 ctx.fillStyle = '#FFE156';
                                 ctx.beginPath();
-                                ctx.arc(photoX + photoWidth - 40, currentY + 50, 45, 0, 2 * Math.PI);
+                                ctx.arc(photoX + photoWidth - 45, currentY + 45, 40, 0, 2 * Math.PI);
                                 ctx.fill();
                                 ctx.stroke();
                                 ctx.fillStyle = '#1A1A2E';
-                                ctx.font = 'bold 16px "Space Grotesk", sans-serif';
-                                ctx.fillText('PASSED', photoX + photoWidth - 40, currentY + 55);
+                                ctx.font = 'bold 15px "Space Grotesk", sans-serif';
+                                ctx.fillText('PASSED', photoX + photoWidth - 45, currentY + 50);
                             }
                             
                             currentY += photoHeight + photoSpacing + 20;
