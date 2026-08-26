@@ -33,12 +33,14 @@
                     @yield('header')
                 </div>
                 @auth
+                @unless(View::hasSection('hide_notification'))
                 <a href="{{ route('invitations.index') }}" class="top-notification-button" title="Notifikasi">
                     <span class="text-xl">🔔</span>
                     @if($totalNotifications > 0)
                         <span class="top-notification-badge">{{ $totalNotifications }}</span>
                     @endif
                 </a>
+                @endunless
                 @endauth
             </div>
         </header>

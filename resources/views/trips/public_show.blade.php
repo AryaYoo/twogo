@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', $trip->title . ' - Itinerary Publik')
+@section('hide_notification', true)
 
 @php
     $formatActivityTime = function (?string $time): string {

@@ -159,6 +159,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Pesan obrolan trip yang dikirim pengguna.
+     */
+    public function tripMessages(): HasMany
+    {
+        return $this->hasMany(TripMessage::class);
+    }
+
+    /**
      * Dokumen trip milik pengguna.
      */
     public function documents(): HasMany

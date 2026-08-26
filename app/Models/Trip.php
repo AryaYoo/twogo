@@ -171,6 +171,14 @@ class Trip extends Model
     }
 
     /**
+     * Pesan obrolan dalam trip.
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(TripMessage::class);
+    }
+
+    /**
      * Like pada trip.
      */
     public function likes(): HasMany

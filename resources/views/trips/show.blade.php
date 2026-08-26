@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', $trip->title)
-
+@section('hide_notification', true)
 @section('header')
 <div class="flex items-center gap-2 md:gap-3 w-full">
     <a href="{{ route('trips.index') }}" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform text-sm md:text-base">
@@ -21,27 +21,48 @@
         </p>
         @endif
     </div>
-    @if($trip->user_id === Auth::id())
-    <div class="relative shrink-0">
-        <button id="trip-actions-btn" type="button" aria-haspopup="true" aria-expanded="false" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-sm md:text-base">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 6h16M4 12h16M4 18h16" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
+    
+    <div class="flex items-center gap-2 md:gap-3 shrink-0">
+        {{-- Chat dengan partner (hanya jika ada 2 member di trip) --}}
+        @if($trip->members->count() >= 2)
+        <a href="{{ route('trips.chat', $trip) }}" class="w-9 h-9 md:w-10 md:h-10 bg-[#FF6B9D] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-base md:text-lg shrink-0 relative" title="Chat dengan Partner">
+            <span>💬</span>
+            @php
+                $unreadChatCount = $trip->messages()
+                    ->where('user_id', '!=', Auth::id())
+                    ->whereNull('read_at')
+                    ->count();
+            @endphp
+            @if($unreadChatCount > 0)
+                <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] rounded-full text-[10px] font-extrabold flex items-center justify-center px-1 shadow-[1px_1px_0px_#1A1A2E]">
+                    {{ $unreadChatCount > 9 ? '9+' : $unreadChatCount }}
+                </span>
+            @endif
+        </a>
+        @endif
 
-        <div id="trip-actions-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border-[3px] border-[#1A1A2E] rounded-lg shadow-[2px_2px_0px_#1A1A2E] z-50 overflow-hidden">
-            <a href="{{ route('trips.edit', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">✏️ Edit Perjalanan</a>
-            <a href="{{ route('invitations.show', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">🤝 Kelola Undangan</a>
-            <a href="{{ route('trips.summary', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">📋 Ringkasan Perjalanan</a>
-            <form action="{{ route('trips.visibility', $trip) }}" method="POST" class="border-t border-gray-200">
-                @csrf @method('PATCH')
-                <button type="submit" class="w-full text-left px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">
-                    {{ $trip->is_public ? '🔒 Jadikan Privat' : '🌍 Jadikan Publik' }}
-                </button>
-            </form>
+        @if($trip->user_id === Auth::id())
+        <div class="relative shrink-0">
+            <button id="trip-actions-btn" type="button" aria-haspopup="true" aria-expanded="false" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-sm md:text-base">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6h16M4 12h16M4 18h16" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <div id="trip-actions-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border-[3px] border-[#1A1A2E] rounded-lg shadow-[2px_2px_0px_#1A1A2E] z-50 overflow-hidden">
+                <a href="{{ route('trips.edit', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">✏️ Edit Perjalanan</a>
+                <a href="{{ route('invitations.show', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">🤝 Kelola Undangan</a>
+                <a href="{{ route('trips.summary', $trip) }}" class="block px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">📋 Ringkasan Perjalanan</a>
+                <form action="{{ route('trips.visibility', $trip) }}" method="POST" class="border-t border-gray-200">
+                    @csrf @method('PATCH')
+                    <button type="submit" class="w-full text-left px-3 py-2 hover:bg-[#FFE156] text-sm font-medium">
+                        {{ $trip->is_public ? '🔒 Jadikan Privat' : '🌍 Jadikan Publik' }}
+                    </button>
+                </form>
+            </div>
         </div>
+        @endif
     </div>
-    @endif
 </div>
 @endsection
 
