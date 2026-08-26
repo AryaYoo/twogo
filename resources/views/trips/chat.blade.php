@@ -54,7 +54,7 @@
     }
     main.page-content, main.page-content-no-nav {
         padding: 0 !important;
-        padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
         flex: 1 !important;
         display: flex !important;
         flex-direction: column !important;
