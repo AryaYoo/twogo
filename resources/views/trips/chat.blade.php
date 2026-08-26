@@ -89,7 +89,7 @@
                             </p>
                         @endif
 
-                        <div class="inline-block w-fit px-3.5 py-2 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed {{ $isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none' }}">{{ $msg->message }}</div>
+                        <div class="inline-block w-fit max-w-full px-3.5 py-2 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] [overflow-wrap:anywhere] whitespace-pre-wrap text-sm font-medium leading-relaxed {{ $isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none' }}">{{ $msg->message }}</div>
 
                         <div class="flex items-center gap-1 mt-0.5 px-1 {{ $isMine ? 'justify-end' : 'justify-start' }}">
                             <span class="text-[9px] font-bold text-slate-500">
