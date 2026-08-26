@@ -44,11 +44,15 @@
         overflow: hidden !important;
         height: 100% !important;
     }
+    /* Hapus padding page-content agar tidak ada celah di atas banner chat */
+    main.page-content, main.page-content-no-nav {
+        padding: 0 !important;
+    }
 </style>
 @endpush
 
 @section('content')
-<div class="fixed top-[53px] md:top-[59px] bottom-[57px] left-1/2 -translate-x-1/2 w-full max-w-[480px] flex flex-col bg-[#FFFBEB] z-30">
+<div class="fixed top-[53px] md:top-[61px] bottom-[57px] left-1/2 -translate-x-1/2 w-full max-w-[480px] flex flex-col bg-[#FFFBEB] z-30">
     {{-- Notice Banner --}}
     <div class="px-4 py-1.5 bg-[#FFE156] border-b-[3px] border-[#1A1A2E] flex items-center justify-between text-xs font-bold shrink-0">
         <div class="flex items-center gap-1.5 truncate">
