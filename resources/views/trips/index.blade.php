@@ -37,11 +37,6 @@
     @forelse($trips as $trip)
     <a href="{{ route('trips.show', $trip) }}" class="block">
         <x-card class="{{ $trip->is_open_partner ? 'nb-card-yellow !bg-[#FFE156] hover:!bg-[#F2D449]' : '!bg-white hover:!bg-slate-50' }} transition-colors relative overflow-hidden">
-            {{-- Pattern --}}
-            <div class="absolute -right-10 -bottom-10 opacity-10 transform rotate-12">
-                <div class="text-[100px]">🌴</div>
-            </div>
-            
             <div class="flex justify-between items-start mb-2 relative z-10">
                 <h3 class="font-heading font-bold text-xl leading-tight w-3/4">{{ $trip->title }}</h3>
                 <div class="flex flex-col items-end gap-1 shrink-0">
