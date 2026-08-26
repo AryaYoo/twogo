@@ -162,14 +162,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrapper = document.getElementById('chat-wrapper');
         const header = document.querySelector('.page-header');
         const bottomNav = document.querySelector('.bottom-nav');
-        if (wrapper) {
-            const topOffset = header ? header.getBoundingClientRect().bottom : 0;
-            const bottomOffset = bottomNav ? (window.innerHeight - bottomNav.getBoundingClientRect().top) : 0;
-            wrapper.style.top = topOffset + 'px';
-            wrapper.style.bottom = bottomOffset + 'px';
-        }
+        if (!wrapper) return;
+        // offsetHeight lebih stabil daripada getBoundingClientRect saat font belum load
+        const topOffset = header ? header.offsetTop + header.offsetHeight : 0;
+        const bottomOffset = bottomNav ? bottomNav.offsetHeight : 0;
+        wrapper.style.top = topOffset + 'px';
+        wrapper.style.bottom = bottomOffset + 'px';
     };
+
+    // Jalankan segera, setelah frame berikutnya, dan setelah semua asset (font) selesai load
     fitChatWrapper();
+    requestAnimationFrame(fitChatWrapper);
+    window.addEventListener('load', fitChatWrapper);
     window.addEventListener('resize', fitChatWrapper);
 
 
