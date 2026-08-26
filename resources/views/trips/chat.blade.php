@@ -78,14 +78,14 @@
                         <x-avatar :user="$msg->user" size="xs" class="border-2 border-[#1A1A2E] shrink-0 mb-1" />
                     @endif
 
-                    <div>
+                    <div class="flex flex-col {{ $isMine ? 'items-end' : 'items-start' }} max-w-full">
                         @if(!$isMine)
                             <p class="text-[10px] font-bold text-slate-500 mb-0.5 ml-1">
                                 {{ $msg->user->name }}
                             </p>
                         @endif
 
-                        <div class="p-3 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed {{ $isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none' }}">
+                        <div class="inline-block w-fit px-3.5 py-2 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed {{ $isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none' }}">
                             {{ $msg->message }}
                         </div>
 
@@ -219,13 +219,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Safe text encoding preserving newlines
         const msgDiv = document.createElement('div');
-        msgDiv.className = `p-3 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed ${isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none'}`;
+        msgDiv.className = `inline-block w-fit px-3.5 py-2 rounded-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] break-words whitespace-pre-wrap text-sm font-medium leading-relaxed ${isMine ? 'bg-[#00D4AA] text-[#1A1A2E] rounded-br-none' : 'bg-white text-[#1A1A2E] rounded-bl-none'}`;
         msgDiv.textContent = data.message;
 
         itemDiv.innerHTML = `
             <div class="flex items-end gap-2 max-w-[85%] ${isMine ? 'flex-row-reverse' : 'flex-row'}">
                 ${avatarHtml}
-                <div>
+                <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'} max-w-full">
                     ${nameHtml}
                     ${msgDiv.outerHTML}
                     <div class="flex items-center gap-1 mt-0.5 px-1 ${isMine ? 'justify-end' : 'justify-start'}">

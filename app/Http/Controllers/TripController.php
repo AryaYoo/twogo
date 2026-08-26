@@ -16,7 +16,14 @@ class TripController extends Controller
 {
     public function index()
     {
-        $allTrips = Auth::user()->trips()->with('members')->orderByDesc('created_at')->get();
+        $userId = Auth::id();
+        $allTrips = Auth::user()->trips()
+            ->with('members')
+            ->withCount(['messages as unread_messages_count' => function ($query) use ($userId) {
+                $query->where('user_id', '!=', $userId)->whereNull('read_at');
+            }])
+            ->orderByDesc('created_at')
+            ->get();
 
         // Trip dengan tanggal = trip aktif; tanpa tanggal = wishlist
         $trips     = $allTrips->whereNotNull('start_date')->values();

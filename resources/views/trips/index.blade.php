@@ -60,10 +60,19 @@
             </div>
             
             <div class="flex justify-between items-end relative z-10">
-                <div class="flex -space-x-2">
-                    @foreach($trip->members as $member)
-                    <x-avatar :user="$member" size="sm" class="border-2 border-[#1A1A2E]" />
-                    @endforeach
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex -space-x-2">
+                        @foreach($trip->members as $member)
+                        <x-avatar :user="$member" size="sm" class="border-2 border-[#1A1A2E]" />
+                        @endforeach
+                    </div>
+
+                    @if(($trip->unread_messages_count ?? 0) > 0)
+                        <span class="inline-flex items-center gap-1 text-[11px] font-heading font-extrabold bg-[#FF6B9D] text-white px-2.5 py-1 rounded-full border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]">
+                            <span>💬</span>
+                            <span>{{ $trip->unread_messages_count }} pesan baru</span>
+                        </span>
+                    @endif
                 </div>
                 
                 <div class="text-right">
@@ -109,10 +118,19 @@
             </div>
 
             <div class="flex justify-between items-end relative z-10">
-                <div class="flex -space-x-2">
-                    @foreach($trip->members as $member)
-                    <x-avatar :user="$member" size="sm" class="border-2 border-[#1A1A2E]" />
-                    @endforeach
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex -space-x-2">
+                        @foreach($trip->members as $member)
+                        <x-avatar :user="$member" size="sm" class="border-2 border-[#1A1A2E]" />
+                        @endforeach
+                    </div>
+
+                    @if(($trip->unread_messages_count ?? 0) > 0)
+                        <span class="inline-flex items-center gap-1 text-[11px] font-heading font-extrabold bg-[#FF6B9D] text-white px-2.5 py-1 rounded-full border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]">
+                            <span>💬</span>
+                            <span>{{ $trip->unread_messages_count }} pesan baru</span>
+                        </span>
+                    @endif
                 </div>
                 <div class="flex items-center gap-1 text-xs font-bold text-[#FF6B9D] bg-[#FFF0F5] px-3 py-1 rounded-full border-2 border-[#FF6B9D]">
                     ✏️ Isi Tanggal
