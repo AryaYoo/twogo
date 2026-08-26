@@ -38,8 +38,17 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+    body, html {
+        overflow: hidden !important;
+        height: 100% !important;
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="flex flex-col h-[calc(100dvh-130px)] md:h-[calc(100vh-140px)] -mt-4 -mx-4">
+<div class="fixed top-[53px] md:top-[59px] bottom-[57px] left-1/2 -translate-x-1/2 w-full max-w-[480px] flex flex-col bg-[#FFFBEB] z-30">
     {{-- Notice Banner --}}
     <div class="px-4 py-1.5 bg-[#FFE156] border-b-[3px] border-[#1A1A2E] flex items-center justify-between text-xs font-bold shrink-0">
         <div class="flex items-center gap-1.5 truncate">
@@ -51,8 +60,8 @@
         </span>
     </div>
 
-    {{-- Chat Messages Stream Area --}}
-    <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#FFFBEB]">
+    {{-- Chat Messages Stream Area (Satu-satunya area yang bisa di-scroll) --}}
+    <div id="chat-messages-container" class="flex-1 overflow-y-auto min-h-0 p-4 space-y-3 bg-[#FFFBEB]">
         {{-- Empty State --}}
         <div id="chat-empty-state" class="{{ $messages->count() > 0 ? 'hidden' : '' }} flex flex-col items-center justify-center h-full text-center p-6 space-y-3 my-auto">
             <div class="w-16 h-16 bg-[#FF6B9D] border-[3px] border-[#1A1A2E] rounded-2xl shadow-[4px_4px_0px_#1A1A2E] flex items-center justify-center text-3xl">
