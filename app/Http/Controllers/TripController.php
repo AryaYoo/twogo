@@ -59,6 +59,7 @@ class TripController extends Controller
             'total_budget'=> $request->total_budget ?? 0,
             'invite_code' => strtoupper(Str::random(6)),
             'status'      => 'planning',
+            'is_public'   => true,
         ]);
 
         $trip->members()->attach(Auth::id(), [

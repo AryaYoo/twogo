@@ -14,12 +14,19 @@
 
 @if($feed->isEmpty())
     <div class="flex flex-col items-center justify-center py-16 text-center">
-        <div class="text-6xl mb-4">🌴</div>
-        <h2 class="font-heading font-bold text-xl mb-2">Belum Ada Update</h2>
+        <div class="text-6xl mb-4">👫</div>
+        <h2 class="font-heading font-bold text-xl mb-2">Belum Ada Update dari Teman</h2>
         <p class="text-sm font-medium opacity-70 max-w-xs leading-relaxed mb-6">
-            Buat trip atau wishlist dan atur sebagai publik — atau tambah teman yang juga membagikan perjalanan mereka!
+            Teman yang kamu ikuti belum membagikan trip atau aktivitas publik. Yuk cari dan tambah teman baru!
         </p>
-        <a href="{{ route('trips.create') }}" class="nb-btn nb-btn-primary">Buat Trip Baru</a>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <a href="{{ route('friends.index') }}" class="nb-btn nb-btn-primary">
+                Cari Teman 🔍
+            </a>
+            <a href="{{ route('trips.create') }}" class="nb-btn bg-white">
+                Buat Trip Baru ✨
+            </a>
+        </div>
     </div>
 @else
     <div 

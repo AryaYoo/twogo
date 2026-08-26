@@ -55,6 +55,15 @@ class Trip extends Model
     ];
 
     /**
+     * Nilai default untuk atribut model.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_public' => true,
+    ];
+
+    /**
      * Casting atribut.
      *
      * @return array<string, string>
@@ -65,6 +74,7 @@ class Trip extends Model
             'start_date'      => 'date',
             'end_date'        => 'date',
             'total_budget'    => 'decimal:2',
+            'is_public'       => 'boolean',
             'is_open_partner' => 'boolean',
             'is_flagged'      => 'boolean',
         ];

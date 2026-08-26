@@ -15,19 +15,14 @@ class ForYouController extends Controller
         $userIds = Auth::user()->friends()->pluck('id')->push($userId)->unique();
 
         /* ----------------------------------------------------------------
-         | 1. Feed Trip / Wishlist publik
+         | 1. Feed Trip / Wishlist publik (Hanya dari teman & akun sendiri)
          * ---------------------------------------------------------------- */
-        $tripsQuery = Trip::with(['creator', 'likes'])->where('is_public', true);
-
-        $friendTrips = (clone $tripsQuery)
+        $feedTrips = Trip::with(['creator', 'likes'])
+            ->where('is_public', true)
             ->whereIn('user_id', $userIds)
             ->orderByDesc('created_at')
-            ->limit(30)
+            ->limit(50)
             ->get();
-
-        $feedTrips = $friendTrips->count() < 5
-            ? $tripsQuery->orderByDesc('created_at')->limit(30)->get()
-            : $friendTrips;
 
         $tripItems = $feedTrips->map(function (Trip $trip) use ($userId) {
             $imageUrl = null;
@@ -53,23 +48,17 @@ class ForYouController extends Controller
         });
 
         /* ----------------------------------------------------------------
-         | 2. Feed Open Partner: Trip yang membuka lowongan partner
+         | 2. Feed Open Partner (Hanya dari teman & akun sendiri)
          * ---------------------------------------------------------------- */
-        $openPartnerQuery = Trip::with(['creator', 'likes'])
+        $feedOpenPartners = Trip::with(['creator', 'likes'])
             ->where('is_open_partner', true)
+            ->whereIn('user_id', $userIds)
             ->whereHas('members', function ($q) {
                 // Belum penuh (< 2 anggota)
-            }, '<', 2);
-
-        $friendOpenPartners = (clone $openPartnerQuery)
-            ->whereIn('user_id', $userIds)
+            }, '<', 2)
             ->orderByDesc('updated_at')
-            ->limit(30)
+            ->limit(50)
             ->get();
-
-        $feedOpenPartners = $friendOpenPartners->count() < 3
-            ? $openPartnerQuery->orderByDesc('updated_at')->limit(30)->get()
-            : $friendOpenPartners;
 
         $openPartnerItems = $feedOpenPartners->map(function (Trip $trip) use ($userId) {
             $imageUrl = null;
@@ -94,25 +83,18 @@ class ForYouController extends Controller
         });
 
         /* ----------------------------------------------------------------
-         | 3. Feed Aktivitas: sudah selesai + punya foto + is_public = true
-         *    + trip-nya juga publik
+         | 3. Feed Aktivitas (Hanya dari teman & akun sendiri)
          * ---------------------------------------------------------------- */
-        $activitiesQuery = TripActivity::with(['day.trip.creator'])
+        $feedActivities = TripActivity::with(['day.trip.creator'])
             ->where('is_public', true)
             ->where('is_completed', true)
             ->whereNotNull('photo')
-            ->whereHas('day.trip', fn ($q) => $q->where('is_public', true));
-
-        // Prioritas teman/sendiri
-        $friendActivities = (clone $activitiesQuery)
-            ->whereHas('day.trip', fn ($q) => $q->whereIn('user_id', $userIds))
+            ->whereHas('day.trip', function ($q) use ($userIds) {
+                $q->where('is_public', true)->whereIn('user_id', $userIds);
+            })
             ->orderByDesc('updated_at')
-            ->limit(30)
+            ->limit(50)
             ->get();
-
-        $feedActivities = $friendActivities->count() < 5
-            ? $activitiesQuery->orderByDesc('updated_at')->limit(30)->get()
-            : $friendActivities;
 
         $activityItems = $feedActivities->map(function (TripActivity $activity) use ($userId) {
             $trip    = $activity->day->trip;
