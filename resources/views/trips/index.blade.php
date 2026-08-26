@@ -36,7 +36,7 @@
 <div id="tab-trip" class="tab-content flex flex-col gap-4">
     @forelse($trips as $trip)
     <a href="{{ route('trips.show', $trip) }}" class="block">
-        <x-card class="bg-[#FFE156] hover:bg-[#F2D449] transition-colors relative overflow-hidden">
+        <x-card class="{{ $trip->is_open_partner ? 'nb-card-yellow !bg-[#FFE156] hover:!bg-[#F2D449]' : '!bg-white hover:!bg-slate-50' }} transition-colors relative overflow-hidden">
             {{-- Pattern --}}
             <div class="absolute -right-10 -bottom-10 opacity-10 transform rotate-12">
                 <div class="text-[100px]">🌴</div>

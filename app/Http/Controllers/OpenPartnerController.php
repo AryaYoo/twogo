@@ -22,6 +22,7 @@ class OpenPartnerController extends Controller
                 // Trip yang belum penuh (< 2 anggota)
             }, '<', 2);
 
+        // Filter Kata Kunci (Judul, Destinasi, Catatan)
         if ($search = $request->input('q')) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -30,7 +31,30 @@ class OpenPartnerController extends Controller
             });
         }
 
+        // Filter Lokasi / Destinasi
+        if ($location = $request->input('location')) {
+            $query->where('destination', 'like', "%{$location}%");
+        }
+
+        // Filter Bulan
+        if ($month = $request->input('month')) {
+            $query->whereMonth('start_date', $month);
+        }
+
+        // Filter Tahun
+        if ($year = $request->input('year')) {
+            $query->whereYear('start_date', $year);
+        }
+
         $trips = $query->latest()->paginate(10)->withQueryString();
+
+        // Ambil daftar destinasi unik untuk rekomendasi/datalist
+        $availableDestinations = Trip::where('is_open_partner', true)
+            ->whereNotNull('destination')
+            ->distinct()
+            ->pluck('destination')
+            ->filter()
+            ->values();
 
         // Ambil ID trip yang sudah pernah diajukan oleh user yang sedang login
         $myPendingTripIds = [];
@@ -41,7 +65,7 @@ class OpenPartnerController extends Controller
                 ->toArray();
         }
 
-        return view('search.partner', compact('trips', 'myPendingTripIds'));
+        return view('search.partner', compact('trips', 'myPendingTripIds', 'availableDestinations'));
     }
 
     /**
