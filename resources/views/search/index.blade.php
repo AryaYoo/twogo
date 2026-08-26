@@ -38,7 +38,7 @@
     {{-- Open Partner --}}
     <a href="{{ route('search.partner') }}"
        class="nb-card bg-white flex flex-col items-center justify-center gap-3 py-7 px-3 text-center hover:bg-[#EEF2FF] hover:translate-y-[-3px] transition-all duration-200 group relative overflow-hidden">
-        <span class="absolute top-2 right-2 bg-[#4361EE] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full border-[1.5px] border-white leading-none">SOON</span>
+        <span class="absolute top-2 right-2 bg-[#00D4AA] text-[#1A1A2E] text-[8px] font-extrabold px-2 py-0.5 rounded-full border border-[#1A1A2E] shadow-[1px_1px_0px_#1A1A2E] leading-none">BARU</span>
         <div class="w-14 h-14 bg-[#4361EE] rounded-xl flex items-center justify-center text-2xl border-[3px] border-[#1A1A2E] shadow-[3px_3px_0px_#1A1A2E] opacity-80 group-hover:opacity-100 transition-all">
             🤝
         </div>
