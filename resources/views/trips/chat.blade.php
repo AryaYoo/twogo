@@ -40,22 +40,33 @@
 
 @push('styles')
 <style>
-    body, html {
-        overflow: hidden !important;
+    html, body {
         height: 100% !important;
+        overflow: hidden !important;
     }
-    /* Hapus padding page-content agar tidak ada celah di atas banner chat */
+    .app-container {
+        height: 100dvh !important;
+        height: 100vh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
     main.page-content, main.page-content-no-nav {
         padding: 0 !important;
+        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
     }
 </style>
 @endpush
 
 @section('content')
-<div id="chat-wrapper" class="fixed top-0 bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] flex flex-col bg-[#FFFBEB] z-30">
-
-
-    {{-- Chat Messages Stream Area (Satu-satunya area yang bisa di-scroll) --}}
+<div class="flex-1 flex flex-col min-h-0 w-full bg-[#FFFBEB]">
+    {{-- Chat Messages Stream Area (Full mentok sampai keatas & satu-satunya area yang scroll) --}}
     <div id="chat-messages-container" class="flex-1 overflow-y-auto min-h-0 p-4 space-y-3 bg-[#FFFBEB]">
         {{-- Empty State --}}
         <div id="chat-empty-state" class="{{ $messages->count() > 0 ? 'hidden' : '' }} flex flex-col items-center justify-center h-full text-center p-6 space-y-3 my-auto">
@@ -147,26 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUserId = {{ Auth::id() }};
     const storeUrl = "{{ route('trips.chat.store', $trip, false) }}";
     const fetchUrl = "{{ route('trips.chat.messages', $trip, false) }}";
-
-    // Ukur tinggi header dan bottom-nav secara dinamis agar tidak ada celah
-    const fitChatWrapper = () => {
-        const wrapper = document.getElementById('chat-wrapper');
-        const header = document.querySelector('.page-header');
-        const bottomNav = document.querySelector('.bottom-nav');
-        if (!wrapper) return;
-        // offsetHeight lebih stabil daripada getBoundingClientRect saat font belum load
-        const topOffset = header ? header.offsetTop + header.offsetHeight : 0;
-        const bottomOffset = bottomNav ? bottomNav.offsetHeight : 0;
-        wrapper.style.top = topOffset + 'px';
-        wrapper.style.bottom = bottomOffset + 'px';
-    };
-
-    // Jalankan segera, setelah frame berikutnya, dan setelah semua asset (font) selesai load
-    fitChatWrapper();
-    requestAnimationFrame(fitChatWrapper);
-    window.addEventListener('load', fitChatWrapper);
-    window.addEventListener('resize', fitChatWrapper);
-
 
     // Auto-resize textarea as user types
     const autoResizeTextarea = () => {
