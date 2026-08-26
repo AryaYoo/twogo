@@ -18,7 +18,7 @@
 
 @section('header')
 <div class="flex items-center gap-3">
-    <a href="{{ url()->previous() }}" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform">&larr;</a>
+    <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('dashboard') }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }" class="w-10 h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform cursor-pointer">&larr;</a>
     <div class="flex-1 overflow-hidden">
         <h1 class="text-xl font-heading font-bold truncate">{{ $trip->title }}</h1>
         <p class="text-xs opacity-70 font-medium">Itinerary Publik · oleh <a href="{{ route('profile.user', $trip->creator) }}" class="font-bold underline hover:opacity-80">{{ $trip->creator->name }}</a></p>

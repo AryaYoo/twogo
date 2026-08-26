@@ -4,7 +4,7 @@
 
 @section('header')
 <div class="flex items-center gap-2 md:gap-3 w-full">
-    <a href="{{ route('trips.show', $trip) }}" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] active:translate-y-[1px] transition-transform text-sm md:text-base">
+    <a href="{{ route('trips.show', $trip) }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }" class="w-9 h-9 md:w-10 md:h-10 bg-white border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] active:translate-y-[1px] transition-transform text-sm md:text-base cursor-pointer">
         &larr;
     </a>
     

@@ -3,7 +3,7 @@
 
 @section('header')
 <div class="flex items-center gap-2">
-    <a href="{{ $user->id === Auth::id() ? route('profile.show') : route('profile.user', $user) }}" class="w-9 h-9 bg-white border-[2.5px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform">&larr;</a>
+    <a href="{{ $user->id === Auth::id() ? route('profile.show') : route('profile.user', $user) }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }" class="w-9 h-9 bg-white border-[2.5px] border-[#1A1A2E] rounded-full flex items-center justify-center font-bold shadow-[2px_2px_0px_#1A1A2E] shrink-0 hover:translate-y-[-2px] transition-transform cursor-pointer">&larr;</a>
     <h1 class="text-lg font-heading font-bold">Level & Misi</h1>
 </div>
 @endsection
