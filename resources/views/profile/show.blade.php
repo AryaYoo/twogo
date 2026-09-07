@@ -47,13 +47,15 @@
                 <span class="px-2 py-0.5 bg-[#FFE156] text-[#1A1A2E] text-[10px] font-heading font-extrabold border-2 border-[#1A1A2E] rounded-md shadow-[1px_1px_0px_#1A1A2E]">ADMIN</span>
             @endif
             
-            @php
-                $tierInfo = $user->tier_badge;
-            @endphp
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-heading font-extrabold {{ $tierInfo['badge_class'] }}">
-                <span>{{ $tierInfo['icon'] }}</span>
-                <span>{{ $tierInfo['name'] }}</span>
-            </span>
+            @if($user->account_tier === 'premium' || $user->account_tier === 'early_access')
+                @php
+                    $tierInfo = $user->tier_badge;
+                @endphp
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-heading font-extrabold {{ $tierInfo['badge_class'] }}">
+                    <span>{{ $tierInfo['icon'] }}</span>
+                    <span>{{ $tierInfo['name'] }}</span>
+                </span>
+            @endif
         </div>
 
         @if($user->bio)
