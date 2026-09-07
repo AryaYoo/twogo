@@ -163,6 +163,7 @@ Route::prefix('ctrl-twogo-admin')->name('admin.')->group(function () {
         Route::get('/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'show'])->name('users.show');
         Route::post('/users/{user}/status', [\App\Http\Controllers\Admin\AdminUserController::class, 'updateStatus'])->name('users.status');
+        Route::post('/users/{user}/tier', [\App\Http\Controllers\Admin\AdminUserController::class, 'updateTier'])->name('users.tier');
         Route::post('/users/{user}/reset-password', [\App\Http\Controllers\Admin\AdminUserController::class, 'resetPassword'])->name('users.reset_password');
         Route::delete('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy'])->name('users.destroy');
 

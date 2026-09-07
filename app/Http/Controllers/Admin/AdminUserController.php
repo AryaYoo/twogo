@@ -102,6 +102,25 @@ class AdminUserController extends Controller
         return back()->with('success', "Status pengguna {$user->name} berhasil diubah menjadi: {$statusText}.");
     }
 
+    public function updateTier(Request $request, User $user)
+    {
+        $request->validate([
+            'account_tier' => 'required|in:standard,early_access,premium',
+        ]);
+
+        $newTier = $request->input('account_tier');
+
+        $user->update(['account_tier' => $newTier]);
+
+        $tierText = match ($newTier) {
+            'standard'     => 'Standard',
+            'early_access' => 'Early Access',
+            'premium'      => 'Premium',
+        };
+
+        return back()->with('success', "Account Tier pengguna {$user->name} berhasil diubah menjadi: {$tierText}.");
+    }
+
     public function resetPassword(Request $request, User $user)
     {
         $request->validate([

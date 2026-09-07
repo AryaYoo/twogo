@@ -98,3 +98,22 @@ window.formatRupiah = function(number) {
 };
 
 window.csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+// Toggle Password Visibility Helper
+window.togglePasswordVisibility = function(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    const eyeIcon = document.getElementById('eye-icon-' + inputId);
+    const eyeOffIcon = document.getElementById('eye-off-icon-' + inputId);
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (eyeIcon) eyeIcon.classList.add('hidden');
+        if (eyeOffIcon) eyeOffIcon.classList.remove('hidden');
+    } else {
+        input.type = 'password';
+        if (eyeIcon) eyeIcon.classList.remove('hidden');
+        if (eyeOffIcon) eyeOffIcon.classList.add('hidden');
+    }
+};

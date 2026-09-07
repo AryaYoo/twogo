@@ -42,6 +42,7 @@ class User extends Authenticatable
         'xp',
         'is_admin',
         'status',
+        'account_tier',
         'last_login_at',
     ];
 
@@ -73,6 +74,16 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return (bool) $this->is_admin;
+    }
+
+    public function isPremium(): bool
+    {
+        return $this->account_tier === 'premium';
+    }
+
+    public function isEarlyAccess(): bool
+    {
+        return in_array($this->account_tier, ['early_access', 'premium']);
     }
 
     public function isActive(): bool
