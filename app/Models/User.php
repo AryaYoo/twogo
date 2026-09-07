@@ -86,6 +86,42 @@ class User extends Authenticatable
         return in_array($this->account_tier, ['early_access', 'premium']);
     }
 
+    /**
+     * Data badge dan deskripsi untuk account tier pengguna.
+     */
+    public function getTierBadgeAttribute(): array
+    {
+        return match ($this->account_tier) {
+            'premium' => [
+                'name'        => 'Premium',
+                'icon'        => '👑',
+                'badge_class' => 'bg-[#FFE156] text-[#1A1A2E] border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]',
+                'label'       => 'Member Premium',
+                'description' => 'Akses prioritas tak terbatas ke seluruh fitur TwoGo.',
+                'tag'         => 'PRO',
+                'tag_class'   => 'bg-[#1A1A2E] text-[#FFE156]',
+            ],
+            'early_access' => [
+                'name'        => 'Early Access',
+                'icon'        => '🚀',
+                'badge_class' => 'bg-[#4361EE] text-white border-2 border-[#1A1A2E] shadow-[2px_2px_0px_#1A1A2E]',
+                'label'       => 'Tester Early Access',
+                'description' => 'Akses perdana ke fitur eksperimental (seperti AI Itinerary).',
+                'tag'         => 'BETA',
+                'tag_class'   => 'bg-[#4361EE] text-white',
+            ],
+            default => [
+                'name'        => 'Standard',
+                'icon'        => '🌱',
+                'badge_class' => 'bg-slate-100 text-slate-700 border border-[#1A1A2E]',
+                'label'       => 'Standard Member',
+                'description' => 'Akun reguler TwoGo.',
+                'tag'         => 'FREE',
+                'tag_class'   => 'bg-slate-200 text-slate-700',
+            ],
+        };
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active' || empty($this->status);

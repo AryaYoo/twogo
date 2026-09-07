@@ -108,9 +108,36 @@ class AdminUserController extends Controller
             'account_tier' => 'required|in:standard,early_access,premium',
         ]);
 
+        $oldTier = $user->account_tier ?? 'standard';
         $newTier = $request->input('account_tier');
 
         $user->update(['account_tier' => $newTier]);
+
+        // Kirim in-app notification jika tier berubah
+        if ($oldTier !== $newTier) {
+            if ($newTier === 'early_access') {
+                $user->notify(new \App\Notifications\AppActivityNotification(
+                    'Selamat datang di tier Early Access! 🚀 Kamu sekarang memiliki akses eksklusif untuk mencoba fitur-fitur terbaru (seperti AI Itinerary).',
+                    '🚀',
+                    route('profile.show'),
+                    'tier_welcome'
+                ));
+            } elseif ($newTier === 'premium') {
+                $user->notify(new \App\Notifications\AppActivityNotification(
+                    'Selamat datang di tier Premium! 👑 Akun kamu telah di-upgrade. Nikmati seluruh fitur eksklusif dan prioritas TwoGo.',
+                    '👑',
+                    route('profile.show'),
+                    'tier_welcome'
+                ));
+            } elseif ($newTier === 'standard') {
+                $user->notify(new \App\Notifications\AppActivityNotification(
+                    'Status tier akun kamu telah diubah menjadi Standard.',
+                    '🌱',
+                    route('profile.show'),
+                    'tier_change'
+                ));
+            }
+        }
 
         $tierText = match ($newTier) {
             'standard'     => 'Standard',

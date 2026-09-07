@@ -41,12 +41,55 @@
 
     {{-- Name & Bio --}}
     <div class="mb-4">
-        <h2 class="text-lg font-heading font-bold leading-tight">{{ $user->name }}</h2>
+        <div class="flex items-center gap-2 flex-wrap mb-1">
+            <h2 class="text-lg font-heading font-bold leading-tight">{{ $user->name }}</h2>
+            @if($user->isAdmin())
+                <span class="px-2 py-0.5 bg-[#FFE156] text-[#1A1A2E] text-[10px] font-heading font-extrabold border-2 border-[#1A1A2E] rounded-md shadow-[1px_1px_0px_#1A1A2E]">ADMIN</span>
+            @endif
+            
+            @php
+                $tierInfo = $user->tier_badge;
+            @endphp
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-heading font-extrabold {{ $tierInfo['badge_class'] }}">
+                <span>{{ $tierInfo['icon'] }}</span>
+                <span>{{ $tierInfo['name'] }}</span>
+            </span>
+        </div>
+
         @if($user->bio)
-            <p class="text-sm font-medium opacity-80 mt-0.5">{{ $user->bio }}</p>
+            <p class="text-sm font-medium opacity-80 mt-1">{{ $user->bio }}</p>
         @endif
         @if($user->phone)
             <p class="text-xs opacity-60 mt-0.5">📞 {{ $user->phone }}</p>
+        @endif
+
+        {{-- Tier Highlight Banner --}}
+        @if($user->account_tier === 'premium')
+            <div class="mt-3 p-3 bg-gradient-to-r from-[#FFE156]/40 via-[#FFE156]/15 to-white border-2 border-[#1A1A2E] rounded-xl shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 bg-[#FFE156] border-2 border-[#1A1A2E] rounded-lg flex items-center justify-center text-lg shadow-[1px_1px_0px_#1A1A2E] shrink-0">
+                        👑
+                    </div>
+                    <div>
+                        <p class="font-heading font-extrabold text-xs text-[#1A1A2E]">Member Premium</p>
+                        <p class="text-[11px] font-medium text-slate-600">Akses prioritas tak terbatas ke seluruh fitur TwoGo.</p>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 bg-[#1A1A2E] text-[#FFE156] text-[10px] font-extrabold rounded-md uppercase shrink-0">PRO</span>
+            </div>
+        @elseif($user->account_tier === 'early_access')
+            <div class="mt-3 p-3 bg-gradient-to-r from-[#C3D0FC]/50 via-[#C3D0FC]/20 to-white border-2 border-[#1A1A2E] rounded-xl shadow-[3px_3px_0px_#1A1A2E] flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 bg-[#4361EE] text-white border-2 border-[#1A1A2E] rounded-lg flex items-center justify-center text-lg shadow-[1px_1px_0px_#1A1A2E] shrink-0">
+                        🚀
+                    </div>
+                    <div>
+                        <p class="font-heading font-extrabold text-xs text-[#1A1A2E]">Tester Early Access</p>
+                        <p class="text-[11px] font-medium text-slate-600">Akses perdana ke fitur eksperimental (seperti AI Itinerary).</p>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 bg-[#4361EE] text-white text-[10px] font-extrabold rounded-md uppercase shrink-0">BETA</span>
+            </div>
         @endif
     </div>
 

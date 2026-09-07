@@ -33,6 +33,24 @@
         <x-input name="phone" label="No. Handphone" value="{{ $user->phone }}" placeholder="08123456789" />
         <x-input type="textarea" name="bio" label="Bio Singkat" value="{{ $user->bio }}" placeholder="Traveler santai yang suka nyari makanan enak..." />
         
+        @php
+            $tierInfo = $user->tier_badge;
+        @endphp
+        <div class="mt-3 mb-2">
+            <label class="block font-heading font-bold text-xs text-[#1A1A2E] mb-1.5">Tier Akun Kamu</label>
+            <div class="p-3 bg-[#FFFBEB] border-2 border-[#1A1A2E] rounded-xl flex items-center justify-between shadow-[2px_2px_0px_#1A1A2E]">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">{{ $tierInfo['icon'] }}</span>
+                    <div>
+                        <div class="font-heading font-extrabold text-sm text-[#1A1A2E]">{{ $tierInfo['name'] }}</div>
+                        <div class="text-[11px] text-slate-600 font-medium">{{ $tierInfo['description'] }}</div>
+                    </div>
+                </div>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded border border-[#1A1A2E] uppercase {{ $tierInfo['tag_class'] }}">{{ $tierInfo['tag'] }}</span>
+            </div>
+            <p class="text-[10px] text-slate-500 font-medium mt-1">Tier diatur secara khusus oleh Administrator.</p>
+        </div>
+        
         <div class="mt-6 flex gap-4">
             <x-button type="submit" variant="mint" class="flex-1">Simpan Profil</x-button>
         </div>
