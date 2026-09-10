@@ -41,6 +41,13 @@
             this.savingTrip = false;
             if (data.success) {
                 this.selectedTrip.trip = data.trip;
+                if (data.days) {
+                    this.selectedTrip.days = data.days;
+                    const badge = document.querySelector(`[data-trip-days="${tripId}"]`);
+                    if (badge) {
+                        badge.textContent = data.days.length + ' Hari';
+                    }
+                }
                 this.showToast('✅ ' + data.message, true);
             } else {
                 const errors = data.errors ? Object.values(data.errors).flat().join(', ') : 'Terjadi kesalahan.';
@@ -178,7 +185,7 @@
                     <div class="grid grid-cols-3 gap-2 text-center text-[11px] font-bold">
                         <div class="p-2 bg-[#FFFBEB] border border-[#1A1A2E] rounded-lg">
                             <div class="text-slate-400">HARI</div>
-                            <div class="text-[#1A1A2E] font-extrabold text-sm">{{ $trip->days_count }} Hari</div>
+                            <div data-trip-days="{{ $trip->id }}" class="text-[#1A1A2E] font-extrabold text-sm">{{ $trip->days_count }} Hari</div>
                         </div>
                         <div class="p-2 bg-[#FFFBEB] border border-[#1A1A2E] rounded-lg">
                             <div class="text-slate-400">KEGIATAN</div>

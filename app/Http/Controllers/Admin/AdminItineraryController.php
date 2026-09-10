@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ContentReport;
 use App\Models\Trip;
 use App\Models\TripActivity;
+use App\Models\TripDay;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AdminItineraryController extends Controller
@@ -55,6 +57,9 @@ class AdminItineraryController extends Controller
 
     public function show(Trip $trip)
     {
+        // Pastikan record TripDay sinkron dengan rentang start_date dan end_date
+        $this->syncTripDays($trip, $trip->start_date, $trip->end_date);
+
         $trip->load([
             'creator',
             'members',
@@ -91,11 +96,62 @@ class AdminItineraryController extends Controller
 
         $trip->update($validated);
 
+        // Sinkronisasi record TripDay sesuai start_date dan end_date baru
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $this->syncTripDays($trip, $request->start_date, $request->end_date);
+        }
+
+        $trip->load([
+            'creator',
+            'members',
+            'days.activities',
+            'expenses',
+            'wishlistItems',
+            'reports.reporter'
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => "Trip \"{$trip->title}\" berhasil diperbarui.",
-            'trip'    => $trip->fresh(),
+            'trip'    => $trip,
+            'days'    => $trip->days,
         ]);
+    }
+
+    /**
+     * Sinkronisasi record TripDay berdasarkan rentang start_date dan end_date.
+     */
+    private function syncTripDays(Trip $trip, mixed $startDate, mixed $endDate): void
+    {
+        if (!$startDate || !$endDate) {
+            return;
+        }
+
+        $start = Carbon::parse($startDate);
+        $end   = Carbon::parse($endDate);
+        $daysCount = $start->diffInDays($end) + 1;
+
+        // Hapus hari-hari yang melebihi rentang durasi baru
+        $trip->days()->where('day_number', '>', $daysCount)->delete();
+
+        // Buat atau perbarui tanggal pada hari-hari dalam rentang baru
+        for ($i = 0; $i < $daysCount; $i++) {
+            $dayDate = $start->copy()->addDays($i)->format('Y-m-d');
+            $dayNum  = $i + 1;
+
+            $existingDay = $trip->days()->where('day_number', $dayNum)->first();
+            if ($existingDay) {
+                if ($existingDay->date !== $dayDate) {
+                    $existingDay->update(['date' => $dayDate]);
+                }
+            } else {
+                TripDay::create([
+                    'trip_id'    => $trip->id,
+                    'day_number' => $dayNum,
+                    'date'       => $dayDate,
+                ]);
+            }
+        }
     }
 
     /**
