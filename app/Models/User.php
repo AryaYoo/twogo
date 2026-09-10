@@ -96,11 +96,15 @@ class User extends Authenticatable
     public function checkAndRefreshAiQuota(): void
     {
         if ($this->ai_itinerary_reset_at && now()->greaterThanOrEqualTo($this->ai_itinerary_reset_at)) {
-            $this->update([
-                'ai_itinerary_count' => 0,
-                'ai_itinerary_reset_at' => null,
-            ]);
-            $this->refresh();
+            try {
+                $this->update([
+                    'ai_itinerary_count'    => 0,
+                    'ai_itinerary_reset_at' => null,
+                ]);
+                $this->refresh();
+            } catch (\Exception $e) {
+                // Column mungkin belum di-migrate
+            }
         }
     }
 
@@ -121,7 +125,19 @@ class User extends Authenticatable
 
         $this->checkAndRefreshAiQuota();
 
-        return $this->ai_itinerary_count < 2;
+        // Jika kuota habis tapi belum ada jadwal reset
+        // (misal: user sudah pakai sebelum fitur ini ditambah),
+        // jadwalkan reset 2 jam dari sekarang.
+        if (($this->ai_itinerary_count ?? 0) >= 2 && !$this->ai_itinerary_reset_at) {
+            try {
+                $this->update(['ai_itinerary_reset_at' => now()->addHours(2)]);
+                $this->refresh();
+            } catch (\Exception $e) {
+                // Column belum di-migrate, abaikan
+            }
+        }
+
+        return ($this->ai_itinerary_count ?? 0) < 2;
     }
 
     /**

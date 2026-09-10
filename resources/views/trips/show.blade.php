@@ -436,12 +436,17 @@
                 @if(!Auth::user()->canUseAiItinerary())
                     <div class="mt-2 pt-2 border-t border-red-200 text-xs text-red-600 font-bold flex flex-col gap-1">
                         <div>Kuota AI kamu sudah habis (maksimal 2x per 2 jam).</div>
-                        @if($resetAt)
+                        @php $freshResetAt = Auth::user()->fresh()->ai_itinerary_reset_at; @endphp
+                        @if($freshResetAt)
                             <div class="flex items-center gap-1 text-[11px] text-slate-600">
                                 <span>⏳ Kuota akan refresh dalam:</span>
-                                <span id="ai-countdown" class="font-extrabold text-red-600" data-target="{{ $resetAt->toISOString() }}">
+                                <span id="ai-countdown" class="font-extrabold text-red-600" data-target="{{ $freshResetAt->toISOString() }}">
                                     Menghitung...
                                 </span>
+                            </div>
+                        @else
+                            <div class="text-[11px] text-slate-500 font-semibold">
+                                ⏳ Silakan refresh halaman untuk melihat hitung mundur.
                             </div>
                         @endif
                     </div>
