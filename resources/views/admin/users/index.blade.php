@@ -244,6 +244,15 @@
                         <div>🗓️ <b>Tanggal Registrasi:</b> <span x-text="selectedUser.registered_at"></span></div>
                         <div>🕒 <b>Login Terakhir:</b> <span x-text="selectedUser.last_login"></span></div>
                         <div>📝 <b>Bio Profile:</b> <span x-text="selectedUser.user?.bio || 'Belum diisi'"></span></div>
+                        <div class="pt-2 mt-2 border-t border-slate-200">
+                            🤖 <b>Sisa Kuota AI:</b> 
+                            <span class="px-2 py-0.5 rounded text-white text-[11px] font-black"
+                                  :class="(selectedUser.ai_quota_left ?? 0) > 0 ? 'bg-emerald-600' : 'bg-red-500'"
+                                  x-text="(selectedUser.ai_quota_left ?? 0) + ' / 2'"></span>
+                            <template x-if="selectedUser.ai_reset_relative">
+                                <span class="text-slate-500 text-[11px] ml-1.5 font-semibold" x-text="'(Reset ' + selectedUser.ai_reset_relative + ')'"></span>
+                            </template>
+                        </div>
                     </div>
                 </div>
             </template>

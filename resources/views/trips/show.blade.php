@@ -419,13 +419,37 @@
 
             <x-input type="textarea" name="description" label="Deskripsi / Keinginan Kamu" placeholder="Contoh: Saya ingin kuliner malam yang pedas dan mengunjungi tempat sejarah..." required="true" />
             
-            <div class="mt-2 mb-4">
+            <div class="mt-3 mb-4 p-3 rounded-xl border-2 border-[#1A1A2E] {{ Auth::user()->canUseAiItinerary() ? 'bg-[#E8F5E9]' : 'bg-[#FFEBEE]' }}">
                 @php
-                    $quotaLeft = 2 - Auth::user()->ai_itinerary_count;
+                    $quotaLeft = Auth::user()->ai_quota_remaining;
+                    $resetAt = Auth::user()->ai_itinerary_reset_at;
                 @endphp
-                <span class="text-xs font-bold {{ $quotaLeft > 0 ? 'text-[#00D4AA]' : 'text-red-500' }}">
-                    Sisa Kuota AI: {{ max(0, $quotaLeft) }} / 2
-                </span>
+
+                <div class="flex items-center justify-between text-xs font-bold">
+                    <span class="flex items-center gap-1.5 {{ $quotaLeft > 0 ? 'text-emerald-700' : 'text-red-600' }}">
+                        <span>{{ $quotaLeft > 0 ? '✨' : '⚠️' }}</span>
+                        <span>Sisa Kuota AI: {{ $quotaLeft }} / 2</span>
+                    </span>
+                    <span class="text-[11px] text-slate-500 font-semibold">Reset tiap 2 jam</span>
+                </div>
+
+                @if(!Auth::user()->canUseAiItinerary())
+                    <div class="mt-2 pt-2 border-t border-red-200 text-xs text-red-600 font-bold flex flex-col gap-1">
+                        <div>Kuota AI kamu sudah habis (maksimal 2x per 2 jam).</div>
+                        @if($resetAt)
+                            <div class="flex items-center gap-1 text-[11px] text-slate-600">
+                                <span>⏳ Kuota akan refresh dalam:</span>
+                                <span id="ai-countdown" class="font-extrabold text-red-600" data-target="{{ $resetAt->toISOString() }}">
+                                    Menghitung...
+                                </span>
+                            </div>
+                        @endif
+                    </div>
+                @elseif($resetAt && $quotaLeft < 2)
+                    <div class="mt-1 text-[11px] text-slate-500 font-medium">
+                        ⏳ Reset penuh dalam: <span id="ai-countdown" class="font-bold text-[#1A1A2E]" data-target="{{ $resetAt->toISOString() }}">Menghitung...</span>
+                    </div>
+                @endif
             </div>
 
             <div class="mt-6">
@@ -434,8 +458,8 @@
                         ✨ Generate Sekarang
                     </x-button>
                 @else
-                    <button type="button" disabled class="w-full nb-btn bg-gray-300 text-gray-500 border-[3px] border-gray-400 cursor-not-allowed rounded-xl py-3 font-bold">
-                        Kuota Habis
+                    <button type="button" disabled class="w-full nb-btn bg-gray-200 text-gray-400 border-[3px] border-gray-300 cursor-not-allowed rounded-xl py-3 font-bold flex items-center justify-center gap-2">
+                        <span>🔒 Kuota Habis — Tunggu Reset</span>
                     </button>
                 @endif
             </div>
@@ -561,6 +585,41 @@
         window.addEventListener('resize', function() { updateControls(); });
         container.addEventListener('scroll', function() { updateControls(); });
         updateControls();
+    });
+
+    // AI Quota Countdown Timer
+    document.addEventListener('DOMContentLoaded', function () {
+        var countdownEl = document.getElementById('ai-countdown');
+        if (!countdownEl) return;
+
+        var targetTime = new Date(countdownEl.getAttribute('data-target')).getTime();
+
+        function updateCountdown() {
+            var now = new Date().getTime();
+            var distance = targetTime - now;
+
+            if (distance <= 0) {
+                countdownEl.textContent = 'Siap direfresh! Silakan refresh halaman.';
+                countdownEl.classList.remove('text-red-600');
+                countdownEl.classList.add('text-emerald-600');
+                return;
+            }
+
+            var hours = Math.floor(distance / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            var text = '';
+            if (hours > 0) {
+                text += hours + 'j ';
+            }
+            text += minutes + 'm ' + seconds + 'd';
+
+            countdownEl.textContent = text;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     });
 </script>
 @endpush

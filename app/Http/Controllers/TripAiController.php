@@ -123,8 +123,13 @@ class TripAiController extends Controller
                 ]);
             }
 
-            // Tambah hitungan kuota user
-            $user->increment('ai_itinerary_count');
+            // Tambah hitungan kuota user dan atur reset 2 jam jika belum diset
+            $newCount = ($user->ai_itinerary_count ?? 0) + 1;
+            $updates = ['ai_itinerary_count' => $newCount];
+            if (!$user->ai_itinerary_reset_at) {
+                $updates['ai_itinerary_reset_at'] = now()->addHours(2);
+            }
+            $user->update($updates);
 
             return back()->with('success', 'Itinerary otomatis berhasil dibuat oleh AI!');
 

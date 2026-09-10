@@ -68,12 +68,16 @@ class AdminUserController extends Controller
         $bestPartners = GamificationService::getBestPartners($user);
 
         return response()->json([
-            'user'          => $user,
-            'level_info'    => $levelInfo,
-            'best_partners' => $bestPartners,
-            'trips_count'   => $user->owned_trips_count,
-            'registered_at' => $user->created_at->format('d M Y H:i'),
-            'last_login'    => $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Belum pernah login',
+            'user'             => $user,
+            'level_info'       => $levelInfo,
+            'best_partners'    => $bestPartners,
+            'trips_count'      => $user->owned_trips_count,
+            'registered_at'    => $user->created_at->format('d M Y H:i'),
+            'last_login'       => $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Belum pernah login',
+            'ai_quota_left'    => $user->ai_quota_remaining,
+            'ai_quota_used'    => $user->ai_itinerary_count ?? 0,
+            'ai_reset_at'      => $user->ai_itinerary_reset_at ? $user->ai_itinerary_reset_at->format('d M Y H:i') : null,
+            'ai_reset_relative'=> $user->ai_itinerary_reset_at ? $user->ai_itinerary_reset_at->diffForHumans() : null,
         ]);
     }
 

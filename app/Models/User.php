@@ -44,6 +44,7 @@ class User extends Authenticatable
         'status',
         'account_tier',
         'ai_itinerary_count',
+        'ai_itinerary_reset_at',
         'last_login_at',
     ];
 
@@ -70,6 +71,7 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'last_login_at' => 'datetime',
             'ai_itinerary_count' => 'integer',
+            'ai_itinerary_reset_at' => 'datetime',
         ];
     }
 
@@ -88,9 +90,38 @@ class User extends Authenticatable
         return in_array($this->account_tier, ['early_access', 'premium']);
     }
 
+    /**
+     * Cek dan sinkronkan kuota AI jika durasi reset (2 jam) telah tercapai.
+     */
+    public function checkAndRefreshAiQuota(): void
+    {
+        if ($this->ai_itinerary_reset_at && now()->greaterThanOrEqualTo($this->ai_itinerary_reset_at)) {
+            $this->update([
+                'ai_itinerary_count' => 0,
+                'ai_itinerary_reset_at' => null,
+            ]);
+            $this->refresh();
+        }
+    }
+
+    /**
+     * Hitung sisa kuota AI (Maksimal 2).
+     */
+    public function getAiQuotaRemainingAttribute(): int
+    {
+        $this->checkAndRefreshAiQuota();
+        return max(0, 2 - ($this->ai_itinerary_count ?? 0));
+    }
+
     public function canUseAiItinerary(): bool
     {
-        return $this->isEarlyAccess() && $this->ai_itinerary_count < 2;
+        if (!$this->isEarlyAccess()) {
+            return false;
+        }
+
+        $this->checkAndRefreshAiQuota();
+
+        return $this->ai_itinerary_count < 2;
     }
 
     /**
