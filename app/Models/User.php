@@ -43,6 +43,7 @@ class User extends Authenticatable
         'is_admin',
         'status',
         'account_tier',
+        'ai_itinerary_count',
         'last_login_at',
     ];
 
@@ -68,6 +69,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'last_login_at' => 'datetime',
+            'ai_itinerary_count' => 'integer',
         ];
     }
 
@@ -84,6 +86,11 @@ class User extends Authenticatable
     public function isEarlyAccess(): bool
     {
         return in_array($this->account_tier, ['early_access', 'premium']);
+    }
+
+    public function canUseAiItinerary(): bool
+    {
+        return $this->isEarlyAccess() && $this->ai_itinerary_count < 2;
     }
 
     /**

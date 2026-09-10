@@ -23,6 +23,13 @@
     </div>
     
     <div class="flex items-center gap-2 md:gap-3 shrink-0">
+        {{-- Tombol AI Itinerary (Hanya Early Access & Premium) --}}
+        @if(Auth::user()->isEarlyAccess())
+        <button type="button" onclick="openModal('aiItineraryModal')" class="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-br from-[#FFE156] to-[#FF9E00] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-base md:text-lg shrink-0 relative" title="Buat Itinerary Otomatis (AI)">
+            ✨
+        </button>
+        @endif
+
         {{-- Chat dengan partner (hanya jika ada 2 member di trip) --}}
         @if($trip->members->count() >= 2)
         <a href="{{ route('trips.chat', $trip) }}" class="w-9 h-9 md:w-10 md:h-10 bg-[#FF6B9D] border-[3px] border-[#1A1A2E] rounded-full flex items-center justify-center shadow-[2px_2px_0px_#1A1A2E] hover:translate-y-[-2px] transition-transform text-base md:text-lg shrink-0 relative" title="Chat dengan Partner">
@@ -386,6 +393,51 @@
                 <button type="submit" class="flex-1 nb-btn bg-red-500 text-white border-2 border-[#1A1A2E] hover:bg-red-600 font-bold transition-transform hover:translate-y-[-1px] shadow-[2px_2px_0px_#1A1A2E] rounded-md py-2">
                     Ya, Hapus
                 </button>
+            </div>
+        </form>
+    </div>
+</x-modal>
+
+<x-modal id="aiItineraryModal" title="Buat Itinerary dengan AI ✨">
+    <div class="p-2">
+        <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+            AI kami akan membantu menyusun rekomendasi kegiatan berdasarkan preferensi kamu.
+        </p>
+
+        <form id="aiItineraryForm" method="POST" action="{{ route('trips.ai-itinerary', $trip) }}">
+            @csrf
+            
+            <div class="nb-form-group mb-4">
+                <label class="nb-label">Pilih Hari <span class="text-red-500">*</span></label>
+                <select name="day_id" class="nb-select" required>
+                    <option value="">-- Pilih Hari --</option>
+                    @foreach($trip->days as $day)
+                        <option value="{{ $day->id }}">Hari {{ $day->day_number }} ({{ Carbon\Carbon::parse($day->date)->translatedFormat('d M y') }})</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <x-input type="textarea" name="description" label="Deskripsi / Keinginan Kamu" placeholder="Contoh: Saya ingin kuliner malam yang pedas dan mengunjungi tempat sejarah..." required="true" />
+            
+            <div class="mt-2 mb-4">
+                @php
+                    $quotaLeft = 2 - Auth::user()->ai_itinerary_count;
+                @endphp
+                <span class="text-xs font-bold {{ $quotaLeft > 0 ? 'text-[#00D4AA]' : 'text-red-500' }}">
+                    Sisa Kuota AI: {{ max(0, $quotaLeft) }} / 2
+                </span>
+            </div>
+
+            <div class="mt-6">
+                @if(Auth::user()->canUseAiItinerary())
+                    <x-button type="submit" variant="primary" class="w-full bg-gradient-to-r from-[#FFE156] to-[#FF9E00] border-[3px] border-[#1A1A2E] text-[#1A1A2E] hover:from-[#FF9E00] hover:to-[#FF8500]">
+                        ✨ Generate Sekarang
+                    </x-button>
+                @else
+                    <button type="button" disabled class="w-full nb-btn bg-gray-300 text-gray-500 border-[3px] border-gray-400 cursor-not-allowed rounded-xl py-3 font-bold">
+                        Kuota Habis
+                    </button>
+                @endif
             </div>
         </form>
     </div>

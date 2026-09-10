@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('trips', TripController::class);
     Route::get('/trips/{trip}/summary', [TripController::class, 'summary'])->name('trips.summary');
     Route::get('/trips/{trip}/edit-dates', [TripController::class, 'editDates'])->name('trips.edit-dates');
+    Route::post('/trips/{trip}/ai-itinerary', [\App\Http\Controllers\TripAiController::class, 'generate'])->name('trips.ai-itinerary');
     Route::get('/trips/{trip}/chat', [\App\Http\Controllers\TripChatController::class, 'index'])->name('trips.chat');
     Route::post('/trips/{trip}/chat', [\App\Http\Controllers\TripChatController::class, 'store'])->name('trips.chat.store');
     Route::get('/trips/{trip}/chat/messages', [\App\Http\Controllers\TripChatController::class, 'fetchMessages'])->name('trips.chat.messages');
