@@ -165,6 +165,34 @@ class AdminUserController extends Controller
         return back()->with('success', "Password pengguna {$user->name} telah berhasil diperbarui.");
     }
 
+    public function updateAiQuota(Request $request, User $user)
+    {
+        $request->validate([
+            'action'      => 'required|in:reset,set',
+            'quota_count' => 'required_if:action,set|integer|min:0|max:10',
+        ]);
+
+        if ($request->input('action') === 'reset') {
+            // Reset kuota instan: count kembali ke 0, hapus jadwal reset
+            $user->update([
+                'ai_itinerary_count'    => 0,
+                'ai_itinerary_reset_at' => null,
+            ]);
+
+            return back()->with('success', "Kuota AI {$user->name} berhasil direset (sisa kuota kembali ke 2/2).");
+        }
+
+        // Set manual nilai kuota terpakai
+        $count = (int) $request->input('quota_count');
+        $user->update([
+            'ai_itinerary_count'    => $count,
+            'ai_itinerary_reset_at' => $count >= 2 ? now()->addHours(2) : null,
+        ]);
+
+        $remaining = max(0, 2 - $count);
+        return back()->with('success', "Kuota AI {$user->name} berhasil diubah. Sisa kuota: {$remaining}/2.");
+    }
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {

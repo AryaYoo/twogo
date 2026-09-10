@@ -244,14 +244,50 @@
                         <div>🗓️ <b>Tanggal Registrasi:</b> <span x-text="selectedUser.registered_at"></span></div>
                         <div>🕒 <b>Login Terakhir:</b> <span x-text="selectedUser.last_login"></span></div>
                         <div>📝 <b>Bio Profile:</b> <span x-text="selectedUser.user?.bio || 'Belum diisi'"></span></div>
-                        <div class="pt-2 mt-2 border-t border-slate-200">
-                            🤖 <b>Sisa Kuota AI:</b> 
-                            <span class="px-2 py-0.5 rounded text-white text-[11px] font-black"
-                                  :class="(selectedUser.ai_quota_left ?? 0) > 0 ? 'bg-emerald-600' : 'bg-red-500'"
-                                  x-text="(selectedUser.ai_quota_left ?? 0) + ' / 2'"></span>
-                            <template x-if="selectedUser.ai_reset_relative">
-                                <span class="text-slate-500 text-[11px] ml-1.5 font-semibold" x-text="'(Reset ' + selectedUser.ai_reset_relative + ')'"></span>
-                            </template>
+                        <div class="pt-2 mt-2 border-t border-slate-200 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-600">🤖 Kuota AI:</span>
+                                    <span class="ml-1.5 px-2 py-0.5 rounded text-white text-[11px] font-black"
+                                          :class="(selectedUser.ai_quota_left ?? 0) > 0 ? 'bg-emerald-600' : 'bg-red-500'"
+                                          x-text="(selectedUser.ai_quota_left ?? 0) + ' / 2 sisa'"></span>
+                                    <template x-if="selectedUser.ai_reset_relative">
+                                        <span class="text-slate-400 text-[10px] ml-1 font-semibold" x-text="'(Reset ' + selectedUser.ai_reset_relative + ')'"></span>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Panel Kelola Kuota AI -->
+                            <div class="bg-[#FFF8E7] border-2 border-[#1A1A2E] rounded-xl p-3 space-y-2.5">
+                                <div class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">⚙️ Kelola Kuota AI</div>
+
+                                <!-- Reset Instan -->
+                                <form :action="'/ctrl-twogo-admin/users/' + selectedUser.user?.id + '/ai-quota'" method="POST" class="flex items-center gap-2">
+                                    @csrf
+                                    <input type="hidden" name="action" value="reset">
+                                    <button type="submit"
+                                        onclick="return confirm('Reset kuota AI user ini? Kuota akan kembali penuh (2/2).')"
+                                        class="flex-1 px-3 py-2 bg-[#00D4AA] hover:bg-[#00b896] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
+                                        🔄 Reset Kuota Instan (→ 2/2)
+                                    </button>
+                                </form>
+
+                                <!-- Atur Manual -->
+                                <form :action="'/ctrl-twogo-admin/users/' + selectedUser.user?.id + '/ai-quota'" method="POST" class="flex items-center gap-2">
+                                    @csrf
+                                    <input type="hidden" name="action" value="set">
+                                    <label class="text-[11px] font-bold text-slate-600 whitespace-nowrap">Kuota terpakai:</label>
+                                    <select name="quota_count" class="flex-1 px-2 py-1.5 bg-white border-2 border-[#1A1A2E] rounded-lg text-xs font-bold text-[#1A1A2E] focus:outline-none cursor-pointer">
+                                        <option value="0">0 (Sisa: 2)</option>
+                                        <option value="1">1 (Sisa: 1)</option>
+                                        <option value="2">2 (Sisa: 0)</option>
+                                    </select>
+                                    <button type="submit"
+                                        class="px-3 py-1.5 bg-[#4361EE] hover:bg-[#3451d1] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
+                                        Simpan
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

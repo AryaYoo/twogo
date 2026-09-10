@@ -166,6 +166,7 @@ Route::prefix('ctrl-twogo-admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/status', [\App\Http\Controllers\Admin\AdminUserController::class, 'updateStatus'])->name('users.status');
         Route::post('/users/{user}/tier', [\App\Http\Controllers\Admin\AdminUserController::class, 'updateTier'])->name('users.tier');
         Route::post('/users/{user}/reset-password', [\App\Http\Controllers\Admin\AdminUserController::class, 'resetPassword'])->name('users.reset_password');
+        Route::post('/users/{user}/ai-quota', [\App\Http\Controllers\Admin\AdminUserController::class, 'updateAiQuota'])->name('users.ai_quota');
         Route::delete('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy'])->name('users.destroy');
 
         // Itinerary Management
