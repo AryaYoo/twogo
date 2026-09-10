@@ -62,15 +62,17 @@ class TripAiController extends Controller
         $prompt .= "Buatkan sekitar 3-5 kegiatan.";
 
         try {
-            $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+            $response = Http::timeout(30)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $prompt]]]
                 ]
             ]);
 
             if (!$response->successful()) {
-                Log::error('Gemini API Error: ' . $response->body());
-                return back()->with('error', 'Terjadi kesalahan saat menghubungi server AI. Coba lagi nanti.');
+                $errBody = $response->json();
+                $errMsg = $errBody['error']['message'] ?? $response->body();
+                Log::error('Gemini API Error: ' . $errMsg);
+                return back()->with('error', 'Gagal dari AI: ' . ($errBody['error']['message'] ?? 'Periksa API Key Gemini Anda.'));
             }
 
             $responseData = $response->json();
