@@ -33,7 +33,7 @@ class TripAiController extends Controller
 
         // Validasi input
         $request->validate([
-            'day_id' => 'required|exists:trip_days,id',
+            'day_id'      => 'required|exists:trip_days,id',
             'description' => 'required|string|max:1000',
         ]);
 
@@ -49,7 +49,7 @@ class TripAiController extends Controller
             return back()->with('error', 'API Key Gemini belum disetting di server. Mohon hubungi admin.');
         }
 
-        $prompt = "Buatkan itinerary kegiatan liburan berdasarkan deskripsi berikut:\n\"{$request->description}\"\n\n";
+        $prompt  = "Buatkan itinerary kegiatan liburan berdasarkan deskripsi berikut:\n\"{$request->description}\"\n\n";
         $prompt .= "Aturan Output WAJIB dalam bentuk Array JSON murni (tanpa markdown ```json, HANYA JSON array). Tiap object memiliki key:\n";
         $prompt .= "- 'title' (string, max 50 char)\n";
         $prompt .= "- 'session' (string, HANYA boleh bernilai 'pagi', 'siang', atau 'malam')\n";
@@ -62,15 +62,18 @@ class TripAiController extends Controller
         $prompt .= "Buatkan sekitar 3-5 kegiatan.";
 
         try {
-            $response = Http::timeout(30)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    ['parts' => [['text' => $prompt]]]
+            $response = Http::timeout(30)->post(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}",
+                [
+                    'contents' => [
+                        ['parts' => [['text' => $prompt]]],
+                    ],
                 ]
-            ]);
+            );
 
             if (!$response->successful()) {
                 $errBody = $response->json();
-                $errMsg = $errBody['error']['message'] ?? $response->body();
+                $errMsg  = $errBody['error']['message'] ?? $response->body();
                 Log::error('Gemini API Error: ' . $errMsg);
                 return back()->with('error', 'Gagal dari AI: ' . ($errBody['error']['message'] ?? 'Periksa API Key Gemini Anda.'));
             }
@@ -102,8 +105,7 @@ class TripAiController extends Controller
             $maxSort = $day->activities()->max('sort_order') ?? 0;
 
             foreach ($activities as $act) {
-                // Validasi data sederhana agar tidak error
-                $session = in_array($act['session'] ?? '', ['pagi', 'siang', 'malam']) ? $act['session'] : 'siang';
+                $session  = in_array($act['session'] ?? '', ['pagi', 'siang', 'malam']) ? $act['session'] : 'siang';
                 $category = in_array($act['category'] ?? '', ['wisata', 'kuliner', 'transportasi', 'akomodasi', 'belanja', 'lainnya']) ? $act['category'] : 'lainnya';
 
                 TripActivity::create([
@@ -121,7 +123,7 @@ class TripAiController extends Controller
                 ]);
             }
 
-            // Kurangi kuota user
+            // Tambah hitungan kuota user
             $user->increment('ai_itinerary_count');
 
             return back()->with('success', 'Itinerary otomatis berhasil dibuat oleh AI!');
