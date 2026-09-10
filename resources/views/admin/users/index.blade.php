@@ -263,43 +263,39 @@
                                 <div class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">⚙️ Kelola Kuota AI</div>
 
                                 <!-- Reset Instan -->
-                                <form :action="'/ctrl-twogo-admin/users/' + selectedUser.user?.id + '/ai-quota'" method="POST" class="flex items-center gap-2">
-                                    @csrf
-                                    <input type="hidden" name="action" value="reset">
-                                    <button type="submit"
-                                        onclick="return confirm('Reset kuota AI user ini? Kuota terpakai akan kembali ke 0.')"
-                                        class="flex-1 px-3 py-2 bg-[#00D4AA] hover:bg-[#00b896] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
-                                        🔄 Reset Kuota Instan
-                                    </button>
-                                </form>
+                                <button type="button"
+                                    @click="adminAiQuotaAction(selectedUser.user?.id, 'reset', null, null)"
+                                    class="w-full px-3 py-2 bg-[#00D4AA] hover:bg-[#00b896] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
+                                    🔄 Reset Kuota Instan
+                                </button>
 
                                 <!-- Set Kuota Terpakai Manual -->
-                                <form :action="'/ctrl-twogo-admin/users/' + selectedUser.user?.id + '/ai-quota'" method="POST" class="flex items-center gap-2">
-                                    @csrf
-                                    <input type="hidden" name="action" value="set">
+                                <div class="flex items-center gap-2">
                                     <label class="text-[11px] font-bold text-slate-600 whitespace-nowrap">Kuota terpakai:</label>
-                                    <input type="number" name="quota_count" min="0" max="100"
+                                    <input type="number" id="adminQuotaCount" min="0" max="100"
                                            :value="selectedUser.ai_quota_used ?? 0"
+                                           x-model="selectedUser.ai_quota_used"
                                            class="flex-1 w-16 px-2 py-1.5 bg-white border-2 border-[#1A1A2E] rounded-lg text-xs font-bold text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#4361EE] text-center">
-                                    <button type="submit"
+                                    <button type="button"
+                                        @click="adminAiQuotaAction(selectedUser.user?.id, 'set', selectedUser.ai_quota_used, null)"
                                         class="px-3 py-1.5 bg-[#4361EE] hover:bg-[#3451d1] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
                                         Set
                                     </button>
-                                </form>
+                                </div>
 
                                 <!-- Ubah Batas Limit -->
-                                <form :action="'/ctrl-twogo-admin/users/' + selectedUser.user?.id + '/ai-quota'" method="POST" class="flex items-center gap-2">
-                                    @csrf
-                                    <input type="hidden" name="action" value="set_limit">
+                                <div class="flex items-center gap-2">
                                     <label class="text-[11px] font-bold text-[#7B2FF7] whitespace-nowrap">✦ Batas limit:</label>
-                                    <input type="number" name="quota_limit" min="1" max="100"
+                                    <input type="number" id="adminQuotaLimit" min="1" max="100"
                                            :value="selectedUser.ai_limit ?? 2"
+                                           x-model="selectedUser.ai_limit"
                                            class="flex-1 w-16 px-2 py-1.5 bg-white border-2 border-[#7B2FF7] rounded-lg text-xs font-bold text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#7B2FF7] text-center">
-                                    <button type="submit"
+                                    <button type="button"
+                                        @click="adminAiQuotaAction(selectedUser.user?.id, 'set_limit', null, selectedUser.ai_limit)"
                                         class="px-3 py-1.5 bg-[#7B2FF7] hover:bg-[#6a28d4] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
                                         Simpan
                                     </button>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -354,6 +350,57 @@
             el._x_dataStack[0].resetUser = user;
             el._x_dataStack[0].showResetModal = true;
         }
+    }
+
+    /**
+     * Submit aksi kuota AI admin tanpa masalah Alpine.js binding timing.
+     * Membuat form sementara di DOM lalu langsung submit.
+     */
+    function adminAiQuotaAction(userId, action, quotaCount, quotaLimit) {
+        if (!userId) { alert('User ID tidak ditemukan.'); return; }
+
+        if (action === 'reset') {
+            if (!confirm('Reset kuota AI user ini? Kuota terpakai akan kembali ke 0.')) return;
+        }
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/ctrl-twogo-admin/users/' + userId + '/ai-quota';
+
+        // CSRF
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = '_token';
+        csrf.value = '{{ csrf_token() }}';
+        form.appendChild(csrf);
+
+        // Action type
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = action;
+        form.appendChild(actionInput);
+
+        // Optional: quota_count
+        if (action === 'set' && quotaCount !== null) {
+            const countInput = document.createElement('input');
+            countInput.type = 'hidden';
+            countInput.name = 'quota_count';
+            countInput.value = quotaCount;
+            form.appendChild(countInput);
+        }
+
+        // Optional: quota_limit
+        if (action === 'set_limit' && quotaLimit !== null) {
+            const limitInput = document.createElement('input');
+            limitInput.type = 'hidden';
+            limitInput.name = 'quota_limit';
+            limitInput.value = quotaLimit;
+            form.appendChild(limitInput);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
     }
 </script>
 @endpush
