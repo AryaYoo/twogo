@@ -428,14 +428,14 @@
                 <div class="flex items-center justify-between text-xs font-bold">
                     <span class="flex items-center gap-1.5 {{ $quotaLeft > 0 ? 'text-emerald-700' : 'text-red-600' }}">
                         <span>{{ $quotaLeft > 0 ? '✨' : '⚠️' }}</span>
-                        <span>Sisa Kuota AI: {{ $quotaLeft }} / 2</span>
+                        <span>Sisa Kuota AI: {{ $quotaLeft }} / {{ Auth::user()->ai_limit }}</span>
                     </span>
                     <span class="text-[11px] text-slate-500 font-semibold">Reset tiap 2 jam</span>
                 </div>
 
                 @if(!Auth::user()->canUseAiItinerary())
                     <div class="mt-2 pt-2 border-t border-red-200 text-xs text-red-600 font-bold flex flex-col gap-1">
-                        <div>Kuota AI kamu sudah habis (maksimal 2x per 2 jam).</div>
+                        <div>Kuota AI kamu sudah habis (maksimal {{ Auth::user()->ai_limit }}x per 2 jam).</div>
                         @php $freshResetAt = Auth::user()->fresh()->ai_itinerary_reset_at; @endphp
                         @if($freshResetAt)
                             <div class="flex items-center gap-1 text-[11px] text-slate-600">
@@ -459,9 +459,10 @@
 
             <div class="mt-6">
                 @if(Auth::user()->canUseAiItinerary())
-                    <x-button type="submit" variant="primary" class="w-full bg-gradient-to-r from-[#FFE156] to-[#FF9E00] border-[3px] border-[#1A1A2E] text-[#1A1A2E] hover:from-[#FF9E00] hover:to-[#FF8500]">
+                    <button type="submit" id="aiGenerateBtn"
+                        class="w-full bg-gradient-to-r from-[#FFE156] to-[#FF9E00] border-[3px] border-[#1A1A2E] text-[#1A1A2E] font-extrabold rounded-xl py-3 hover:from-[#FF9E00] hover:to-[#FF8500] transition-all shadow-[3px_3px_0px_#1A1A2E] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] cursor-pointer">
                         ✨ Generate Sekarang
-                    </x-button>
+                    </button>
                 @else
                     <button type="button" disabled class="w-full nb-btn bg-gray-200 text-gray-400 border-[3px] border-gray-300 cursor-not-allowed rounded-xl py-3 font-bold flex items-center justify-center gap-2">
                         <span>🔒 Kuota Habis — Tunggu Reset</span>
@@ -471,6 +472,27 @@
         </form>
     </div>
 </x-modal>
+
+{{-- AI Generate Loading Overlay --}}
+<div id="aiLoadingOverlay" class="fixed inset-0 z-[999] flex-col items-center justify-center bg-[#1A1A2E]/80 backdrop-blur-sm hidden">
+    <div class="flex flex-col items-center gap-5">
+        {{-- Spinning ring --}}
+        <div class="relative w-20 h-20">
+            <div class="absolute inset-0 rounded-full border-[5px] border-[#FFE156]/30"></div>
+            <div class="absolute inset-0 rounded-full border-[5px] border-transparent border-t-[#FFE156] animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-3xl">✨</div>
+        </div>
+        {{-- Text with animated dots --}}
+        <div class="text-center">
+            <p class="text-white font-extrabold text-lg tracking-wide">AI sedang bekerja</p>
+            <p class="text-[#FFE156] text-sm font-semibold mt-1">Menyusun itinerary untuk kamu<span id="aiLoadingDots"></span></p>
+        </div>
+        {{-- Tips --}}
+        <div class="bg-white/10 border border-white/20 rounded-xl px-5 py-3 text-center max-w-xs">
+            <p class="text-white/70 text-xs font-medium">⏳ Proses ini memakan waktu 10–30 detik.<br>Jangan tutup atau refresh halaman.</p>
+        </div>
+    </div>
+</div>
 
 @endsection
 
@@ -625,6 +647,44 @@
 
         updateCountdown();
         setInterval(updateCountdown, 1000);
+    });
+
+    // AI Generate Loading Overlay
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('aiItineraryForm');
+        var overlay = document.getElementById('aiLoadingOverlay');
+        var dotsEl = document.getElementById('aiLoadingDots');
+
+        if (!form || !overlay) return;
+
+        // Animated dots
+        var dots = 0;
+        var dotsInterval;
+
+        form.addEventListener('submit', function (e) {
+            // Validasi cepat sebelum show overlay
+            var dayId = form.querySelector('[name="day_id"]').value;
+            var desc = form.querySelector('[name="description"]').value.trim();
+            if (!dayId || !desc) return; // biarkan HTML5 validation handle
+
+            // Tampilkan overlay
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+
+            // Animasi dots
+            dots = 0;
+            dotsInterval = setInterval(function () {
+                dots = (dots + 1) % 4;
+                dotsEl.textContent = '.'.repeat(dots);
+            }, 450);
+
+            // Nonaktifkan tombol agar tidak double submit
+            var btn = document.getElementById('aiGenerateBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Memproses...';
+            }
+        });
     });
 </script>
 @endpush

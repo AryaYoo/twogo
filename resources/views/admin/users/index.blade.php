@@ -250,11 +250,12 @@
                                     <span class="text-xs font-bold text-slate-600">🤖 Kuota AI:</span>
                                     <span class="ml-1.5 px-2 py-0.5 rounded text-white text-[11px] font-black"
                                           :class="(selectedUser.ai_quota_left ?? 0) > 0 ? 'bg-emerald-600' : 'bg-red-500'"
-                                          x-text="(selectedUser.ai_quota_left ?? 0) + ' / 2 sisa'"></span>
+                                          x-text="(selectedUser.ai_quota_left ?? 0) + ' / ' + (selectedUser.ai_limit ?? 2) + ' sisa'"></span>
                                     <template x-if="selectedUser.ai_reset_relative">
                                         <span class="text-slate-400 text-[10px] ml-1 font-semibold" x-text="'(Reset ' + selectedUser.ai_reset_relative + ')'"></span>
                                     </template>
                                 </div>
+                                <span class="text-[10px] font-extrabold text-slate-400 uppercase" x-text="'Limit: ' + (selectedUser.ai_limit ?? 2) + 'x'"></span>
                             </div>
 
                             <!-- Panel Kelola Kuota AI -->
@@ -266,24 +267,36 @@
                                     @csrf
                                     <input type="hidden" name="action" value="reset">
                                     <button type="submit"
-                                        onclick="return confirm('Reset kuota AI user ini? Kuota akan kembali penuh (2/2).')"
+                                        onclick="return confirm('Reset kuota AI user ini? Kuota terpakai akan kembali ke 0.')"
                                         class="flex-1 px-3 py-2 bg-[#00D4AA] hover:bg-[#00b896] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
-                                        🔄 Reset Kuota Instan (→ 2/2)
+                                        🔄 Reset Kuota Instan
                                     </button>
                                 </form>
 
-                                <!-- Atur Manual -->
+                                <!-- Set Kuota Terpakai Manual -->
                                 <form :action="'/ctrl-twogo-admin/users/' + selectedUser.user?.id + '/ai-quota'" method="POST" class="flex items-center gap-2">
                                     @csrf
                                     <input type="hidden" name="action" value="set">
                                     <label class="text-[11px] font-bold text-slate-600 whitespace-nowrap">Kuota terpakai:</label>
-                                    <select name="quota_count" class="flex-1 px-2 py-1.5 bg-white border-2 border-[#1A1A2E] rounded-lg text-xs font-bold text-[#1A1A2E] focus:outline-none cursor-pointer">
-                                        <option value="0">0 (Sisa: 2)</option>
-                                        <option value="1">1 (Sisa: 1)</option>
-                                        <option value="2">2 (Sisa: 0)</option>
-                                    </select>
+                                    <input type="number" name="quota_count" min="0" max="100"
+                                           :value="selectedUser.ai_quota_used ?? 0"
+                                           class="flex-1 w-16 px-2 py-1.5 bg-white border-2 border-[#1A1A2E] rounded-lg text-xs font-bold text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#4361EE] text-center">
                                     <button type="submit"
                                         class="px-3 py-1.5 bg-[#4361EE] hover:bg-[#3451d1] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
+                                        Set
+                                    </button>
+                                </form>
+
+                                <!-- Ubah Batas Limit -->
+                                <form :action="'/ctrl-twogo-admin/users/' + selectedUser.user?.id + '/ai-quota'" method="POST" class="flex items-center gap-2">
+                                    @csrf
+                                    <input type="hidden" name="action" value="set_limit">
+                                    <label class="text-[11px] font-bold text-[#7B2FF7] whitespace-nowrap">✦ Batas limit:</label>
+                                    <input type="number" name="quota_limit" min="1" max="100"
+                                           :value="selectedUser.ai_limit ?? 2"
+                                           class="flex-1 w-16 px-2 py-1.5 bg-white border-2 border-[#7B2FF7] rounded-lg text-xs font-bold text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#7B2FF7] text-center">
+                                    <button type="submit"
+                                        class="px-3 py-1.5 bg-[#7B2FF7] hover:bg-[#6a28d4] text-white border-2 border-[#1A1A2E] rounded-xl font-extrabold text-xs shadow-[2px_2px_0px_#1A1A2E] cursor-pointer transition-all active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">
                                         Simpan
                                     </button>
                                 </form>

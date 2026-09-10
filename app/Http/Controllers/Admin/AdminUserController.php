@@ -76,6 +76,7 @@ class AdminUserController extends Controller
             'last_login'       => $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Belum pernah login',
             'ai_quota_left'    => $user->ai_quota_remaining,
             'ai_quota_used'    => $user->ai_itinerary_count ?? 0,
+            'ai_limit'         => $user->ai_limit,
             'ai_reset_at'      => $user->ai_itinerary_reset_at ? $user->ai_itinerary_reset_at->format('d M Y H:i') : null,
             'ai_reset_relative'=> $user->ai_itinerary_reset_at ? $user->ai_itinerary_reset_at->diffForHumans() : null,
         ]);
@@ -168,29 +169,34 @@ class AdminUserController extends Controller
     public function updateAiQuota(Request $request, User $user)
     {
         $request->validate([
-            'action'      => 'required|in:reset,set',
-            'quota_count' => 'required_if:action,set|integer|min:0|max:10',
+            'action'      => 'required|in:reset,set,set_limit',
+            'quota_count' => 'required_if:action,set|integer|min:0|max:100',
+            'quota_limit' => 'required_if:action,set_limit|integer|min:1|max:100',
         ]);
 
         if ($request->input('action') === 'reset') {
-            // Reset kuota instan: count kembali ke 0, hapus jadwal reset
             $user->update([
                 'ai_itinerary_count'    => 0,
                 'ai_itinerary_reset_at' => null,
             ]);
-
-            return back()->with('success', "Kuota AI {$user->name} berhasil direset (sisa kuota kembali ke 2/2).");
+            return back()->with('success', "Kuota AI {$user->name} berhasil direset. Sisa kuota kembali ke {$user->ai_limit}/{$user->ai_limit}.");
         }
 
-        // Set manual nilai kuota terpakai
+        if ($request->input('action') === 'set_limit') {
+            $limit = (int) $request->input('quota_limit');
+            $user->update(['ai_itinerary_limit' => $limit]);
+            return back()->with('success', "Batas kuota AI {$user->name} berhasil diubah menjadi {$limit}x per 2 jam.");
+        }
+
+        // set — ubah jumlah kuota terpakai
         $count = (int) $request->input('quota_count');
+        $limit = $user->ai_limit;
         $user->update([
             'ai_itinerary_count'    => $count,
-            'ai_itinerary_reset_at' => $count >= 2 ? now()->addHours(2) : null,
+            'ai_itinerary_reset_at' => $count >= $limit ? now()->addHours(2) : null,
         ]);
-
-        $remaining = max(0, 2 - $count);
-        return back()->with('success', "Kuota AI {$user->name} berhasil diubah. Sisa kuota: {$remaining}/2.");
+        $remaining = max(0, $limit - $count);
+        return back()->with('success', "Kuota AI {$user->name} diubah. Sisa kuota: {$remaining}/{$limit}.");
     }
 
     public function destroy(User $user)

@@ -44,6 +44,7 @@ class User extends Authenticatable
         'status',
         'account_tier',
         'ai_itinerary_count',
+        'ai_itinerary_limit',
         'ai_itinerary_reset_at',
         'last_login_at',
     ];
@@ -66,11 +67,12 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_admin' => 'boolean',
-            'last_login_at' => 'datetime',
-            'ai_itinerary_count' => 'integer',
+            'email_verified_at'     => 'datetime',
+            'password'              => 'hashed',
+            'is_admin'              => 'boolean',
+            'last_login_at'         => 'datetime',
+            'ai_itinerary_count'    => 'integer',
+            'ai_itinerary_limit'    => 'integer',
             'ai_itinerary_reset_at' => 'datetime',
         ];
     }
@@ -109,12 +111,20 @@ class User extends Authenticatable
     }
 
     /**
-     * Hitung sisa kuota AI (Maksimal 2).
+     * Ambil batas kuota AI user ini (default 2, bisa diubah admin).
+     */
+    public function getAiLimitAttribute(): int
+    {
+        return max(1, $this->ai_itinerary_limit ?? 2);
+    }
+
+    /**
+     * Hitung sisa kuota AI.
      */
     public function getAiQuotaRemainingAttribute(): int
     {
         $this->checkAndRefreshAiQuota();
-        return max(0, 2 - ($this->ai_itinerary_count ?? 0));
+        return max(0, $this->ai_limit - ($this->ai_itinerary_count ?? 0));
     }
 
     public function canUseAiItinerary(): bool
@@ -128,7 +138,7 @@ class User extends Authenticatable
         // Jika kuota habis tapi belum ada jadwal reset
         // (misal: user sudah pakai sebelum fitur ini ditambah),
         // jadwalkan reset 2 jam dari sekarang.
-        if (($this->ai_itinerary_count ?? 0) >= 2 && !$this->ai_itinerary_reset_at) {
+        if (($this->ai_itinerary_count ?? 0) >= $this->ai_limit && !$this->ai_itinerary_reset_at) {
             try {
                 $this->update(['ai_itinerary_reset_at' => now()->addHours(2)]);
                 $this->refresh();
@@ -137,7 +147,7 @@ class User extends Authenticatable
             }
         }
 
-        return ($this->ai_itinerary_count ?? 0) < 2;
+        return ($this->ai_itinerary_count ?? 0) < $this->ai_limit;
     }
 
     /**
