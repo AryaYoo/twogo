@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ContentReport;
 use App\Models\Trip;
+use App\Models\TripActivity;
 use Illuminate\Http\Request;
 
 class AdminItineraryController extends Controller
@@ -73,14 +74,64 @@ class AdminItineraryController extends Controller
         ]);
     }
 
+    /**
+     * Update trip info by admin.
+     */
+    public function update(Request $request, Trip $trip)
+    {
+        $validated = $request->validate([
+            'title'        => 'required|string|max:255',
+            'destination'  => 'required|string|max:255',
+            'description'  => 'nullable|string',
+            'total_budget' => 'nullable|numeric|min:0',
+            'start_date'   => 'nullable|date',
+            'end_date'     => 'nullable|date|after_or_equal:start_date',
+            'is_public'    => 'boolean',
+        ]);
+
+        $trip->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Trip \"{$trip->title}\" berhasil diperbarui.",
+            'trip'    => $trip->fresh(),
+        ]);
+    }
+
+    /**
+     * Update a single activity by admin.
+     */
+    public function updateActivity(Request $request, TripActivity $activity)
+    {
+        $validated = $request->validate([
+            'title'          => 'required|string|max:255',
+            'description'    => 'nullable|string',
+            'session'        => 'nullable|in:pagi,siang,sore,malam',
+            'start_time'     => 'nullable|date_format:H:i',
+            'end_time'       => 'nullable|date_format:H:i',
+            'location_name'  => 'nullable|string|max:255',
+            'location_url'   => 'nullable|url|max:500',
+            'estimated_cost' => 'nullable|numeric|min:0',
+            'category'       => 'nullable|in:wisata,kuliner,transportasi,akomodasi,belanja,lainnya',
+        ]);
+
+        $activity->update($validated);
+
+        return response()->json([
+            'success'  => true,
+            'message'  => "Aktivitas \"{$activity->title}\" berhasil diperbarui.",
+            'activity' => $activity->fresh(),
+        ]);
+    }
+
     public function toggleFlag(Request $request, Trip $trip)
     {
         $trip->update([
             'is_flagged' => !$trip->is_flagged,
         ]);
 
-        $statusMessage = $trip->is_flagged 
-            ? "Itinerary \"{$trip->title}\" berhasil di-flag untuk moderasi." 
+        $statusMessage = $trip->is_flagged
+            ? "Itinerary \"{$trip->title}\" berhasil di-flag untuk moderasi."
             : "Flag moderasi pada itinerary \"{$trip->title}\" telah dicabut.";
 
         return back()->with('success', $statusMessage);
@@ -114,3 +165,4 @@ class AdminItineraryController extends Controller
         return back()->with('success', "Itinerary \"{$title}\" berhasil dihapus dari sistem.");
     }
 }
+

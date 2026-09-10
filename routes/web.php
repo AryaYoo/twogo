@@ -172,6 +172,8 @@ Route::prefix('ctrl-twogo-admin')->name('admin.')->group(function () {
         // Itinerary Management
         Route::get('/itineraries', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'index'])->name('itineraries.index');
         Route::get('/itineraries/{trip}', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'show'])->name('itineraries.show');
+        Route::put('/itineraries/{trip}', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'update'])->name('itineraries.update');
+        Route::put('/itineraries/activities/{activity}', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'updateActivity'])->name('itineraries.activity.update');
         Route::post('/itineraries/{trip}/flag', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'toggleFlag'])->name('itineraries.flag');
         Route::delete('/itineraries/{trip}', [\App\Http\Controllers\Admin\AdminItineraryController::class, 'destroy'])->name('itineraries.destroy');
 
