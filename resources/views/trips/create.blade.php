@@ -109,7 +109,7 @@
 
             <button type="button" onclick="goToStep(2)"
                 class="nb-btn w-full py-3.5 bg-[#FFE156] border-[3px] border-[#1A1A2E] rounded-xl font-heading font-extrabold text-[#1A1A2E] text-base shadow-[4px_4px_0px_#1A1A2E] flex items-center justify-center gap-2 cursor-pointer">
-                Lanjut — Pilih Tanggal 📅 <span>→</span>
+                <span>Lanjut</span> <span>→</span>
             </button>
         </div>
 
@@ -165,7 +165,7 @@
                 </button>
                 <button type="button" onclick="goToStep(3)"
                     class="nb-btn flex-1 py-3.5 bg-[#00D4AA] border-[3px] border-[#1A1A2E] rounded-xl font-heading font-extrabold text-[#1A1A2E] text-base shadow-[4px_4px_0px_#1A1A2E] flex items-center justify-center gap-2 cursor-pointer">
-                    Lanjut — Budget &amp; Catatan 💰 <span>→</span>
+                    <span>Lanjut</span> <span>→</span>
                 </button>
             </div>
         </div>
