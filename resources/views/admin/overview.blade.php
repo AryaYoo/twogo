@@ -74,30 +74,11 @@
                 </span>
             </div>
 
-            <!-- Custom Neo-Brutalism Canvas Chart / Bar Graph -->
-            <div class="h-64 flex items-end gap-3 pt-6 px-2 border-b-3 border-[#1A1A2E]">
-                @php
-                    $maxVal = max(1, max($chartValues));
-                @endphp
-                @foreach($chartValues as $idx => $val)
-                    @php
-                        $heightPercent = max(8, min(100, round(($val / $maxVal) * 100)));
-                    @endphp
-                    <div class="flex-1 flex flex-col items-center gap-2 group relative">
-                        <!-- Tooltip -->
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-10 bg-[#1A1A2E] text-white text-xs font-bold py-1 px-2 rounded border border-[#1A1A2E] whitespace-nowrap z-20 pointer-events-none">
-                            {{ $chartLabels[$idx] }}: {{ $val }} user
-                        </div>
-                        <div class="text-xs font-extrabold text-[#1A1A2E]">{{ $val }}</div>
-                        <div 
-                            style="height: {{ $heightPercent }}%;" 
-                            class="w-full bg-[#FFE156] group-hover:bg-[#FF6B9D] border-[2px] border-[#1A1A2E] rounded-t-lg shadow-[2px_0px_0px_#1A1A2E] transition-all"
-                        ></div>
-                        <div class="text-[10px] font-bold text-slate-500 truncate w-full text-center">{{ $chartLabels[$idx] }}</div>
-                    </div>
-                @endforeach
+            <!-- User Growth Chart.js Canvas -->
+            <div class="relative h-64 w-full">
+                <canvas id="userGrowthChart"></canvas>
             </div>
-            <div class="mt-4 flex items-center justify-between text-xs font-bold text-slate-500">
+            <div class="mt-4 flex items-center justify-between text-xs font-bold text-slate-500 pt-3 border-t-2 border-slate-100">
                 <span>14 Hari Lalu</span>
                 <span class="text-[#4361EE] font-extrabold">Total Akun: {{ $totalUsers }} User</span>
                 <span>Hari Ini</span>
@@ -135,3 +116,113 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('userGrowthChart');
+        if (!ctx) return;
+
+        const labels = {!! json_encode($chartLabels) !!};
+        const dataValues = {!! json_encode($chartValues) !!};
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Registrasi User',
+                    data: dataValues,
+                    borderColor: '#4361EE',
+                    backgroundColor: 'rgba(67, 97, 238, 0.12)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#FFE156',
+                    pointBorderColor: '#1A1A2E',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointHoverBackgroundColor: '#FF6B9D',
+                    pointHoverBorderColor: '#1A1A2E',
+                    pointHoverBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1A1A2E',
+                        titleFont: {
+                            family: 'Plus Jakarta Sans',
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            family: 'Plus Jakarta Sans',
+                            size: 13,
+                            weight: 'bold'
+                        },
+                        padding: 10,
+                        cornerRadius: 8,
+                        borderColor: '#FFE156',
+                        borderWidth: 2,
+                        callbacks: {
+                            label: function(context) {
+                                return ' ' + context.parsed.y + ' User Baru';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: true,
+                            borderColor: '#1A1A2E',
+                            borderWidth: 2
+                        },
+                        ticks: {
+                            font: {
+                                family: 'Plus Jakarta Sans',
+                                size: 11,
+                                weight: '600'
+                            },
+                            color: '#64748B'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grace: 1,
+                        grid: {
+                            color: '#E2E8F0',
+                            drawBorder: true,
+                            borderColor: '#1A1A2E',
+                            borderWidth: 2
+                        },
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0,
+                            font: {
+                                family: 'Plus Jakarta Sans',
+                                size: 11,
+                                weight: '600'
+                            },
+                            color: '#64748B'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
