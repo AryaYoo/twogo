@@ -5,113 +5,7 @@
 ])
 
 @section('content')
-<div class="space-y-6" x-data="{
-    selectedTrip: null,
-    showModal: false,
-    activeTab: 'detail',
-    editForm: {},
-    activityForm: {},
-    editingActivityId: null,
-    savingTrip: false,
-    savingActivity: false,
-    toastMsg: '',
-    toastSuccess: true,
-
-    showToast(msg, success = true) {
-        this.toastMsg = msg;
-        this.toastSuccess = success;
-        setTimeout(() => { this.toastMsg = ''; }, 3500);
-    },
-
-    saveTripInfo() {
-        this.savingTrip = true;
-        const tripId = this.selectedTrip.trip.id;
-        const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || '';
-        fetch('/ctrl-twogo-admin/itineraries/' + tripId, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-            },
-            body: JSON.stringify(this.editForm),
-        })
-        .then(r => r.json())
-        .then(data => {
-            this.savingTrip = false;
-            if (data.success) {
-                this.selectedTrip.trip = data.trip;
-                if (data.days) {
-                    this.selectedTrip.days = data.days;
-                    const badge = document.querySelector(`[data-trip-days="${tripId}"]`);
-                    if (badge) {
-                        badge.textContent = data.days.length + ' Hari';
-                    }
-                }
-                this.showToast('✅ ' + data.message, true);
-            } else {
-                const errors = data.errors ? Object.values(data.errors).flat().join(', ') : 'Terjadi kesalahan.';
-                this.showToast('❌ ' + errors, false);
-            }
-        })
-        .catch(() => {
-            this.savingTrip = false;
-            this.showToast('❌ Gagal menyimpan. Coba lagi.', false);
-        });
-    },
-
-    startEditActivity(act) {
-        this.editingActivityId = act.id;
-        this.activityForm = {
-            title:          act.title          || '',
-            description:    act.description    || '',
-            session:        act.session        || '',
-            start_time:     act.start_time     ? act.start_time.substring(0,5) : '',
-            end_time:       act.end_time       ? act.end_time.substring(0,5)   : '',
-            location_name:  act.location_name  || '',
-            location_url:   act.location_url   || '',
-            estimated_cost: act.estimated_cost || '',
-            category:       act.category       || '',
-        };
-    },
-
-    saveActivity(act) {
-        this.savingActivity = true;
-        const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || '';
-        fetch('/ctrl-twogo-admin/itineraries/activities/' + act.id, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-            },
-            body: JSON.stringify(this.activityForm),
-        })
-        .then(r => r.json())
-        .then(data => {
-            this.savingActivity = false;
-            if (data.success) {
-                // Update the activity in-place in selectedTrip.days
-                for (let day of this.selectedTrip.days) {
-                    const idx = day.activities.findIndex(a => a.id === act.id);
-                    if (idx !== -1) {
-                        day.activities[idx] = data.activity;
-                        break;
-                    }
-                }
-                this.editingActivityId = null;
-                this.showToast('✅ ' + data.message, true);
-            } else {
-                const errors = data.errors ? Object.values(data.errors).flat().join(', ') : 'Terjadi kesalahan.';
-                this.showToast('❌ ' + errors, false);
-            }
-        })
-        .catch(() => {
-            this.savingActivity = false;
-            this.showToast('❌ Gagal menyimpan aktivitas. Coba lagi.', false);
-        });
-    },
-}">
+<div class="space-y-6" x-data="itineraryManager()">
     <!-- Filter Tabs & Search -->
     <div class="bg-white border-[3px] border-[#1A1A2E] shadow-[4px_4px_0px_#1A1A2E] rounded-2xl p-5 flex flex-col lg:flex-row items-center justify-between gap-4">
         <!-- Filter Tabs -->
@@ -508,37 +402,139 @@
 
 @push('scripts')
 <script>
-    function fetchTripDetail(tripId) {
-        fetch('/ctrl-twogo-admin/itineraries/' + tripId)
-            .then(res => res.json())
-            .then(data => {
-                const el = document.querySelector('[x-data]');
-                if (el && el._x_dataStack) {
-                    const state = el._x_dataStack[0];
-                    state.selectedTrip = data;
-                    state.activeTab = 'detail';
-                    state.editingActivityId = null;
-                    state.toastMsg = '';
-                    // Pre-fill edit form from trip data
+function itineraryManager() {
+    return {
+        selectedTrip: null,
+        showModal: false,
+        activeTab: 'detail',
+        editForm: {},
+        activityForm: {},
+        editingActivityId: null,
+        savingTrip: false,
+        savingActivity: false,
+        toastMsg: '',
+        toastSuccess: true,
+
+        showToast(msg, success = true) {
+            this.toastMsg = msg;
+            this.toastSuccess = success;
+            setTimeout(() => { this.toastMsg = ''; }, 3500);
+        },
+
+        fetchTripDetail(tripId) {
+            fetch('/ctrl-twogo-admin/itineraries/' + tripId)
+                .then(res => res.json())
+                .then(data => {
+                    this.selectedTrip = data;
+                    this.activeTab = 'detail';
+                    this.editingActivityId = null;
+                    this.toastMsg = '';
                     const trip = data.trip;
-                    state.editForm = {
+                    this.editForm = {
                         title:        trip.title        || '',
                         destination:  trip.destination  || '',
                         description:  trip.description  || '',
                         total_budget: trip.total_budget  || 0,
-                        start_date:   trip.start_date   ? trip.start_date.substring(0,10) : '',
-                        end_date:     trip.end_date     ? trip.end_date.substring(0,10)   : '',
-                        is_public:    trip.is_public,
+                        start_date:   trip.start_date   ? trip.start_date.substring(0, 10) : '',
+                        end_date:     trip.end_date     ? trip.end_date.substring(0, 10)   : '',
+                        is_public:    Boolean(trip.is_public),
                     };
-                    state.showModal = true;
-                }
-            });
-    }
+                    this.showModal = true;
+                })
+                .catch(() => {
+                    alert('Gagal memuat detail itinerary.');
+                });
+        },
 
-    document.addEventListener('alpine:init', () => {
-        // Extend the x-data to add edit-related state & methods
-        Alpine.data !== undefined; // noop, just check alpine loaded
-    });
+        saveTripInfo() {
+            this.savingTrip = true;
+            const tripId = this.selectedTrip.trip.id;
+            const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || '';
+            fetch('/ctrl-twogo-admin/itineraries/' + tripId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify(this.editForm),
+            })
+            .then(r => r.json())
+            .then(data => {
+                this.savingTrip = false;
+                if (data.success) {
+                    this.selectedTrip.trip = data.trip;
+                    if (data.days) {
+                        this.selectedTrip.days = data.days;
+                        const badge = document.querySelector('[data-trip-days="' + tripId + '"]');
+                        if (badge) {
+                            badge.textContent = data.days.length + ' Hari';
+                        }
+                    }
+                    this.showToast('✅ ' + data.message, true);
+                } else {
+                    const errors = data.errors ? Object.values(data.errors).flat().join(', ') : 'Terjadi kesalahan.';
+                    this.showToast('❌ ' + errors, false);
+                }
+            })
+            .catch(() => {
+                this.savingTrip = false;
+                this.showToast('❌ Gagal menyimpan. Coba lagi.', false);
+            });
+        },
+
+        startEditActivity(act) {
+            this.editingActivityId = act.id;
+            this.activityForm = {
+                title:          act.title          || '',
+                description:    act.description    || '',
+                session:        act.session        || '',
+                start_time:     act.start_time     ? act.start_time.substring(0, 5) : '',
+                end_time:       act.end_time       ? act.end_time.substring(0, 5)   : '',
+                location_name:  act.location_name  || '',
+                location_url:   act.location_url   || '',
+                estimated_cost: act.estimated_cost || '',
+                category:       act.category       || '',
+            };
+        },
+
+        saveActivity(act) {
+            this.savingActivity = true;
+            const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || '';
+            fetch('/ctrl-twogo-admin/itineraries/activities/' + act.id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify(this.activityForm),
+            })
+            .then(r => r.json())
+            .then(data => {
+                this.savingActivity = false;
+                if (data.success) {
+                    for (let day of this.selectedTrip.days) {
+                        const idx = day.activities.findIndex(a => a.id === act.id);
+                        if (idx !== -1) {
+                            day.activities[idx] = data.activity;
+                            break;
+                        }
+                    }
+                    this.editingActivityId = null;
+                    this.showToast('✅ ' + data.message, true);
+                } else {
+                    const errors = data.errors ? Object.values(data.errors).flat().join(', ') : 'Terjadi kesalahan.';
+                    this.showToast('❌ ' + errors, false);
+                }
+            })
+            .catch(() => {
+                this.savingActivity = false;
+                this.showToast('❌ Gagal menyimpan aktivitas. Coba lagi.', false);
+            });
+        },
+    };
+}
 </script>
 @endpush
 @endsection
